@@ -1,7 +1,7 @@
 <script lang="ts">
 import AdminLayout from "@/layouts/AdminLayout.vue";
-import { User } from "@/types";
-import { Link, useForm } from "@inertiajs/vue3";
+import { PageProps, User } from "@/types";
+import { Link, useForm, usePage } from "@inertiajs/vue3";
 
 export default {
     layout: AdminLayout,
@@ -35,6 +35,9 @@ const props = defineProps<{
     user: User;
 }>();
 
+const page = usePage<PageProps>();
+const isSelf = page.props.auth.user.id === props.user.id;
+
 const form = useForm({
     type: props.user.type,
     npm: props.user.npm,
@@ -55,12 +58,12 @@ const form = useForm({
                             })
                         "
                     >
-                        Users
+                        Pengguna
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator class="hidden md:block" />
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Edit</BreadcrumbPage>
+                    <BreadcrumbPage>Ubah</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
@@ -68,8 +71,8 @@ const form = useForm({
     <div class="flex-1">
         <Card class="max-w-sm">
             <CardHeader>
-                <CardTitle>Edit User</CardTitle>
-                <CardDescription>Please complete the form</CardDescription>
+                <CardTitle>Ubah Pengguna</CardTitle>
+                <CardDescription>Silakan lengkapi formulir di bawah ini</CardDescription>
             </CardHeader>
             <CardContent>
                 <form
@@ -79,12 +82,15 @@ const form = useForm({
                     "
                 >
                     <div class="space-y-2">
-                        <Label>Type</Label>
-                        <Select v-model="form.type">
+                        <Label>Peran</Label>
+                        <Select v-model="form.type" :disabled="isSelf">
                             <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="committee">Committee</SelectItem>
-                            <SelectItem value="voter">Voter</SelectItem>
+                            <SelectItem value="committee">Panitia</SelectItem>
+                            <SelectItem value="voter">Pemilih</SelectItem>
                         </Select>
+                        <p v-if="isSelf" class="text-xs text-muted-foreground">
+                            Peran akun Anda sendiri tidak dapat diturunkan selama sedang login.
+                        </p>
                         <FormMessage v-if="form.errors.type" variant="error">
                             {{ form.errors.type }}
                         </FormMessage>
@@ -104,14 +110,14 @@ const form = useForm({
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Name</Label>
+                        <Label>Nama</Label>
                         <Input v-model="form.name" />
                         <FormMessage v-if="form.errors.name" variant="error">
                             {{ form.errors.name }}
                         </FormMessage>
                     </div>
                     <div class="flex flex-row-reverse justify-between">
-                        <Button type="submit">Save</Button>
+                        <Button type="submit" :disabled="form.processing">Simpan</Button>
                         <Link
                             :href="
                                 route('admin.users.index', {
@@ -120,7 +126,7 @@ const form = useForm({
                             "
                         >
                             <Button type="button" variant="outline">
-                                Back
+                                Kembali
                             </Button>
                         </Link>
                     </div>

@@ -6,6 +6,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import ConfirmationDialog from "@/components/ConfirmationDialog.vue";
 import FormMessage from "@/components/FormMessage.vue";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -28,8 +29,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PageProps } from "@/types";
-import { Link, useForm, usePage } from "@inertiajs/vue3";
-import { Plus } from "lucide-vue-next";
+import { Link, router, useForm, usePage } from "@inertiajs/vue3";
+import { Plus, Trash2 } from "lucide-vue-next";
 import { ref } from "vue";
 
 const props = defineProps<{
@@ -90,7 +91,7 @@ const setLogo = (event: Event) => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Edit Calon</BreadcrumbPage>
+          <BreadcrumbPage>Ubah Calon</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -98,8 +99,8 @@ const setLogo = (event: Event) => {
   <div class="flex-1">
     <Card class="max-w-sm">
       <CardHeader>
-        <CardTitle>Edit Candidate</CardTitle>
-        <CardDescription>Please complete the form</CardDescription>
+        <CardTitle>Ubah Calon</CardTitle>
+        <CardDescription>Silakan lengkapi data calon di bawah ini</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -145,40 +146,62 @@ const setLogo = (event: Event) => {
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Name 1</Label>
+            <Label>Nama Calon 1</Label>
             <Input v-model="form.name_1" autofocus />
             <FormMessage v-if="form.errors.name_1" variant="error">
               {{ form.errors.name_1 }}
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Name 2</Label>
+            <Label>Nama Calon 2 (Opsional)</Label>
             <Input v-model="form.name_2" />
             <FormMessage v-if="form.errors.name_2" variant="error">
               {{ form.errors.name_2 }}
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Vision</Label>
+            <Label>Visi</Label>
             <Textarea v-model="form.vision" rows="3" />
             <FormMessage v-if="form.errors.vision" variant="error">
               {{ form.errors.vision }}
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Mission</Label>
+            <Label>Misi</Label>
             <Textarea v-model="form.mission" rows="4" />
             <FormMessage v-if="form.errors.mission" variant="error">
               {{ form.errors.mission }}
             </FormMessage>
           </div>
-          <div class="flex flex-row-reverse justify-between">
-            <Button type="submit">Save</Button>
+          <div class="flex flex-row-reverse justify-between pt-2">
+            <Button type="submit" :disabled="form.processing">Simpan</Button>
             <Link :href="route('admin.candidates.index')">
-              <Button type="button" variant="outline"> Back </Button>
+              <Button type="button" variant="outline"> Kembali </Button>
             </Link>
           </div>
         </form>
+        <div class="mt-4 pt-4 border-t">
+          <ConfirmationDialog
+            title="Hapus Calon?"
+            description="Calon ini akan dihapus dari daftar pemilihan. Lanjutkan?"
+            confirm-label="Ya, Hapus"
+            variant="destructive"
+            @accept="
+              router.delete(
+                route('admin.organizations.groups.candidates.destroy', {
+                  organization: organization?.id,
+                  group: group?.id,
+                  candidate: candidate.id,
+                }),
+              )
+            "
+          >
+            <Button type="button" variant="destructive" class="w-full gap-2">
+              <Trash2 class="size-4" />
+              Hapus Calon
+            </Button>
+          </ConfirmationDialog>
+        </div>
       </CardContent>
     </Card>
   </div>

@@ -61,7 +61,7 @@ class UserController extends Controller
         Whitelist::query()->firstOrCreate(["npm" => $request->input("npm")]);
 
         return redirect(route("admin.users.index", ["type" => $user->type]))
-            ->with("flash.message", "User has been added.")
+            ->with("flash.message", "Pengguna berhasil ditambahkan.")
             ->with("flash.type", "success");
     }
 
@@ -93,6 +93,16 @@ class UserController extends Controller
             "npm" => "required|string|size:11|regex:/^[0-9]{11}$/|unique:users,npm," . $user->id,
         ]);
 
+        if ($user->id === $request->user()->id && $request->input("type") !== "admin") {
+            return redirect()
+                ->back()
+                ->withErrors([
+                    "type" => "Anda tidak dapat menurunkan peran akun Anda sendiri yang sedang login.",
+                ])
+                ->with("flash.message", "Anda tidak dapat menurunkan peran akun Anda sendiri yang sedang login.")
+                ->with("flash.type", "destructive");
+        }
+
         $npm = $request->input("npm");
         $user->update([
             "npm" => $npm,
@@ -106,18 +116,25 @@ class UserController extends Controller
         Whitelist::query()->firstOrCreate(["npm" => $request->input("npm")]);
 
         return redirect(route("admin.users.index", ["type" => $user->type]))
-            ->with("flash.message", "User has been updated.")
+            ->with("flash.message", "Pengguna berhasil diperbarui.")
             ->with("flash.type", "success");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
+        if ($user->id === $request->user()->id) {
+            return redirect()
+                ->back()
+                ->with("flash.message", "Anda tidak dapat menghapus akun Anda sendiri yang sedang login.")
+                ->with("flash.type", "destructive");
+        }
+
         $user->delete();
         return redirect(route("admin.users.index", ["type" => $user->type]))
-            ->with("flash.message", "User {$user->name} has been deleted.")
+            ->with("flash.message", "Pengguna {$user->name} berhasil dihapus.")
             ->with("flash.type", "success");
     }
 }

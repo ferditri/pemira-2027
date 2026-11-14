@@ -35,9 +35,7 @@ const props = defineProps<{
   organizations: CandidateOrg[];
 }>();
 
-const selectedOrgId = ref<number | "all">(
-  props.organizations[0]?.id ?? "all",
-);
+const selectedOrgId = ref<number | "all">("all");
 
 const majorLabel = (code: string | null) => formatMajor(code);
 

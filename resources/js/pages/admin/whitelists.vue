@@ -45,7 +45,7 @@ const massForm = useForm({
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Whitelists</BreadcrumbPage>
+                    <BreadcrumbPage>Daftar Pemilih</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
@@ -55,9 +55,9 @@ const massForm = useForm({
             <div>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Validate</CardTitle>
+                        <CardTitle>Cek Daftar Pemilih</CardTitle>
                         <CardDescription>
-                            Search npm to validate
+                            Cari NPM untuk memastikan terdaftar
                         </CardDescription>
                         <form
                             class="space-y-6 mt-2"
@@ -75,22 +75,22 @@ const massForm = useForm({
                             <div class="space-y-2">
                                 <Input
                                     v-model="validateForm.npm"
-                                    placeholder="Insert NPM"
+                                    placeholder="Masukkan NPM"
                                 />
                                 <FormMessage
                                     v-if="validateForm.wasSuccessful"
                                     variant="success"
                                 >
-                                    NPM is in whitelists
+                                    NPM terdaftar dalam daftar pemilih
                                 </FormMessage>
                                 <FormMessage
                                     v-if="validateForm.errors.npm"
                                     variant="error"
                                 >
-                                    NPM is not in whitelists
+                                    NPM tidak terdaftar dalam daftar pemilih
                                 </FormMessage>
                             </div>
-                            <Button type="submit">Validate</Button>
+                            <Button type="submit">Cek NPM</Button>
                         </form>
                     </CardHeader>
                 </Card>
@@ -98,9 +98,9 @@ const massForm = useForm({
             <div>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Single Whitelist</CardTitle>
+                        <CardTitle>Tambah Satu NPM</CardTitle>
                         <CardDescription>
-                            Add NPM to whitelist
+                            Tambahkan satu NPM ke daftar pemilih
                         </CardDescription>
                         <form
                             class="space-y-6 mt-2"
@@ -113,13 +113,13 @@ const massForm = useForm({
                             <div class="space-y-2">
                                 <Input
                                     v-model="storeForm.npm"
-                                    placeholder="Insert NPM"
+                                    placeholder="Masukkan NPM"
                                 />
                                 <FormMessage
                                     v-if="storeForm.wasSuccessful"
                                     variant="success"
                                 >
-                                    Added to whitelists
+                                    NPM berhasil ditambahkan ke daftar pemilih
                                 </FormMessage>
                                 <FormMessage
                                     v-if="storeForm.errors.npm"
@@ -128,7 +128,7 @@ const massForm = useForm({
                                     {{ storeForm.errors.npm }}
                                 </FormMessage>
                             </div>
-                            <Button type="submit">Add</Button>
+                            <Button type="submit">Tambah</Button>
                         </form>
                     </CardHeader>
                 </Card>
@@ -136,9 +136,9 @@ const massForm = useForm({
             <div>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Mass Whitelists</CardTitle>
+                        <CardTitle>Daftar Pemilih Massal</CardTitle>
                         <CardDescription>
-                            Update all NPMs in whitelist
+                            Perbarui seluruh NPM dalam daftar pemilih
                         </CardDescription>
                         <form
                             class="space-y-6 mt-2"
@@ -149,7 +149,7 @@ const massForm = useForm({
                             <div class="space-y-2">
                                 <Textarea
                                     v-model="massForm.whitelists"
-                                    placeholder="Copy and paste NPMs separated with new line here"
+                                    placeholder="Tempel daftar NPM di sini (pisahkan dengan baris baru)"
                                 />
                                 <FormMessage
                                     v-if="massForm.errors.whitelists"
@@ -158,7 +158,7 @@ const massForm = useForm({
                                     {{ massForm.errors.whitelists }}
                                 </FormMessage>
                             </div>
-                            <Button type="submit">Save</Button>
+                            <Button type="submit">Simpan</Button>
                         </form>
                     </CardHeader>
                 </Card>

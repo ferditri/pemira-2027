@@ -58,10 +58,10 @@ const setLogo = (event: Event) => {
   <Teleport defer to="#header">
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem class="hidden md:block"> Organizations </BreadcrumbItem>
+        <BreadcrumbItem class="hidden md:block"> Organisasi </BreadcrumbItem>
         <BreadcrumbSeparator class="hidden md:block" />
         <BreadcrumbItem>
-          <BreadcrumbPage>Add New</BreadcrumbPage>
+          <BreadcrumbPage>Tambah Baru</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -69,8 +69,8 @@ const setLogo = (event: Event) => {
   <div class="flex-1">
     <Card class="max-w-sm">
       <CardHeader>
-        <CardTitle>Add New Organization</CardTitle>
-        <CardDescription>Please complete the form</CardDescription>
+        <CardTitle>Tambah Organisasi Baru</CardTitle>
+        <CardDescription>Silakan lengkapi formulir di bawah ini</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -107,7 +107,7 @@ const setLogo = (event: Event) => {
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Name</Label>
+            <Label>Nama Organisasi</Label>
             <Input v-model="form.name" autofocus />
             <FormMessage v-if="form.errors.name" variant="error">
               {{ form.errors.name }}
@@ -138,9 +138,9 @@ const setLogo = (event: Event) => {
             </FormMessage>
           </div>
           <div class="flex flex-row-reverse justify-between">
-            <Button type="submit">Add</Button>
+            <Button type="submit">Tambah</Button>
             <Link :href="route('admin.candidates.index')">
-              <Button type="button" variant="outline"> Back </Button>
+              <Button type="button" variant="outline"> Kembali </Button>
             </Link>
           </div>
         </form>

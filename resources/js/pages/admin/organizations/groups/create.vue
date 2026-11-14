@@ -64,8 +64,8 @@ const form = useForm({
     <div class="flex-1">
         <Card class="max-w-sm">
             <CardHeader>
-                <CardTitle>Add New Group</CardTitle>
-                <CardDescription>Please complete the form</CardDescription>
+                <CardTitle>Tambah Tipe Pemilihan</CardTitle>
+                <CardDescription>Silakan lengkapi formulir di bawah ini</CardDescription>
             </CardHeader>
             <CardContent>
                 <form
@@ -79,21 +79,21 @@ const form = useForm({
                     "
                 >
                     <div class="space-y-2">
-                        <Label>Name</Label>
+                        <Label>Nama Tipe / Grup</Label>
                         <Input v-model="form.name" autofocus />
                         <FormMessage v-if="form.errors.name" variant="error">
                             {{ form.errors.name }}
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Year (Angkatan - Opsional)</Label>
+                        <Label>Angkatan (Opsional)</Label>
                         <Input v-model="form.year" placeholder="Contoh: 24 (kosong = semua angkatan)" />
                         <FormMessage v-if="form.errors.year" variant="error">
                             {{ form.errors.year }}
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Prodi / Major (Opsional)</Label>
+                        <Label>Program Studi (Opsional)</Label>
                         <select
                             v-model="form.major"
                             class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
@@ -114,11 +114,10 @@ const form = useForm({
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Min. Candidates</Label>
+                        <Label>Minimal Pilihan Calon</Label>
                         <Input v-model="form.min_candidates" type="number" />
                         <FormMessage>
-                            The minimum amount of candidates need to be selected
-                            when voting.
+                            Jumlah minimal calon yang harus dipilih saat pemungutan suara.
                         </FormMessage>
                         <FormMessage
                             v-if="form.errors.min_candidates"
@@ -128,7 +127,7 @@ const form = useForm({
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Ordering</Label>
+                        <Label>Urutan Tampil</Label>
                         <Input v-model="form.ordering" />
                         <FormMessage
                             v-if="form.errors.ordering"
@@ -138,10 +137,10 @@ const form = useForm({
                         </FormMessage>
                     </div>
                     <div class="flex flex-row-reverse justify-between">
-                        <Button type="submit">Add</Button>
+                        <Button type="submit">Tambah</Button>
                         <Link :href="route('admin.candidates.index')">
                             <Button type="button" variant="outline">
-                                Back
+                                Kembali
                             </Button>
                         </Link>
                     </div>

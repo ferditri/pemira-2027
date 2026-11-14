@@ -93,8 +93,8 @@ const destroy = (candidate: Candidate) => {
                 <Card>
                     <CardHeader class="flex-row justify-between gap-4">
                         <div class="space-y-1.5">
-                            <CardTitle>Candidates</CardTitle>
-                            <CardDescription>Manage candidates</CardDescription>
+                            <CardTitle>Daftar Calon</CardTitle>
+                            <CardDescription>Kelola calon pada tipe ini</CardDescription>
                         </div>
                         <Link
                             :href="
@@ -107,7 +107,7 @@ const destroy = (candidate: Candidate) => {
                                 )
                             "
                         >
-                            <Button>Add New</Button>
+                            <Button>Tambah Calon</Button>
                         </Link>
                     </CardHeader>
                     <CardContent>
@@ -115,8 +115,8 @@ const destroy = (candidate: Candidate) => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead></TableHead>
-                                    <TableHead>Name 1</TableHead>
-                                    <TableHead>Name 2</TableHead>
+                                    <TableHead>Nama Calon 1</TableHead>
+                                    <TableHead>Nama Calon 2</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -126,7 +126,7 @@ const destroy = (candidate: Candidate) => {
                                         class="text-center text-muted-foreground"
                                         colspan="4"
                                     >
-                                        No data yet
+                                        Belum ada calon
                                     </TableCell>
                                 </TableRow>
                                 <TableRow v-for="candidate in group.candidates">

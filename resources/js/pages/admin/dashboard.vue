@@ -50,7 +50,7 @@ defineProps<{
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
                         <CardTitle class="text-sm font-medium text-muted-foreground">
-                            Whitelists
+                            Daftar Pemilih (Whitelist)
                         </CardTitle>
                         <Check class="size-4 text-muted-foreground" />
                     </CardHeader>
@@ -65,7 +65,7 @@ defineProps<{
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
                         <CardTitle class="text-sm font-medium text-muted-foreground">
-                            Registered Voters
+                            Pemilih Terdaftar
                         </CardTitle>
                         <Users2 class="size-4 text-muted-foreground" />
                     </CardHeader>
@@ -78,7 +78,7 @@ defineProps<{
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
                         <CardTitle class="text-sm font-medium text-muted-foreground">
-                            Committees
+                            Panitia
                         </CardTitle>
                         <Users2 class="size-4 text-muted-foreground" />
                     </CardHeader>
@@ -88,17 +88,17 @@ defineProps<{
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card class="taste-card shadow-sm">
                     <CardHeader
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
-                        <CardTitle class="text-sm font-medium">
-                            Admins
+                        <CardTitle class="text-sm font-medium text-muted-foreground">
+                            Admin
                         </CardTitle>
                         <Users2 class="size-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-3xl font-extrabold">{{ admins }}</div>
+                        <div class="text-3xl font-extrabold tabular-nums">{{ admins }}</div>
                     </CardContent>
                 </Card>
             </div>

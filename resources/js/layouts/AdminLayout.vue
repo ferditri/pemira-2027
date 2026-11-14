@@ -97,12 +97,12 @@ const menu = {
       icon: Layers,
     },
     {
-      name: "Whitelists",
+      name: "Daftar Pemilih",
       url: route("admin.whitelists.index"),
       icon: Check,
     },
     {
-      name: "Users",
+      name: "Pengguna",
       url: route("admin.users.index"),
       icon: Users,
     },
@@ -209,14 +209,14 @@ const menu = {
                   @click="router.visit(route('index'))"
                 >
                   <Vote />
-                  Back to Vote
+                  Kembali ke Halaman Voting
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   class="cursor-pointer"
                   @click="router.post(route('logout'))"
                 >
                   <LogOut />
-                  Log out
+                  Keluar
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

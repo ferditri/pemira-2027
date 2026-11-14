@@ -105,11 +105,10 @@ const remove = () => {
                     </FormMessage>
                 </div>
                 <div class="space-y-2">
-                    <Label>Min. Candidates</Label>
+                    <Label>Minimal Pilihan Calon</Label>
                     <Input v-model="form.min_candidates" type="number" />
                     <FormMessage>
-                        The minimum amount of candidates need to be selected
-                        when voting.
+                        Jumlah minimal calon yang harus dipilih saat pemungutan suara.
                     </FormMessage>
                     <FormMessage
                         v-if="form.errors.min_candidates"
@@ -119,16 +118,16 @@ const remove = () => {
                     </FormMessage>
                 </div>
                 <div class="space-y-2">
-                    <Label>Ordering</Label>
+                    <Label>Urutan Tampil</Label>
                     <Input v-model="form.ordering" />
                     <FormMessage v-if="form.errors.ordering" variant="error">
                         {{ form.errors.ordering }}
                     </FormMessage>
                 </div>
                 <div class="flex flex-row-reverse justify-between">
-                    <Button type="submit">Save</Button>
+                    <Button type="submit">Simpan</Button>
                     <Link :href="route('admin.candidates.index')">
-                        <Button variant="outline" type="button">Back</Button>
+                        <Button variant="outline" type="button">Kembali</Button>
                     </Link>
                 </div>
             </form>
@@ -142,7 +141,7 @@ const remove = () => {
         @accept="remove"
     >
         <Button variant="destructive" class="w-full mt-4">
-            Remove
+            Hapus Tipe
         </Button>
     </ConfirmationDialog>
 </template>

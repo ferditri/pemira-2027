@@ -93,8 +93,8 @@ const setLogo = (event: Event) => {
   <div class="flex-1">
     <Card class="max-w-sm">
       <CardHeader>
-        <CardTitle>Add New Candidate</CardTitle>
-        <CardDescription>Please complete the form</CardDescription>
+        <CardTitle>Tambah Calon Baru</CardTitle>
+        <CardDescription>Silakan lengkapi data calon di bawah ini</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -138,37 +138,37 @@ const setLogo = (event: Event) => {
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Name 1</Label>
+            <Label>Nama Calon 1</Label>
             <Input v-model="form.name_1" autofocus />
             <FormMessage v-if="form.errors.name_1" variant="error">
               {{ form.errors.name_1 }}
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Name 2</Label>
+            <Label>Nama Calon 2 (Opsional)</Label>
             <Input v-model="form.name_2" />
             <FormMessage v-if="form.errors.name_2" variant="error">
               {{ form.errors.name_2 }}
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Vision</Label>
+            <Label>Visi</Label>
             <Textarea v-model="form.vision" rows="3" />
             <FormMessage v-if="form.errors.vision" variant="error">
               {{ form.errors.vision }}
             </FormMessage>
           </div>
           <div class="space-y-2">
-            <Label>Mission</Label>
+            <Label>Misi</Label>
             <Textarea v-model="form.mission" rows="4" />
             <FormMessage v-if="form.errors.mission" variant="error">
               {{ form.errors.mission }}
             </FormMessage>
           </div>
           <div class="flex flex-row-reverse justify-between">
-            <Button type="submit">Add</Button>
+            <Button type="submit">Tambah</Button>
             <Link :href="route('admin.candidates.index')">
-              <Button type="button" variant="outline"> Back </Button>
+              <Button type="button" variant="outline"> Kembali </Button>
             </Link>
           </div>
         </form>

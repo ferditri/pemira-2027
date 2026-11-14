@@ -104,7 +104,7 @@ const remove = () => {
           </FormMessage>
         </div>
         <div class="space-y-2">
-          <Label>Name</Label>
+          <Label>Nama Organisasi</Label>
           <Input v-model="form.name" autofocus />
           <FormMessage v-if="form.errors.name" variant="error">
             {{ form.errors.name }}
@@ -144,9 +144,9 @@ const remove = () => {
           </FormMessage>
         </div>
         <div class="flex flex-row-reverse justify-between">
-          <Button type="submit">Save</Button>
+          <Button type="submit">Simpan</Button>
           <Link :href="route('admin.candidates.index')">
-            <Button type="button" variant="outline">Back</Button>
+            <Button type="button" variant="outline">Kembali</Button>
           </Link>
         </div>
       </form>
@@ -164,7 +164,7 @@ const remove = () => {
       variant="destructive"
       class="mt-4 w-full"
     >
-      Remove
+      Hapus Organisasi
     </Button>
   </ConfirmationDialog>
 </template>

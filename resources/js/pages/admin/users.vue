@@ -76,7 +76,7 @@ const next = () => {
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Users</BreadcrumbPage>
+                    <BreadcrumbPage>Pengguna</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
@@ -85,8 +85,8 @@ const next = () => {
         <Card>
             <CardHeader class="flex-row justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <Label>Type:</Label>
-                    <div class="w-32">
+                    <Label>Peran:</Label>
+                    <div class="w-36">
                         <Select
                             v-model="type"
                             @change="
@@ -97,14 +97,14 @@ const next = () => {
                         >
                             <SelectItem value="admin">Admin</SelectItem>
                             <SelectItem value="committee">
-                                Committee
+                                Panitia
                             </SelectItem>
-                            <SelectItem value="voter">Voter</SelectItem>
+                            <SelectItem value="voter">Pemilih</SelectItem>
                         </Select>
                     </div>
                 </div>
                 <Link :href="route('admin.users.create', { _query: { type } })">
-                    <Button>Add New</Button>
+                    <Button>Tambah Pengguna</Button>
                 </Link>
             </CardHeader>
             <CardContent class="space-y-4">
@@ -112,7 +112,7 @@ const next = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>NPM</TableHead>
-                            <TableHead>Name</TableHead>
+                            <TableHead>Nama</TableHead>
                             <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -122,7 +122,7 @@ const next = () => {
                                 class="text-center text-muted-foreground"
                                 colspan="3"
                             >
-                                No data yet
+                                Belum ada data
                             </TableCell>
                         </TableRow>
                         <TableRow v-for="user in users.data">
@@ -150,7 +150,7 @@ const next = () => {
                                     <Edit class="size-4" />
                                 </Button>
                                 <ConfirmationDialog
-                                    title="Hapus User?"
+                                    title="Hapus Pengguna?"
                                     :description="`Akun ${user.name} (${user.npm}) akan dihapus dari sistem.`"
                                     destructive
                                     confirm-text="Ya, Hapus"
@@ -173,14 +173,14 @@ const next = () => {
                         variant="outline"
                         @click="prev"
                     >
-                        Previous
+                        Sebelumnya
                     </Button>
                     <Button
                         :disabled="!users.next_page_url"
                         variant="outline"
                         @click="next"
                     >
-                        Next
+                        Berikutnya
                     </Button>
                 </div>
             </CardContent>

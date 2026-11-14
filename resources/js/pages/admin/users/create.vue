@@ -59,12 +59,12 @@ const form = useForm({
                             })
                         "
                     >
-                        Users
+                        Pengguna
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator class="hidden md:block" />
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Add New</BreadcrumbPage>
+                    <BreadcrumbPage>Tambah Baru</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
@@ -72,8 +72,8 @@ const form = useForm({
     <div class="flex-1">
         <Card class="max-w-sm">
             <CardHeader>
-                <CardTitle>Add New User</CardTitle>
-                <CardDescription>Please complete the form</CardDescription>
+                <CardTitle>Tambah Pengguna</CardTitle>
+                <CardDescription>Silakan lengkapi formulir di bawah ini</CardDescription>
             </CardHeader>
             <CardContent>
                 <form
@@ -81,11 +81,11 @@ const form = useForm({
                     @submit.prevent="form.post(route('admin.users.store'))"
                 >
                     <div class="space-y-2">
-                        <Label>Type</Label>
+                        <Label>Peran</Label>
                         <Select v-model="form.type">
                             <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="committee">Committee</SelectItem>
-                            <SelectItem value="voter">Voter</SelectItem>
+                            <SelectItem value="committee">Panitia</SelectItem>
+                            <SelectItem value="voter">Pemilih</SelectItem>
                         </Select>
                         <FormMessage v-if="form.errors.type" variant="error">
                             {{ form.errors.type }}
@@ -106,21 +106,21 @@ const form = useForm({
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Name</Label>
+                        <Label>Nama</Label>
                         <Input v-model="form.name" />
                         <FormMessage v-if="form.errors.name" variant="error">
                             {{ form.errors.name }}
                         </FormMessage>
                     </div>
                     <div class="flex flex-row-reverse justify-between">
-                        <Button type="submit">Add</Button>
+                        <Button type="submit">Tambah</Button>
                         <Link
                             :href="
                                 route('admin.users.index', { _query: { type } })
                             "
                         >
                             <Button type="button" variant="outline">
-                                Back
+                                Kembali
                             </Button>
                         </Link>
                     </div>
