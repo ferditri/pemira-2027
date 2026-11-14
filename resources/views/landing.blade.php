@@ -395,7 +395,7 @@
       <!-- Desktop Timeline Display (Clean 2K Background + Sharp Vector Typography & Cards) -->
       <div class="hidden md:block timeline-layered-container">
         <img 
-          src="{{ asset('assets/images/me/bg-jadwalpelaksanaan.webp') }}?v=2" 
+          src="{{ asset('assets/images/me/bg-jadwalpelaksanaan.webp') }}?v=3" 
           alt="Latar Jadwal Pelaksanaan" 
           loading="lazy"
           decoding="async"
@@ -504,16 +504,19 @@
     <!-- ================= FOOTER ================= -->
     <footer class="footer-royal">
 
-      <div class="max-w-4xl mx-auto px-4">
-        
-        <!-- Crisp Transparent Logo centered -->
-        <div class="flex justify-center mb-4">
+      <!-- Crisp Transparent Logo centered above footer rectangle (matching Figma) -->
+      <div class="max-w-4xl mx-auto px-4 pb-5">
+        <div class="flex justify-center">
           <img 
             src="{{ asset('assets/images/me/teks-pemira-footer-trimmed.webp') }}" 
             alt="PEMIRA FASILKOM 2027" 
             class="h-14 md:h-16 w-auto drop-shadow-[0_4px_15px_rgba(223,158,56,0.55)]"
           />
         </div>
+      </div>
+
+      <div class="footer-rectangle-panel">
+        <div class="max-w-4xl mx-auto">
 
         <!-- Navigation Links matching BAHAN/LandingPage.png -->
         <div class="flex flex-wrap justify-center gap-6 md:gap-10 mb-5">
@@ -557,6 +560,7 @@
           &copy; 2026 PEMIRA Fasilkom 2027. Hak cipta dilindungi.
         </p>
 
+        </div>
       </div>
     </footer>
 

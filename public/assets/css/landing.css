@@ -377,14 +377,12 @@ section[id], header[id] {
   position: relative;
   z-index: 2;
   margin-top: -40px;
-  background-color: #0a1835;
-  background-image:
-    linear-gradient(180deg, rgba(8, 19, 44, 0.55) 0%, rgba(10, 24, 53, 0.38) 50%, rgba(10, 24, 53, 0.72) 100%),
-    url('../images/me/bg-tutorial-voting.webp?v=2');
+  background-color: #0d1c3f;
+  background-image: url('../images/me/bg-tutorial-voting.webp?v=3');
   background-size: cover;
-  background-position: center;
+  background-position: center bottom;
   background-repeat: no-repeat;
-  padding: 84px 20px 110px 20px;
+  padding: 84px 20px 104px 20px;
   overflow: hidden;
 }
 
@@ -478,15 +476,24 @@ section[id], header[id] {
 }
 
 /* =========================================
-   FOOTER (MATCHING bg-footer.webp #071b40)
+   FOOTER (MATCHING new_rectangle_footer.webp)
    ========================================= */
 .footer-royal {
   position: relative;
   z-index: 15;
-  margin-top: -48px;
-  background: linear-gradient(180deg, transparent 0%, #071b40 48px, #071b40 100%);
-  padding: 0 20px 28px 20px;
+  margin-top: -86px;
+  background: transparent;
   text-align: center;
+}
+
+.footer-rectangle-panel {
+  background-color: #071b40;
+  background-image: url('../images/me/bg-footer-rectangle.webp?v=3');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  border-top: 1px solid rgba(223, 186, 120, 0.25);
+  padding: 24px 20px 28px 20px;
 }
 
 .footer-link {
