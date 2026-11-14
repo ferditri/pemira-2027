@@ -128,6 +128,23 @@ class LandingCandidateController extends Controller
             ->with('flash.type', 'success');
     }
 
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:landing_candidates,id',
+        ]);
+
+        foreach (array_values($validated['ids']) as $index => $id) {
+            LandingCandidate::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+
+        return redirect()
+            ->route('admin.landing-candidates.index')
+            ->with('flash.message', 'Urutan kandidat landing berhasil diperbarui.')
+            ->with('flash.type', 'success');
+    }
+
     private function parseMissionLines(string $raw): array
     {
         $lines = preg_split('/\r\n|\n|\r/', $raw) ?: [];

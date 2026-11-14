@@ -97,6 +97,8 @@ Route::middleware("auth")->group(function () {
             ->name("whitelists.store.single");
 
         Route::resource("users", UserController::class);
+        Route::post("landing-candidates/reorder", [LandingCandidateController::class, "reorder"])
+            ->name("landing-candidates.reorder");
         Route::resource("landing-candidates", LandingCandidateController::class)
             ->only(["index", "store", "update", "destroy"]);
         Route::resource("organizations", OrganizationController::class);
