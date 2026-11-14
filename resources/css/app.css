@@ -188,3 +188,38 @@
     background: linear-gradient(180deg, #941f35 0%, #6b1324 100%);
     box-shadow: 0 4px 12px rgba(92, 22, 36, 0.35);
 }
+
+/* Tactile micro-interactions (design-taste-frontend) */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+.taste-card {
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.22s ease;
+}
+
+.taste-card:hover {
+    transform: translateY(-2px);
+}
+
+.taste-press {
+    transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.16s ease,
+                box-shadow 0.16s ease;
+}
+
+.taste-press:active:not(:disabled) {
+    transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .taste-card:hover,
+    .taste-press:active:not(:disabled),
+    .vote-candidate-arch:hover,
+    .vote-btn-navy:hover:not(:disabled),
+    .vote-btn-outline:hover:not(:disabled) {
+        transform: none;
+    }
+}

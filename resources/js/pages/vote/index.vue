@@ -10,9 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEnterMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, usePage } from "@inertiajs/vue3";
 import { LogOut } from "lucide-vue-next";
+import { ref } from "vue";
 
 const props = defineProps<{
   verification: UserVerification | null;
@@ -21,13 +23,15 @@ const props = defineProps<{
 
 const page = usePage<PageProps>();
 const user = page.props.auth.user;
+const rootRef = ref<HTMLElement | null>(null);
+useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0.05 });
 </script>
 
 <template>
   <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6">
     <Flash />
-    <div class="max-w-lg w-full space-y-5 relative z-10">
-      <Card class="vote-parchment-card border-0">
+    <div ref="rootRef" class="max-w-lg w-full space-y-5 relative z-10">
+      <Card data-enter class="vote-parchment-card border-0">
         <CardHeader
           class="space-y-2 border-b border-[#9c8256]/35 text-center text-pretty pt-8 pb-6 px-6"
         >

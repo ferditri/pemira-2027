@@ -26,6 +26,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useEnterMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, router, usePage } from "@inertiajs/vue3";
 import {
@@ -39,9 +40,12 @@ import {
   Users,
   Vote,
 } from "lucide-vue-next";
+import { ref } from "vue";
 
 const page = usePage<PageProps>();
 const user = page.props.auth.user;
+const mainContentRef = ref<HTMLElement | null>(null);
+useEnterMotion(mainContentRef, ":scope > *", { y: 10, duration: 0.38, staggerDelay: 0.04 });
 
 const menu = {
   items: [
@@ -194,16 +198,16 @@ const menu = {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-    <SidebarInset>
+    <SidebarInset class="bg-stone-50/40">
       <header
-        class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
+        class="flex h-14 shrink-0 items-center gap-2 border-b border-stone-200/70 bg-background/95 backdrop-blur-sm transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
       >
-        <div id="header" class="flex items-center gap-2 px-4">
+        <div id="header" class="flex items-center gap-2 px-4 md:px-6">
           <SidebarTrigger class="-ml-1" />
           <Separator orientation="vertical" class="mr-2 h-4" />
         </div>
       </header>
-      <div class="flex flex-1 p-4 pt-0">
+      <div ref="mainContentRef" class="flex flex-1 p-4 md:p-6">
         <slot />
       </div>
     </SidebarInset>

@@ -45,45 +45,45 @@ defineProps<{
     <div class="flex-1">
         <div class="grid gap-4">
             <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
-                <Card>
+                <Card class="taste-card shadow-sm">
                     <CardHeader
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
-                        <CardTitle class="text-sm font-medium">
+                        <CardTitle class="text-sm font-medium text-muted-foreground">
                             Whitelists
                         </CardTitle>
                         <Check class="size-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-3xl font-extrabold">
+                        <div class="text-3xl font-extrabold tabular-nums">
                             {{ whitelists }}
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card class="taste-card shadow-sm">
                     <CardHeader
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
-                        <CardTitle class="text-sm font-medium">
+                        <CardTitle class="text-sm font-medium text-muted-foreground">
                             Registered Voters
                         </CardTitle>
                         <Users2 class="size-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-3xl font-extrabold">{{ voters }}</div>
+                        <div class="text-3xl font-extrabold tabular-nums">{{ voters }}</div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card class="taste-card shadow-sm">
                     <CardHeader
                         class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
-                        <CardTitle class="text-sm font-medium">
+                        <CardTitle class="text-sm font-medium text-muted-foreground">
                             Committees
                         </CardTitle>
                         <Users2 class="size-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-3xl font-extrabold">
+                        <div class="text-3xl font-extrabold tabular-nums">
                             {{ committees }}
                         </div>
                     </CardContent>

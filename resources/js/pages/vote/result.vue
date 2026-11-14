@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEnterMotion } from "@/composables/useMotion";
 import { Link, router } from "@inertiajs/vue3";
 import { ref } from "vue";
 
@@ -17,6 +18,8 @@ const props = defineProps<{
 }>();
 
 const isSubmitting = ref(false);
+const rootRef = ref<HTMLElement | null>(null);
+useEnterMotion(rootRef, "[data-enter]", { y: 14, duration: 0.48, staggerDelay: 0.06 });
 
 const submit = () => {
   if (isSubmitting.value) return;
@@ -38,8 +41,8 @@ const submit = () => {
 
 <template>
   <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6 lg:p-8">
-    <div class="max-w-5xl w-full relative z-10">
-      <Card class="vote-parchment-card border-0">
+    <div ref="rootRef" class="max-w-5xl w-full relative z-10">
+      <Card data-enter class="vote-parchment-card border-0">
         <CardHeader class="text-center pt-8 pb-5 px-6 border-b border-[#9c8256]/35">
           <CardTitle
             class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
