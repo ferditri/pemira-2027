@@ -11,9 +11,24 @@ class WhitelistController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render("admin/whitelists");
+        $search = trim((string) $request->query("search", ""));
+
+        $whitelists = Whitelist::query()
+            ->with("user:id,npm,name,type")
+            ->when($search !== "", function ($query) use ($search) {
+                $query->where("npm", "like", "%" . $search . "%");
+            })
+            ->orderByDesc("created_at")
+            ->orderBy("npm")
+            ->paginate(15)
+            ->withQueryString();
+
+        return Inertia::render("admin/whitelists", [
+            "whitelists" => $whitelists,
+            "search" => $search,
+        ]);
     }
 
     /**
@@ -61,7 +76,8 @@ class WhitelistController extends Controller
     }
 
     return redirect(route("admin.whitelists.index"))
-        ->with("flash.message", "Mass Whitelists updated!");
+        ->with("flash.message", "Daftar pemilih massal berhasil diperbarui.")
+        ->with("flash.type", "success");
 }
 
     public function storeSingle(Request $request)
@@ -70,7 +86,7 @@ class WhitelistController extends Controller
         Whitelist::query()->firstOrCreate(["npm" => trim($request->npm)]);
 
         return redirect()->back()
-            ->with("flash.message", "NPM berhasil ditambahkan ke whitelist!")
+            ->with("flash.message", "NPM berhasil ditambahkan ke daftar pemilih.")
             ->with("flash.type", "success");
     }
 
@@ -108,6 +124,11 @@ class WhitelistController extends Controller
      */
     public function destroy(Whitelist $whitelist)
     {
-        //
+        $npm = $whitelist->npm;
+        $whitelist->delete();
+
+        return redirect()->back()
+            ->with("flash.message", "NPM {$npm} berhasil dihapus dari daftar pemilih.")
+            ->with("flash.type", "success");
     }
 }
