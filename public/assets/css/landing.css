@@ -376,7 +376,7 @@ section[id], header[id] {
 .section-tutorial {
   position: relative;
   z-index: 2;
-  margin-top: -40px;
+  margin-top: -72px;
   background-color: #0d1c3f;
   background-image: url('../images/me/bg-tutorial-voting.webp?v=3');
   background-size: cover;

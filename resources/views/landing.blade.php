@@ -182,7 +182,7 @@
     </section>
 
     <!-- ================= SECTION: CALON KETUA & WAKIL BEM + CALON BLM ================= -->
-    <section id="kandidat" class="section-parchment pt-12 pb-28 px-4 sm:px-6 lg:px-8">
+    <section id="kandidat" class="section-parchment pt-12 pb-32 px-4 sm:px-6 lg:px-8">
       <div class="max-w-6xl mx-auto candidate-frame-box">
         
         <!-- Golden L-Bracket Ornaments (4 Corners) -->
