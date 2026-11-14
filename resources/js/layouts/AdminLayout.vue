@@ -38,6 +38,7 @@ import {
   Layers,
   LayoutDashboard,
   LogOut,
+  Sparkles,
   Users,
   Vote,
 } from "lucide-vue-next";
@@ -105,6 +106,11 @@ const menu = {
       name: "Pengguna",
       url: route("admin.users.index"),
       icon: Users,
+    },
+    {
+      name: "Kandidat Landing",
+      url: route("admin.landing-candidates.index"),
+      icon: Sparkles,
     },
   ],
 };

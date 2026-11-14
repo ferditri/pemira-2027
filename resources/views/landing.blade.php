@@ -209,45 +209,40 @@
           CALON KETUA DAN WAKIL BEM
         </h2>
 
-        <!-- Candidate Cards Grid (Using Exact Artworks with Interactive Hotspot) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 max-w-4xl mx-auto">
-          
-          <!-- Card 1: Calon Ketua -->
-          <div class="candidate-card-wrapper">
-            <img 
-              src="{{ asset('assets/images/card1_ketua.webp') }}" 
-              alt="Calon Ketua" 
-              loading="lazy"
-              decoding="async"
-              class="w-full h-auto drop-shadow-xl"
-            />
-            <button 
-              type="button" 
-              onclick="openCandidateModal('ketua')"
-              class="candidate-hotspot-btn"
-              title="Lihat Visi & Misi Calon Ketua"
-              aria-label="Lihat Visi & Misi Calon Ketua"
-            ></button>
-          </div>
-
-          <!-- Card 2: Calon Wakil -->
-          <div class="candidate-card-wrapper">
-            <img 
-              src="{{ asset('assets/images/card2_wakil.webp') }}" 
-              alt="Calon Wakil" 
-              loading="lazy"
-              decoding="async"
-              class="w-full h-auto drop-shadow-xl"
-            />
-            <button 
-              type="button" 
-              onclick="openCandidateModal('wakil')"
-              class="candidate-hotspot-btn"
-              title="Lihat Visi & Misi Calon Wakil"
-              aria-label="Lihat Visi & Misi Calon Wakil"
-            ></button>
-          </div>
-
+        <!-- Candidate Cards Grid (Dynamic from Admin -> Kandidat Landing) -->
+        <div class="grid grid-cols-1 {{ ($bemCandidates ?? collect())->count() <= 2 ? 'md:grid-cols-2 max-w-4xl' : 'sm:grid-cols-2 lg:grid-cols-3 max-w-5xl' }} gap-10 md:gap-14 mx-auto">
+          @forelse (($bemCandidates ?? collect()) as $item)
+            <div class="blm-card">
+              <div class="w-40 h-40 mx-auto mb-5 rounded-full overflow-hidden border-2 border-amber-600/60 shadow-md bg-amber-50">
+                @if ($item->photo)
+                  <img
+                    src="{{ $item->photo }}"
+                    alt="{{ $item->name }}"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover"
+                  />
+                @endif
+              </div>
+              <h3 class="font-cinzel font-bold text-[#5c1624] text-lg mb-1 uppercase">
+                {{ $item->role_label }}
+              </h3>
+              <p class="font-cinzel font-semibold text-slate-800 text-base mb-5">
+                {{ $item->name }}
+              </p>
+              <button
+                type="button"
+                onclick="openCandidateModal('bem-{{ $item->id }}')"
+                class="btn-crimson px-7 py-2.5 text-xs uppercase"
+              >
+                VISI &amp; MISI
+              </button>
+            </div>
+          @empty
+            <p class="col-span-full text-center text-sm text-amber-900/70 font-montserrat">
+              Belum ada data calon Ketua &amp; Wakil BEM.
+            </p>
+          @endforelse
         </div>
       </div>
     </section>
@@ -283,69 +278,40 @@
           CALON BLM
         </h2>
 
-        <!-- Calon BLM Cards (5 Kandidat BLM dari Project Pemira) -->
+        <!-- Calon BLM Cards (Dynamic from Admin -> Kandidat Landing) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          
-          <!-- BLM 1 -->
-          <div class="blm-card">
-            <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm1.webp') }}" alt="Mohammad Bintang Adrian" loading="lazy" decoding="async" class="w-full h-full object-cover" />
+          @forelse (($blmCandidates ?? collect()) as $item)
+            <div class="blm-card">
+              <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md bg-amber-50">
+                @if ($item->photo)
+                  <img
+                    src="{{ $item->photo }}"
+                    alt="{{ $item->name }}"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover"
+                  />
+                @endif
+              </div>
+              <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1 uppercase">
+                {{ $item->role_label }}
+              </h3>
+              <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">
+                {{ $item->name }}
+              </p>
+              <button
+                type="button"
+                onclick="openCandidateModal('blm-{{ $item->id }}')"
+                class="btn-crimson px-6 py-2 text-xs uppercase"
+              >
+                VISI &amp; MISI
+              </button>
             </div>
-            <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 1</h3>
-            <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Mohammad Bintang Adrian</p>
-            <button type="button" onclick="openCandidateModal('blm1')" class="btn-crimson px-6 py-2 text-xs uppercase">
-              VISI & MISI
-            </button>
-          </div>
-
-          <!-- BLM 2 -->
-          <div class="blm-card">
-            <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm2.webp') }}" alt="M. Naufal Baihaqi" loading="lazy" decoding="async" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 2</h3>
-            <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">M. Naufal Baihaqi</p>
-            <button type="button" onclick="openCandidateModal('blm2')" class="btn-crimson px-6 py-2 text-xs uppercase">
-              VISI & MISI
-            </button>
-          </div>
-
-          <!-- BLM 3 -->
-          <div class="blm-card">
-            <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm3.webp') }}" alt="Ananda Putri" loading="lazy" decoding="async" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 3</h3>
-            <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Ananda Putri</p>
-            <button type="button" onclick="openCandidateModal('blm3')" class="btn-crimson px-6 py-2 text-xs uppercase">
-              VISI & MISI
-            </button>
-          </div>
-
-          <!-- BLM 4 -->
-          <div class="blm-card sm:col-span-1 lg:col-start-1 lg:col-span-1">
-            <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm4.webp') }}" alt="Bunga Citra Amelya" loading="lazy" decoding="async" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 4</h3>
-            <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Bunga Citra Amelya</p>
-            <button type="button" onclick="openCandidateModal('blm4')" class="btn-crimson px-6 py-2 text-xs uppercase">
-              VISI & MISI
-            </button>
-          </div>
-
-          <!-- BLM 5 -->
-          <div class="blm-card sm:col-span-1 lg:col-span-1">
-            <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm5.webp') }}" alt="Muhammad Ammar" loading="lazy" decoding="async" class="w-full h-full object-cover" />
-            </div>
-            <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 5</h3>
-            <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Muhammad Ammar</p>
-            <button type="button" onclick="openCandidateModal('blm5')" class="btn-crimson px-6 py-2 text-xs uppercase">
-              VISI & MISI
-            </button>
-          </div>
-
+          @empty
+            <p class="col-span-full text-center text-sm text-amber-900/70 font-montserrat">
+              Belum ada data calon BLM.
+            </p>
+          @endforelse
         </div>
       </div>
     </section>
@@ -610,6 +576,24 @@
     </div>
 
     <!-- ================= JAVASCRIPT ================= -->
+    @php
+      $landingCandidatesMap = collect($bemCandidates ?? [])
+        ->merge($blmCandidates ?? [])
+        ->mapWithKeys(function ($item) {
+          return [
+            $item->section . '-' . $item->id => [
+              'title' => $item->role_label,
+              'name' => $item->name,
+              'image' => $item->photo ?: '/assets/images/nav_logo_transparent.png',
+              'visi' => $item->vision,
+              'misi' => is_array($item->mission) ? $item->mission : [],
+            ],
+          ];
+        });
+    @endphp
+    <script>
+      window.__LANDING_CANDIDATES__ = @json($landingCandidatesMap);
+    </script>
     <script src="{{ asset('assets/js/landing.js') }}"></script>
     @vite(['resources/js/landing-motion.ts'])
   </body>

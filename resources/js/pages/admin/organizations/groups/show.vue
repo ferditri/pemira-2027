@@ -51,6 +51,7 @@ const edit = (candidate: Candidate) => {
             organization: organization?.id,
             group: props.group.id,
             candidate: candidate.id,
+            _query: { from: "group" },
         })
     );
 };
@@ -103,6 +104,7 @@ const destroy = (candidate: Candidate) => {
                                     {
                                         organization: organization?.id,
                                         group: props.group.id,
+                                        _query: { from: 'group' },
                                     }
                                 )
                             "

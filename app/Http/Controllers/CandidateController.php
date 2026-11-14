@@ -62,10 +62,15 @@ class CandidateController extends Controller
             'picture' => $picturePath ? '/storage/' . $picturePath : null, // Format path untuk Vue
         ]);
 
-        // 4. Kembali ke halaman Calon & Tipe dengan pesan sukses
-        return redirect()
-            ->route('admin.candidates.index')
-            ->with('flash.message', 'Candidate successfully added!')
+        $redirect = $request->query('from') === 'group'
+            ? redirect()->route('admin.organizations.groups.show', [
+                'organization' => $organization->id,
+                'group' => $group->id,
+            ])
+            : redirect()->route('admin.candidates.index');
+
+        return $redirect
+            ->with('flash.message', 'Calon berhasil ditambahkan!')
             ->with('flash.type', 'success');
     }
 
@@ -139,10 +144,15 @@ class CandidateController extends Controller
             'picture' => $picturePath,
         ]);
 
-        // 4. Redirect kembali ke halaman Calon & Tipe dengan pesan sukses
-        return redirect()
-            ->route('admin.candidates.index')
-            ->with('flash.message', 'Candidate successfully updated!')
+        $redirect = $request->query('from') === 'group'
+            ? redirect()->route('admin.organizations.groups.show', [
+                'organization' => $organization->id,
+                'group' => $group->id,
+            ])
+            : redirect()->route('admin.candidates.index');
+
+        return $redirect
+            ->with('flash.message', 'Data calon berhasil diperbarui!')
             ->with('flash.type', 'success');
         }
 
@@ -150,10 +160,18 @@ class CandidateController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(
+        Request $request,
         Organization $organization,
         Group $group,
         Candidate $candidate
     ) {
+        $redirectRoute = $request->query('from') === 'group'
+            ? route('admin.organizations.groups.show', [
+                'organization' => $organization->id,
+                'group' => $group->id,
+            ])
+            : route('admin.candidates.index');
+
         try {
             // 1. Coba hapus data dari database terlebih dahulu
             $candidate->delete();
@@ -165,16 +183,14 @@ class CandidateController extends Controller
             }
 
             // 3. Kembalikan dengan pesan sukses
-            return redirect()
-                ->route('admin.candidates.index')
-                ->with('flash.message', 'Candidate successfully deleted!')
+            return redirect($redirectRoute)
+                ->with('flash.message', 'Calon berhasil dihapus!')
                 ->with('flash.type', 'success');
 
         } catch (QueryException $e) {
             // 4. TANGKAP ERROR MySQL: Jika kode error adalah 23000 (Integrity Constraint Violation)
             if ($e->getCode() == "23000") {
-                return redirect()
-                    ->route('admin.candidates.index')
+                return redirect($redirectRoute)
                     ->with('flash.message', 'Gagal menghapus! Kandidat ini sudah mendapatkan suara (Vote) di dalam sistem. Bersihkan data suara terlebih dahulu.')
                     ->with('flash.type', 'destructive');
             }

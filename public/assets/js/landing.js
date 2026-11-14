@@ -160,7 +160,7 @@ const candidateModal = document.getElementById('candidate-modal');
 const modalBody = document.getElementById('modal-body');
 
 function openCandidateModal(id) {
-  const data = candidateData[id];
+  const data = (window.__LANDING_CANDIDATES__ && window.__LANDING_CANDIDATES__[id]) || candidateData[id];
   if (!data) return;
 
   modalBody.innerHTML = `

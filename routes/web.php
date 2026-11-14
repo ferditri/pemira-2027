@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminVerificationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\LandingCandidateController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationDashboardController;
 use App\Http\Controllers\RecapController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserVerificationController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\WhitelistController;
+use App\Models\LandingCandidate;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\ComitteeMiddleware;
 use App\Http\Middleware\EnsureGroupBelongsToOrganization;
@@ -36,7 +38,15 @@ if (app()->environment("local")) {
 }
 
 Route::get("/", function () {
-    return view("landing");
+    $candidates = LandingCandidate::query()
+        ->orderBy("sort_order")
+        ->orderBy("id")
+        ->get();
+
+    return view("landing", [
+        "bemCandidates" => $candidates->where("section", "bem")->values(),
+        "blmCandidates" => $candidates->where("section", "blm")->values(),
+    ]);
 })->name("landing");
 
 Route::get("/privacy-policy", function () {
@@ -87,6 +97,8 @@ Route::middleware("auth")->group(function () {
             ->name("whitelists.store.single");
 
         Route::resource("users", UserController::class);
+        Route::resource("landing-candidates", LandingCandidateController::class)
+            ->only(["index", "store", "update", "destroy"]);
         Route::resource("organizations", OrganizationController::class);
         Route::resource("organizations.groups", GroupController::class);
         Route::resource(

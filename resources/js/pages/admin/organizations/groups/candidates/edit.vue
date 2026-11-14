@@ -40,6 +40,15 @@ const props = defineProps<{
 const page = usePage<PageProps>();
 const organization = page.props.organization;
 const group = page.props.group;
+const isFromGroup =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).get("from") === "group";
+const backUrl = isFromGroup
+  ? route("admin.organizations.groups.show", {
+      organization: organization?.id,
+      group: group?.id,
+    })
+  : route("admin.candidates.index");
 
 const form = useForm({
   _method: "put",
@@ -111,6 +120,7 @@ const setLogo = (event: Event) => {
                 organization: organization?.id,
                 group: group?.id,
                 candidate: candidate.id,
+                _query: isFromGroup ? { from: 'group' } : {},
               }),
             )
           "
@@ -175,7 +185,7 @@ const setLogo = (event: Event) => {
           </div>
           <div class="flex flex-row-reverse justify-between pt-2">
             <Button type="submit" :disabled="form.processing">Simpan</Button>
-            <Link :href="route('admin.candidates.index')">
+            <Link :href="backUrl">
               <Button type="button" variant="outline"> Kembali </Button>
             </Link>
           </div>
@@ -192,6 +202,7 @@ const setLogo = (event: Event) => {
                   organization: organization?.id,
                   group: group?.id,
                   candidate: candidate.id,
+                  _query: isFromGroup ? { from: 'group' } : {},
                 }),
               )
             "

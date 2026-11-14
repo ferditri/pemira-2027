@@ -35,6 +35,15 @@ import { ref } from "vue";
 const page = usePage<PageProps>();
 const organization = page.props.organization;
 const group = page.props.group;
+const isFromGroup =
+  typeof window !== "undefined" &&
+  new URLSearchParams(window.location.search).get("from") === "group";
+const backUrl = isFromGroup
+  ? route("admin.organizations.groups.show", {
+      organization: organization?.id,
+      group: group?.id,
+    })
+  : route("admin.candidates.index");
 
 const form = useForm({
   picture: <File | undefined>undefined,
@@ -104,6 +113,7 @@ const setLogo = (event: Event) => {
               route('admin.organizations.groups.candidates.store', {
                 organization: organization?.id,
                 group: group?.id,
+                _query: isFromGroup ? { from: 'group' } : {},
               }),
             )
           "
@@ -167,7 +177,7 @@ const setLogo = (event: Event) => {
           </div>
           <div class="flex flex-row-reverse justify-between">
             <Button type="submit">Tambah</Button>
-            <Link :href="route('admin.candidates.index')">
+            <Link :href="backUrl">
               <Button type="button" variant="outline"> Kembali </Button>
             </Link>
           </div>
