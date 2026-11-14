@@ -56,8 +56,10 @@ Route::get("/privacy-policy", function () {
 Route::middleware("guest")->group(function () {
     Route::get("/login", fn() => Inertia::render("login"))->name("login");
     Route::get("/auth/redirect", [AuthController::class, "redirect"])
+        ->middleware("throttle:20,1")
         ->name("auth.redirect");
     Route::get("/auth/callback", [AuthController::class, "callback"])
+        ->middleware("throttle:20,1")
         ->name("auth.callback");
 });
 
@@ -67,6 +69,7 @@ Route::middleware("auth")->group(function () {
     Route::get("/verification", [UserVerificationController::class, "index"])
         ->name("verification");
     Route::post("/verification", [UserVerificationController::class, "store"])
+        ->middleware("throttle:15,1")
         ->name("verification.store");
 
     Route::post("/logout", [AuthController::class, "logout"])->name("logout");
@@ -150,6 +153,7 @@ Route::middleware("auth")->group(function () {
                 Route::get("/result", [VoteController::class, "result"])
                     ->name("vote.result");
                 Route::post("/result", [VoteController::class, "confirmResult"])
+                    ->middleware("throttle:15,1")
                     ->name("vote.result.confirm");
 
                 Route::middleware([
@@ -161,6 +165,7 @@ Route::middleware("auth")->group(function () {
                     Route::get("/{group}/previous", [VoteController::class, "groupPrevious"])
                         ->name("vote.group.previous");
                     Route::post("/{group}", [VoteController::class, "storeGroup"])
+                        ->middleware("throttle:20,1")
                         ->name("vote.group.store");
                 });
             });
