@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -42,6 +43,11 @@ class OrganizationDashboardController extends Controller
     public function reset(Organization $organization, Request $request)
     {
         if ($request->user()->type !== 'admin') {
+            Log::warning("admin.organization.reset_denied", [
+                "actor_id" => $request->user()?->id,
+                "organization_id" => $organization->id,
+            ]);
+
             return redirect()->route("organizations.dashboard", [
                 "organization" => $organization,
             ])
@@ -73,6 +79,11 @@ class OrganizationDashboardController extends Controller
             $organization->ballotDetails()->delete();
             $organization->ballots()->delete();
         });
+
+        Log::warning("admin.organization.reset", [
+            "actor_id" => $request->user()?->id,
+            "organization_id" => $organization->id,
+        ]);
 
         return redirect()->route("organizations.dashboard", [
             "organization" => $organization,

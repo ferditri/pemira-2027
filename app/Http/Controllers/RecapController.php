@@ -6,6 +6,7 @@ use App\Models\Ballot;
 use App\Models\BallotDetail;
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -18,7 +19,7 @@ class RecapController extends Controller
         ]);
     }
 
-    public function reset(Organization $organization)
+    public function reset(Request $request, Organization $organization)
     {
         $organization->ballots()
             ->where("is_confirmed", 1)
@@ -26,6 +27,11 @@ class RecapController extends Controller
                 "is_verified" => null,
                 "verified_at" => null,
             ]);
+
+        Log::warning("admin.recap.reset", [
+            "actor_id" => $request->user()?->id,
+            "organization_id" => $organization->id,
+        ]);
 
         return redirect()->route("organizations.recap.validate", [
             "organization" => $organization->id,

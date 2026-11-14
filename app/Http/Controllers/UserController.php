@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Whitelist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -60,6 +61,12 @@ class UserController extends Controller
         ]);
 
         Whitelist::query()->firstOrCreate(["npm" => $request->input("npm")]);
+
+        Log::info("admin.user.created", [
+            "actor_id" => $request->user()?->id,
+            "target_user_id" => $user->id,
+            "role" => $user->type,
+        ]);
 
         return redirect(route("admin.users.index", ["type" => $user->type]))
             ->with("flash.message", "Pengguna berhasil ditambahkan.")
@@ -143,6 +150,12 @@ class UserController extends Controller
 
         Whitelist::query()->firstOrCreate(["npm" => $request->input("npm")]);
 
+        Log::info("admin.user.updated", [
+            "actor_id" => $request->user()?->id,
+            "target_user_id" => $user->id,
+            "role" => $user->type,
+        ]);
+
         return redirect(route("admin.users.index", ["type" => $user->type]))
             ->with("flash.message", "Pengguna berhasil diperbarui.")
             ->with("flash.type", "success");
@@ -167,8 +180,17 @@ class UserController extends Controller
                 ->with("flash.type", "destructive");
         }
 
+        $deletedId = $user->id;
+        $deletedType = $user->type;
         $user->delete();
-        return redirect(route("admin.users.index", ["type" => $user->type]))
+
+        Log::warning("admin.user.deleted", [
+            "actor_id" => $request->user()?->id,
+            "target_user_id" => $deletedId,
+            "role" => $deletedType,
+        ]);
+
+        return redirect(route("admin.users.index", ["type" => $deletedType]))
             ->with("flash.message", "Pengguna {$user->name} berhasil dihapus.")
             ->with("flash.type", "success");
     }

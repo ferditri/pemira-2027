@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Ballot;
 use App\Models\UserVerification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -89,6 +90,13 @@ class AdminVerificationController extends Controller
             'retake' => 'diminta Re-take',
             'rejected' => 'ditolak (Tidak Sah — suara tidak dihitung)',
         };
+
+        Log::info('admin.verification.reviewed', [
+            'actor_id' => $request->user()?->id,
+            'verification_id' => $verification->id,
+            'target_user_id' => $verification->user_id,
+            'status' => $validated['status'],
+        ]);
 
         return redirect()->back()
             ->with('flash.message', "Verifikasi {$verification->user->name} berhasil {$label}.")
