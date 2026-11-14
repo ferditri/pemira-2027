@@ -181,8 +181,8 @@
       </div>
     </section>
 
-    <!-- ================= SECTION: CALON KETUA & WAKIL BEM ================= -->
-    <section id="kandidat" class="section-parchment pt-12 pb-24 px-4 sm:px-6 lg:px-8 border-t border-[#dfba78]/30">
+    <!-- ================= SECTION: CALON KETUA & WAKIL BEM + CALON BLM ================= -->
+    <section id="kandidat" class="section-parchment pt-12 pb-28 px-4 sm:px-6 lg:px-8">
       <div class="max-w-6xl mx-auto candidate-frame-box">
         
         <!-- Golden L-Bracket Ornaments (4 Corners) -->
@@ -256,11 +256,9 @@
           @endforelse
         </div>
       </div>
-    </section>
 
-    <!-- ================= SECTION: CALON BLM ================= -->
-    <section class="section-parchment pt-12 pb-28 px-4 sm:px-6 lg:px-8 border-t border-[#dfba78]/30">
-      <div class="max-w-6xl mx-auto candidate-frame-box">
+      <!-- ================= CALON BLM (SATU SECTION PARCHMENT) ================= -->
+      <div class="max-w-6xl mx-auto candidate-frame-box mt-12">
         
         <!-- Golden Corner Ornaments -->
         <svg class="corner-ornament corner-tl text-amber-700/60" viewBox="0 0 100 100" fill="none" stroke="currentColor">
@@ -504,13 +502,13 @@
     <!-- ================= FOOTER ================= -->
     <footer class="footer-royal">
 
-      <!-- Crisp Transparent Logo centered above footer rectangle (matching Figma) -->
-      <div class="max-w-4xl mx-auto px-4 pb-5">
+      <!-- Crisp Transparent Logo centered right below Jadwal Pelaksanaan curve -->
+      <div class="max-w-4xl mx-auto px-4 pb-2">
         <div class="flex justify-center">
           <img 
             src="{{ asset('assets/images/me/teks-pemira-footer-trimmed.webp') }}" 
             alt="PEMIRA FASILKOM 2027" 
-            class="h-14 md:h-16 w-auto drop-shadow-[0_4px_15px_rgba(223,158,56,0.55)]"
+            class="h-20 md:h-24 lg:h-28 w-auto drop-shadow-[0_4px_18px_rgba(223,158,56,0.6)]"
           />
         </div>
       </div>
