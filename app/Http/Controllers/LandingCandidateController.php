@@ -35,7 +35,7 @@ class LandingCandidateController extends Controller
     {
         $validated = $request->validate([
             'section' => 'required|in:bem,blm',
-            'candidate_id' => 'nullable|exists:candidates,id',
+            'candidate_id' => 'required|exists:candidates,id',
             'role_label' => 'required|string|max:120',
             'name' => 'required|string|max:255',
             'vision' => 'required|string',
@@ -43,6 +43,8 @@ class LandingCandidateController extends Controller
             'sort_order' => 'nullable|integer|min:0|max:999',
             'photo_url' => 'nullable|string|max:500',
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'candidate_id.required' => 'Silakan pilih calon dari menu Calon & Tipe terlebih dahulu.',
         ]);
 
         $photo = $validated['photo_url'] ?? null;
@@ -76,7 +78,7 @@ class LandingCandidateController extends Controller
     {
         $validated = $request->validate([
             'section' => 'required|in:bem,blm',
-            'candidate_id' => 'nullable|exists:candidates,id',
+            'candidate_id' => 'required|exists:candidates,id',
             'role_label' => 'required|string|max:120',
             'name' => 'required|string|max:255',
             'vision' => 'required|string',
@@ -84,6 +86,8 @@ class LandingCandidateController extends Controller
             'sort_order' => 'nullable|integer|min:0|max:999',
             'photo_url' => 'nullable|string|max:500',
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'candidate_id.required' => 'Silakan pilih calon dari menu Calon & Tipe terlebih dahulu.',
         ]);
 
         $photo = array_key_exists('photo_url', $validated) && $validated['photo_url'] !== null

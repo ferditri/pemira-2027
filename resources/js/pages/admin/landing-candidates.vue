@@ -238,19 +238,20 @@ resetForm();
             {{ editingId ? "Ubah Kandidat Landing" : "Tambah Kandidat Landing" }}
           </CardTitle>
           <CardDescription>
-            Pilih langsung dari data "Calon &amp; Tipe" atau isi manual di bawah ini.
+            Pilih kandidat yang sudah dibuat di menu "Calon &amp; Tipe", lalu atur label dan urutannya.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form class="space-y-4" @submit.prevent="submit">
             <div class="space-y-2">
-              <Label>Ambil dari Calon &amp; Tipe (Opsional)</Label>
+              <Label>Pilih Calon dari Calon &amp; Tipe</Label>
               <select
                 v-model="selectedSourceId"
+                required
                 class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 @change="applySourceCandidate"
               >
-                <option value="">-- Pilih calon yang sudah dibuat --</option>
+                <option value="">-- Pilih calon dari Calon &amp; Tipe --</option>
                 <option
                   v-for="src in sourceCandidates"
                   :key="src.id"
@@ -259,6 +260,9 @@ resetForm();
                   {{ src.organization?.name }} · {{ src.group?.name }} — {{ src.name_1 }}
                 </option>
               </select>
+              <FormMessage v-if="form.errors.candidate_id" variant="error">
+                {{ form.errors.candidate_id }}
+              </FormMessage>
             </div>
 
             <div class="space-y-2">
