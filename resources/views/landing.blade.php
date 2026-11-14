@@ -259,7 +259,7 @@
     </section>
 
     <!-- ================= SECTION: CALON BLM ================= -->
-    <section class="section-parchment pt-12 pb-24 px-4 sm:px-6 lg:px-8 border-t border-[#dfba78]/30">
+    <section class="section-parchment section-parchment-to-navy pt-12 pb-28 px-4 sm:px-6 lg:px-8 border-t border-[#dfba78]/30">
       <div class="max-w-6xl mx-auto candidate-frame-box">
         
         <!-- Golden Corner Ornaments -->

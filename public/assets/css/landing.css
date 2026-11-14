@@ -262,6 +262,23 @@ section[id], header[id] {
   background-position: center top;
 }
 
+.section-parchment-to-navy::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  background: linear-gradient(180deg, rgba(246, 227, 190, 0) 0%, rgba(10, 24, 53, 0.45) 60%, #0a1835 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.section-parchment-to-navy > * {
+  position: relative;
+  z-index: 2;
+}
+
 .parchment-divider {
   display: flex;
   align-items: center;
