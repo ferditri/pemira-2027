@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Organization;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PemiraSecurityAndFlowTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function test_landing_page_returns_ok_with_security_headers(): void
     {
