@@ -116,6 +116,14 @@ const closeModal = () => {
   editingId.value = null;
 };
 
+const onSectionChange = () => {
+  const count = props.landingCandidates.filter(
+    (item) => item.section === form.section && item.id !== editingId.value
+  ).length;
+  form.role_label = defaultRoleLabel(form.section, count);
+  form.sort_order = count + 1;
+};
+
 const submit = () => {
   if (editingId.value) {
     form.put(route("admin.landing-candidates.update", editingId.value), {
@@ -236,9 +244,6 @@ const onDragEnd = () => {
               : "Daftar Calon BLM"
           }}
         </CardTitle>
-        <CardDescription>
-          Seret ikon pegangan (::) ke atas/bawah atau gunakan tombol panah untuk mengatur urutan di landing page.
-        </CardDescription>
       </CardHeader>
       <CardContent class="space-y-3">
         <div
@@ -383,6 +388,7 @@ const onDragEnd = () => {
                 <select
                   v-model="form.section"
                   class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  @change="onSectionChange"
                 >
                   <option value="bem">Ketua &amp; Wakil BEM</option>
                   <option value="blm">Calon BLM</option>
