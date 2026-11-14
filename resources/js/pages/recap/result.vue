@@ -10,8 +10,13 @@ import {
 } from "@/components/ui/card";
 import { DonutChart } from "@/components/ui/chart-donut";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEnterMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
+
+const rootRef = ref<HTMLElement | null>(null);
+useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.42, staggerDelay: 0.05 });
 
 const page = usePage<PageProps>();
 const isAdmin = page.props.auth.user.type === "admin";
@@ -36,8 +41,8 @@ const ballotsChart = [
 </script>
 
 <template>
-  <div class="p-4 space-y-4">
-    <Card class="max-w-screen-xl mx-auto">
+  <div ref="rootRef" class="p-4 space-y-4 bg-stone-50/40 min-h-dvh">
+    <Card data-enter class="max-w-screen-xl mx-auto shadow-sm">
       <CardHeader class="text-center">
         <CardTitle>Hasil Validasi</CardTitle>
       </CardHeader>

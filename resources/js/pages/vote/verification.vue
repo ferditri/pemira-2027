@@ -9,10 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEnterMotion } from "@/composables/useMotion";
 import { Link, useForm } from "@inertiajs/vue3";
 import { BookImage, Camera, HelpCircle, RefreshCw, X } from "lucide-vue-next";
 import { nextTick, onUnmounted, reactive, ref } from "vue";
 import imageCompression from "browser-image-compression";
+
+const rootRef = ref<HTMLElement | null>(null);
+useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0.05 });
 
 const props = defineProps<{
   verification?: UserVerification | null;
@@ -195,7 +199,7 @@ const submit = () => {
   />
 
   <div class="vote-royal-bg flex flex-col items-center justify-center py-10 px-4 sm:px-6">
-    <div class="max-w-lg w-full space-y-4 relative z-10">
+    <div ref="rootRef" class="max-w-lg w-full space-y-4 relative z-10">
       <div
         v-if="props.verification?.status === 'retake' || props.verification?.status === 'rejected'"
         class="bg-amber-100/95 border border-amber-400 rounded-xl p-4 shadow-md text-amber-950 text-sm space-y-1"
@@ -240,7 +244,7 @@ const submit = () => {
         <p class="text-red-900 text-sm font-medium">{{ errorMessage }}</p>
       </div>
 
-      <Card class="vote-parchment-card border-0">
+      <Card data-enter class="vote-parchment-card border-0">
         <CardHeader class="text-center pt-7 pb-5 px-6">
           <CardTitle
             class="font-cinzel text-[#0c1d44] text-2xl sm:text-3xl font-extrabold tracking-wider uppercase"
@@ -265,7 +269,7 @@ const submit = () => {
         </CardHeader>
       </Card>
 
-      <Card class="vote-parchment-card border-0">
+      <Card data-enter class="vote-parchment-card border-0">
         <CardHeader class="pb-3 pt-6 px-6">
           <CardTitle
             class="font-cinzel text-[#0c1d44] text-lg sm:text-xl font-bold tracking-wide uppercase"
@@ -303,7 +307,7 @@ const submit = () => {
         </CardFooter>
       </Card>
 
-      <Card class="vote-parchment-card border-0">
+      <Card data-enter class="vote-parchment-card border-0">
         <CardHeader class="pb-3 pt-6 px-6">
           <CardTitle
             class="font-cinzel text-[#0c1d44] text-lg sm:text-xl font-bold tracking-wide uppercase"

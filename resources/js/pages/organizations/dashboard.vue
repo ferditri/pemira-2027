@@ -16,9 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEnterMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, router, useForm, usePage } from "@inertiajs/vue3";
 import { ArrowLeft, ArrowRight, Building, LogOut, Vote } from "lucide-vue-next";
+import { ref } from "vue";
+
+const rootRef = ref<HTMLElement | null>(null);
+useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.42, staggerDelay: 0.05 });
 
 const props = defineProps<{
   organization: {
@@ -67,8 +72,8 @@ const recap = () => {
 </script>
 
 <template>
-  <div class="min-h-dvh flex items-center justify-center p-4">
-    <Card class="max-w-screen-md w-full divide-y">
+  <div ref="rootRef" class="min-h-dvh flex items-center justify-center p-4 bg-stone-50/40">
+    <Card data-enter class="max-w-screen-md w-full divide-y shadow-sm">
       <div class="flex justify-between gap-4">
         <CardHeader>
           <CardTitle class="font-extrabold">PEMIRA</CardTitle>

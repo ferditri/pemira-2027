@@ -26,9 +26,10 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useEnterMotion } from "@/composables/useMotion";
+import { prefersReducedMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, router, usePage } from "@inertiajs/vue3";
+import { animate, stagger } from "motion";
 import {
   Check,
   ChevronsUpDown,
@@ -40,12 +41,38 @@ import {
   Users,
   Vote,
 } from "lucide-vue-next";
-import { ref } from "vue";
+import { nextTick, onMounted, onUnmounted, ref } from "vue";
 
 const page = usePage<PageProps>();
 const user = page.props.auth.user;
 const mainContentRef = ref<HTMLElement | null>(null);
-useEnterMotion(mainContentRef, ":scope > *", { y: 10, duration: 0.38, staggerDelay: 0.04 });
+
+const runAdminEnter = async () => {
+  await nextTick();
+  const root = mainContentRef.value;
+  if (!root || prefersReducedMotion()) return;
+  const targets = Array.from(root.children) as HTMLElement[];
+  if (!targets.length) return;
+  animate(
+    targets,
+    { opacity: [0, 1], y: [10, 0] },
+    { duration: 0.36, delay: stagger(0.04), ease: [0.16, 1, 0.3, 1] }
+  );
+};
+
+let removeFinishListener: (() => void) | null = null;
+onMounted(() => {
+  runAdminEnter();
+  removeFinishListener = router.on("finish", (event) => {
+    if (event.detail.visit.completed) {
+      runAdminEnter();
+    }
+  });
+});
+
+onUnmounted(() => {
+  removeFinishListener?.();
+});
 
 const menu = {
   items: [
