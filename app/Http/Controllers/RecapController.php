@@ -21,6 +21,19 @@ class RecapController extends Controller
 
     public function reset(Request $request, Organization $organization)
     {
+        if ($request->user()?->type !== "admin") {
+            Log::warning("admin.recap.reset_denied", [
+                "actor_id" => $request->user()?->id,
+                "organization_id" => $organization->id,
+            ]);
+
+            return redirect()->route("organizations.dashboard", [
+                "organization" => $organization,
+            ])
+                ->with("flash.message", "Hanya Administrator yang berhak mereset validasi rekap!")
+                ->with("flash.type", "destructive");
+        }
+
         $organization->ballots()
             ->where("is_confirmed", 1)
             ->update([

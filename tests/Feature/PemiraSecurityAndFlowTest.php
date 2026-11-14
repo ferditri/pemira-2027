@@ -67,6 +67,11 @@ class PemiraSecurityAndFlowTest extends TestCase
             ->post(route('organizations.reset', ['organization' => $organization->id]));
 
         $this->assertTrue(in_array($response->getStatusCode(), [302, 403], true));
+
+        $recapResetResponse = $this->actingAs($committee)
+            ->post(route('organizations.recap.reset', ['organization' => $organization->id]));
+
+        $this->assertTrue(in_array($recapResetResponse->getStatusCode(), [302, 403], true));
     }
 
     public function test_super_admin_email_check_is_case_insensitive(): void

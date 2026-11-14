@@ -25,8 +25,8 @@
       rel="stylesheet"
     />
 
-    <!-- Tailwind CSS (CDN for instant standalone rendering) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS (bundled via Vite) -->
+    @vite(['resources/css/app.css'])
     <link href="{{ asset('assets/css/landing.css') }}" rel="stylesheet" />
   </head>
 

@@ -11,7 +11,7 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ['resources/js/app.ts', 'resources/js/landing-motion.ts'],
+            input: ['resources/css/app.css', 'resources/js/app.ts', 'resources/js/landing-motion.ts'],
             refresh: true,
         }),
         vue({
