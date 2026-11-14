@@ -1,4 +1,5 @@
 <script lang="ts">
+import ConfirmationDialog from "@/components/ConfirmationDialog.vue";
 import GroupEditCard from "@/components/GroupEditCard.vue";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -55,10 +56,6 @@ const edit = (candidate: Candidate) => {
 };
 
 const destroy = (candidate: Candidate) => {
-    if (!confirm("Are you sure you want to remove this candidate?")) {
-        return;
-    }
-
     router.delete(
         route("admin.organizations.groups.candidates.destroy", {
             organization: organization?.id,
@@ -74,14 +71,8 @@ const destroy = (candidate: Candidate) => {
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbLink
-                        :href="
-                            route('admin.organizations.show', {
-                                organization: organization?.id,
-                            })
-                        "
-                    >
-                        {{ organization?.name }}
+                    <BreadcrumbLink :href="route('admin.candidates.index')">
+                        Calon &amp; Tipe
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
@@ -166,13 +157,20 @@ const destroy = (candidate: Candidate) => {
                                         >
                                             <Edit class="size-4" />
                                         </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="destructive"
-                                            @click="destroy(candidate)"
+                                        <ConfirmationDialog
+                                            title="Hapus Calon?"
+                                            :description="`Calon ${candidate.name_1} akan dihapus dari tipe ${group.name}.`"
+                                            destructive
+                                            confirm-text="Ya, Hapus"
+                                            @accept="destroy(candidate)"
                                         >
-                                            <Trash2 class="size-4" />
-                                        </Button>
+                                            <Button
+                                                size="icon"
+                                                variant="destructive"
+                                            >
+                                                <Trash2 class="size-4" />
+                                            </Button>
+                                        </ConfirmationDialog>
                                     </TableCell>
                                 </TableRow>
                             </TableBody>

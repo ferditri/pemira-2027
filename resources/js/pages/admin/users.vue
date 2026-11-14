@@ -6,6 +6,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
+import ConfirmationDialog from "@/components/ConfirmationDialog.vue";
 import Select from "@/components/Select.vue";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -50,9 +51,6 @@ const edit = (user: User) => {
 };
 
 const destroy = (user: User) => {
-    if (!confirm("Are you sure you want to delete this user?")) {
-        return;
-    }
     router.delete(route("admin.users.destroy", { user: user.id }));
 };
 
@@ -151,13 +149,20 @@ const next = () => {
                                 >
                                     <Edit class="size-4" />
                                 </Button>
-                                <Button
-                                    size="icon"
-                                    variant="destructive"
-                                    @click="destroy(user)"
+                                <ConfirmationDialog
+                                    title="Hapus User?"
+                                    :description="`Akun ${user.name} (${user.npm}) akan dihapus dari sistem.`"
+                                    destructive
+                                    confirm-text="Ya, Hapus"
+                                    @accept="destroy(user)"
                                 >
-                                    <Trash2 class="size-4" />
-                                </Button>
+                                    <Button
+                                        size="icon"
+                                        variant="destructive"
+                                    >
+                                        <Trash2 class="size-4" />
+                                    </Button>
+                                </ConfirmationDialog>
                             </TableCell>
                         </TableRow>
                     </TableBody>

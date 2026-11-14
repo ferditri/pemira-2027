@@ -367,7 +367,7 @@
             <!-- Video Thumbnail strictly fitted inside the golden frame inner window -->
             <div class="video-inner-window">
               <img 
-                src="https://img.youtube.com/vi/_Zpm7Rbca1A/maxresdefault.jpg" 
+                src="https://img.youtube.com/vi/{{ config('pemira.tutorial_video_id') }}/maxresdefault.jpg" 
                 alt="Thumbnail Tutorial Voting" 
                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
@@ -539,7 +539,7 @@
         <div class="flex justify-center gap-4 mb-5">
           <!-- Instagram -->
           <a 
-            href="https://www.instagram.com/pemirafasilkom/" 
+            href="{{ config('pemira.instagram_url') }}" 
             target="_blank" 
             rel="noopener noreferrer" 
             class="social-circle-btn" 
@@ -551,7 +551,7 @@
           </a>
           <!-- YouTube -->
           <a 
-            href="https://www.youtube.com/@pemirafasilkomupnvjt" 
+            href="{{ config('pemira.youtube_url') }}" 
             target="_blank" 
             rel="noopener noreferrer" 
             class="social-circle-btn" 

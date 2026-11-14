@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Organization;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -32,7 +33,30 @@ class OrganizationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'major' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        $logoPath = '';
+        if ($request->hasFile('logo')) {
+            $newPath = $request->file('logo')->store('organizations', 'public');
+            $logoPath = '/storage/' . $newPath;
+        }
+
+        $organization = Organization::create([
+            'name' => $validated['name'],
+            'major' => $validated['major'] ?: null,
+            'logo' => $logoPath,
+            'ordering' => Organization::count() + 1,
+            'is_open' => false,
+        ]);
+
+        return redirect()
+            ->route('admin.candidates.index')
+            ->with('flash.message', 'Organization successfully created!')
+            ->with('flash.type', 'success');
     }
 
     /**
@@ -90,8 +114,8 @@ class OrganizationController extends Controller
             'logo' => $logoPath,
         ]);
 
-        // 4. Redirect kembali dengan Flash Message yang sudah kita standarisasi
-        return redirect()->back()
+        // 4. Redirect kembali ke Calon & Tipe dengan Flash Message
+        return redirect()->route('admin.candidates.index')
             ->with('flash.message', 'Organization successfully updated!')
             ->with('flash.type', 'success');
     }
@@ -101,6 +125,30 @@ class OrganizationController extends Controller
      */
     public function destroy(Organization $organization)
     {
-        //
+        try {
+            $logoPath = $organization->logo;
+            $organization->delete();
+
+            if ($logoPath) {
+                $oldFilePath = str_replace('/storage/', '', $logoPath);
+                if (Storage::disk('public')->exists($oldFilePath)) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
+            }
+
+            return redirect()
+                ->route('admin.candidates.index')
+                ->with('flash.message', "Organisasi {$organization->name} berhasil dihapus!")
+                ->with('flash.type', 'success');
+        } catch (QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return redirect()
+                    ->back()
+                    ->with('flash.message', 'Gagal menghapus! Hapus semua Tipe/Grup & data suara di organisasi ini terlebih dahulu.')
+                    ->with('flash.type', 'destructive');
+            }
+
+            throw $e;
+        }
     }
 }

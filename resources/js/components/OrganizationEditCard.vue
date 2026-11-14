@@ -6,9 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { MAJOR_OPTIONS } from "@/lib/majors";
 import { Link, useForm } from "@inertiajs/vue3";
 import { Plus, Settings } from "lucide-vue-next";
 import { ref } from "vue";
+import ConfirmationDialog from "./ConfirmationDialog.vue";
 import FormMessage from "./FormMessage.vue";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -43,10 +45,6 @@ const setLogo = (event: Event) => {
 };
 
 const remove = () => {
-  if (!confirm("Are you sure you want to remove this organization?")) {
-    return;
-  }
-
   form.delete(
     route("admin.organizations.destroy", {
       organization: props.organization.id,
@@ -81,7 +79,7 @@ const remove = () => {
             ref="logoInput"
             type="file"
             class="absolute -top-24 -left-24"
-            accept="image/webp"
+            accept="image/jpeg, image/png, image/webp"
             @change="setLogo"
           />
           <img
@@ -114,29 +112,59 @@ const remove = () => {
         </div>
         <div class="space-y-2">
           <Label>
-            Major
-            <span class="text-muted-foreground"> - Optional </span>
+            Prodi / Major
+            <span class="text-muted-foreground"> - Opsional </span>
           </Label>
-          <Input v-model="form.major" />
+          <select
+            v-model="form.major"
+            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            <option
+              v-for="opt in MAJOR_OPTIONS"
+              :key="opt.value"
+              :value="opt.value"
+            >
+              {{ opt.label }}
+            </option>
+            <option
+              v-if="
+                form.major &&
+                !MAJOR_OPTIONS.some((o) => o.value === form.major)
+              "
+              :value="form.major"
+            >
+              Prodi {{ form.major }}
+            </option>
+          </select>
+          <FormMessage>
+            Pilih "Semua Prodi" jika organisasi berlaku untuk seluruh fakultas (contoh: BLM &amp; BEM).
+          </FormMessage>
           <FormMessage v-if="form.errors.major" variant="error">
             {{ form.errors.major }}
           </FormMessage>
         </div>
         <div class="flex flex-row-reverse justify-between">
           <Button type="submit">Save</Button>
-          <Link :href="route('admin.dashboard')">
-            <Button variant="outline">Back</Button>
+          <Link :href="route('admin.candidates.index')">
+            <Button type="button" variant="outline">Back</Button>
           </Link>
         </div>
       </form>
     </CardContent>
   </Card>
-  <Button
-    type="button"
-    variant="destructive"
-    class="mt-4 w-full"
-    @click="remove"
+  <ConfirmationDialog
+    title="Hapus Organisasi?"
+    :description="`Organisasi ${organization.name} akan dihapus permanen. Pastikan semua tipe/grup di dalamnya sudah kosong.`"
+    destructive
+    confirm-text="Ya, Hapus"
+    @accept="remove"
   >
-    Remove
-  </Button>
+    <Button
+      type="button"
+      variant="destructive"
+      class="mt-4 w-full"
+    >
+      Remove
+    </Button>
+  </ConfirmationDialog>
 </template>

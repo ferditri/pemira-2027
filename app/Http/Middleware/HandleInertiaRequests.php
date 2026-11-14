@@ -67,6 +67,9 @@ class HandleInertiaRequests extends Middleware
                 null,
             "organization" => $organization,
             "group" => $group,
+            "pemira" => [
+                "support_whatsapp" => config("pemira.support_whatsapp"),
+            ],
         ];
     }
 }

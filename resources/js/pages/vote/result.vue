@@ -31,28 +31,26 @@ const submit = () => {
       onFinish: () => {
         isSubmitting.value = false;
       },
-    }
+    },
   );
 };
 </script>
 
 <template>
-  <div
-    class="min-h-dvh flex justify-center p-4 sm:p-6 lg:p-8 bg-blue-800 bg-[url('/background.webp')] bg-cover bg-center bg-fixed font-sans relative"
-  >
-    <div class="max-w-screen-xl w-full space-y-4 relative z-10">
-      <Card
-        class="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
-      >
-        <CardHeader class="text-center border-b border-white/20 pb-6">
-          <CardTitle class="text-3xl font-extrabold text-white drop-shadow-lg"
-            >Konfirmasi Pilihan</CardTitle
+  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div class="max-w-5xl w-full relative z-10">
+      <Card class="vote-parchment-card border-0">
+        <CardHeader class="text-center pt-8 pb-5 px-6 border-b border-[#9c8256]/35">
+          <CardTitle
+            class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
           >
-          <CardDescription class="text-gray-200 text-lg mt-1">
+            Konfirmasi Pilihan
+          </CardTitle>
+          <CardDescription class="text-[#3d4a66] text-sm sm:text-base font-medium mt-1">
             Pastikan pilihanmu sudah sesuai sebelum melanjutkan!
           </CardDescription>
 
-          <div class="flex justify-center gap-4 mt-6">
+          <div class="flex flex-wrap justify-center gap-3.5 mt-5">
             <Link
               :href="
                 route('vote.organization', {
@@ -61,8 +59,7 @@ const submit = () => {
               "
             >
               <Button
-                variant="ghost"
-                class="bg-white/10 backdrop-blur-lg border border-white/10 text-white rounded-full px-8 shadow-lg hover:bg-white/20 transition-all"
+                class="vote-btn-outline rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase"
               >
                 Kembali
               </Button>
@@ -75,7 +72,7 @@ const submit = () => {
             >
               <Button
                 :disabled="isSubmitting"
-                class="bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full px-8 shadow-lg transition-transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="vote-btn-navy rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span v-if="isSubmitting">Memproses...</span>
                 <span v-else>Konfirmasi</span>
@@ -84,42 +81,49 @@ const submit = () => {
           </div>
         </CardHeader>
 
-        <CardContent class="pt-6">
-          <div
-            class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
-          >
-            <div v-for="detail in details" class="flex flex-col gap-3">
-              <CardTitle
-                class="text-center text-white text-lg font-bold drop-shadow-md"
+        <CardContent class="pt-7 pb-10 px-6 sm:px-10">
+          <div class="flex flex-wrap justify-center gap-7">
+            <div
+              v-for="detail in details"
+              :key="detail.id"
+              class="flex flex-col items-center gap-3 w-full max-w-[240px]"
+            >
+              <h3
+                class="font-cinzel text-center text-[#0c1d44] text-sm sm:text-base font-extrabold uppercase tracking-wide"
               >
                 {{ detail.group?.name }}
-              </CardTitle>
+              </h3>
 
-              <Card
-                class="bg-white/10 border border-white/20 overflow-hidden shadow-lg backdrop-blur-md"
+              <div
+                class="vote-candidate-arch w-full px-4 pt-6 pb-5 text-center flex flex-col items-center"
               >
-                <div class="relative aspect-[4/5]">
-                  <img
-                    :src="detail.candidate?.picture"
-                    class="w-full h-full object-cover absolute inset-0"
-                  />
-                </div>
-                <CardHeader
-                  class="p-4 text-center border-t border-white/20 bg-black/20 text-sm"
-                >
-                  <CardTitle
-                    class="leading-normal text-white font-bold drop-shadow-md"
+                <div class="relative mb-3.5">
+                  <div
+                    class="absolute -top-1.5 left-1/2 -translate-x-1/2 size-3 rotate-45 bg-[#d99b38] border border-[#5c3d12] z-10"
+                  ></div>
+                  <div
+                    class="size-28 sm:size-32 rounded-full p-1 bg-gradient-to-b from-[#e4b35a] to-[#a9782a] shadow-md"
                   >
-                    {{ detail.candidate?.name_1 }}
-                    <template v-if="detail.candidate?.name_2">
-                      <br />
-                      &
-                      <br />
-                      {{ detail.candidate?.name_2 }}
-                    </template>
-                  </CardTitle>
-                </CardHeader>
-              </Card>
+                    <img
+                      :src="detail.candidate?.picture"
+                      :alt="detail.candidate?.name_1"
+                      class="w-full h-full rounded-full object-cover bg-[#0c1d44]"
+                    />
+                  </div>
+                </div>
+
+                <p
+                  class="font-cinzel text-xs sm:text-sm font-bold text-[#0c1d44] leading-snug uppercase"
+                >
+                  {{ detail.candidate?.name_1 }}
+                  <template v-if="detail.candidate?.name_2">
+                    <br />
+                    &amp;
+                    <br />
+                    {{ detail.candidate?.name_2 }}
+                  </template>
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>

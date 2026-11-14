@@ -7,7 +7,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@inertiajs/vue3";
+import { PageProps } from "@/types";
+import { Link, usePage } from "@inertiajs/vue3";
+
+const page = usePage<PageProps>();
+const isAdmin = page.props.auth.user.type === "admin";
 
 const props = defineProps<{
     organization: Organization;
@@ -27,9 +31,11 @@ const props = defineProps<{
             <CardFooter class="gap-2">
                 <Link
                     :href="
-                        route('organizations.dashboard', {
-                            organization: props.organization.id,
-                        })
+                        isAdmin
+                            ? route('admin.elections.index')
+                            : route('organizations.dashboard', {
+                                  organization: props.organization.id,
+                              })
                     "
                 >
                     <Button variant="outline">Kembali</Button>

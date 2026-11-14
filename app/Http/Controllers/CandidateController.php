@@ -62,10 +62,10 @@ class CandidateController extends Controller
             'picture' => $picturePath ? '/storage/' . $picturePath : null, // Format path untuk Vue
         ]);
 
-        // 4. Kembali ke halaman daftar dengan pesan sukses
+        // 4. Kembali ke halaman Calon & Tipe dengan pesan sukses
         return redirect()
-            ->route('admin.organizations.groups.show', [$organization->id, $group->id])
-           ->with('flash.message', 'Candidate successfully added!')
+            ->route('admin.candidates.index')
+            ->with('flash.message', 'Candidate successfully added!')
             ->with('flash.type', 'success');
     }
 
@@ -139,9 +139,9 @@ class CandidateController extends Controller
             'picture' => $picturePath,
         ]);
 
-        // 4. Redirect kembali dengan pesan sukses
+        // 4. Redirect kembali ke halaman Calon & Tipe dengan pesan sukses
         return redirect()
-            ->route('admin.organizations.groups.show', [$organization->id, $group->id])
+            ->route('admin.candidates.index')
             ->with('flash.message', 'Candidate successfully updated!')
             ->with('flash.type', 'success');
         }
@@ -166,7 +166,7 @@ class CandidateController extends Controller
 
             // 3. Kembalikan dengan pesan sukses
             return redirect()
-                ->route('admin.organizations.groups.show', [$organization->id, $group->id])
+                ->route('admin.candidates.index')
                 ->with('flash.message', 'Candidate successfully deleted!')
                 ->with('flash.type', 'success');
 
@@ -174,7 +174,7 @@ class CandidateController extends Controller
             // 4. TANGKAP ERROR MySQL: Jika kode error adalah 23000 (Integrity Constraint Violation)
             if ($e->getCode() == "23000") {
                 return redirect()
-                    ->route('admin.organizations.groups.show', [$organization->id, $group->id])
+                    ->route('admin.candidates.index')
                     ->with('flash.message', 'Gagal menghapus! Kandidat ini sudah mendapatkan suara (Vote) di dalam sistem. Bersihkan data suara terlebih dahulu.')
                     ->with('flash.type', 'destructive');
             }

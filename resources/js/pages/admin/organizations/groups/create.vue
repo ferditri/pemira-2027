@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MAJOR_OPTIONS } from "@/lib/majors";
 
 const props = defineProps<{
     new_ordering: number;
@@ -49,17 +50,13 @@ const form = useForm({
         <Breadcrumb>
             <BreadcrumbList>
                 <BreadcrumbItem>
-                    <BreadcrumbLink
-                        :href="
-                            route('admin.organizations.show', organization?.id)
-                        "
-                    >
-                        {{ organization?.name }}
+                    <BreadcrumbLink :href="route('admin.candidates.index')">
+                        Calon &amp; Tipe
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator class="hidden md:block" />
                 <BreadcrumbItem>
-                    <BreadcrumbPage>Add New Group</BreadcrumbPage>
+                    <BreadcrumbPage>{{ organization?.name }} · Tambah Tipe</BreadcrumbPage>
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
@@ -89,15 +86,29 @@ const form = useForm({
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Year</Label>
-                        <Input v-model="form.year" />
+                        <Label>Year (Angkatan - Opsional)</Label>
+                        <Input v-model="form.year" placeholder="Contoh: 24 (kosong = semua angkatan)" />
                         <FormMessage v-if="form.errors.year" variant="error">
                             {{ form.errors.year }}
                         </FormMessage>
                     </div>
                     <div class="space-y-2">
-                        <Label>Major</Label>
-                        <Input v-model="form.major" />
+                        <Label>Prodi / Major (Opsional)</Label>
+                        <select
+                            v-model="form.major"
+                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                        >
+                            <option
+                                v-for="opt in MAJOR_OPTIONS"
+                                :key="opt.value"
+                                :value="opt.value"
+                            >
+                                {{ opt.label }}
+                            </option>
+                        </select>
+                        <FormMessage>
+                            Pilih "Semua Prodi" untuk umum (seperti BEM), atau pilih prodi tertentu (seperti BLM Informatika).
+                        </FormMessage>
                         <FormMessage v-if="form.errors.major" variant="error">
                             {{ form.errors.major }}
                         </FormMessage>
@@ -128,13 +139,7 @@ const form = useForm({
                     </div>
                     <div class="flex flex-row-reverse justify-between">
                         <Button type="submit">Add</Button>
-                        <Link
-                            :href="
-                                route('admin.organizations.show', {
-                                    organization: organization?.id,
-                                })
-                            "
-                        >
+                        <Link :href="route('admin.candidates.index')">
                             <Button type="button" variant="outline">
                                 Back
                             </Button>

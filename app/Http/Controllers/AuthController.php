@@ -12,15 +12,26 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-    public function redirect()
+    private function googleDriver(Request $request)
     {
-        return Socialite::driver("google")->redirect();
+        $driver = Socialite::driver("google");
+
+        if (app()->environment("local")) {
+            $driver->redirectUrl($request->getSchemeAndHttpHost() . "/auth/callback");
+        }
+
+        return $driver;
+    }
+
+    public function redirect(Request $request)
+    {
+        return $this->googleDriver($request)->redirect();
     }
 
     public function callback(Request $request)
     {
         try {
-            $user = Socialite::driver("google")->user();
+            $user = $this->googleDriver($request)->user();
         } catch (\Throwable $th) {
             \Illuminate\Support\Facades\Log::error("Google OAuth error: " . $th->getMessage());
             return redirect(route("login"))
@@ -28,19 +39,22 @@ class AuthController extends Controller
                 ->with("flash.type", "destructive");
         }
 
-        $domain = explode("@", $user->email)[1] ?? "";
-        $allowAnyEmail = env("AUTH_ALLOW_ANY_EMAIL", false);
+        $email = strtolower((string) $user->getEmail());
+        $domain = explode("@", $email)[1] ?? "";
+        $allowedDomains = config("pemira.allowed_email_domains", ["student.upnjatim.ac.id"]);
+        $allowAnyEmail = config("pemira.auth_allow_any_email", false);
+        $isEnvAdmin = in_array($email, config("pemira.admin_emails", []), true);
 
-        if ($domain !== "student.upnjatim.ac.id" && !$allowAnyEmail) {
+        if (!in_array($domain, $allowedDomains, true) && !$allowAnyEmail && !$isEnvAdmin) {
             return redirect(route("login"))
                 ->with("flash.message", "Oops.. kamu harus menggunakan email mahasiswa UPN!")
                 ->with("flash.type", "destructive");
         }
 
-        $npm = explode("@", $user->email)[0];
+        $npm = explode("@", $email)[0];
 
-        // Jika mode bebas email diaktifkan di .env: otomatis whitelist agar mudah dites
-        if ($allowAnyEmail) {
+        // Jika mode bebas email aktif di non-production atau user adalah admin .env: otomatis whitelist
+        if ($allowAnyEmail || $isEnvAdmin) {
             Whitelist::query()->firstOrCreate(["npm" => $npm]);
         }
 
@@ -65,7 +79,10 @@ class AuthController extends Controller
             "avatar" => $user->getAvatar(),
         ]);
 
-        if ($user->wasRecentlyCreated) {
+        if ($isEnvAdmin) {
+            $user->type = "admin";
+            $user->save();
+        } elseif ($user->wasRecentlyCreated) {
             $user->type = "voter";
             $user->save();
         }

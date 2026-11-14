@@ -16,8 +16,12 @@ class EnsureUserIsVerified
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if (!$user->verification) {
-            return redirect()->route("index");
+        $verification = $user->verification;
+
+        if (!$verification || in_array($verification->status, ["retake", "rejected"], true)) {
+            return redirect()->route("index")
+                ->with("flash.message", "Silakan selesaikan atau ulangi verifikasi KTM & selfie terlebih dahulu.")
+                ->with("flash.type", "destructive");
         }
 
         return $next($request);

@@ -10,9 +10,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
-import { BookImage } from "lucide-vue-next";
-import { reactive, ref } from "vue";
+import { BookImage, Camera, HelpCircle, RefreshCw, X } from "lucide-vue-next";
+import { nextTick, onUnmounted, reactive, ref } from "vue";
 import imageCompression from "browser-image-compression";
+
+const props = defineProps<{
+  verification?: UserVerification | null;
+  exampleImages?: {
+    ktm: string | null;
+    selfie: string | null;
+  };
+}>();
+
 const form = useForm<{
   ktm: File | undefined;
   verification: File | undefined;
@@ -34,38 +43,120 @@ const isCompressing = ref<boolean>(false);
 const ktmInput = ref<HTMLInputElement | null>(null);
 const verificationInput = ref<HTMLInputElement | null>(null);
 
-const handleInput = async (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  const file = target.files?.[0];
+const showExampleModal = ref(true);
+const cameraTarget = ref<"ktm" | "verification" | null>(null);
+const facingMode = ref<"user" | "environment">("user");
+const cameraError = ref<string | null>(null);
+const videoRef = ref<HTMLVideoElement | null>(null);
+let mediaStream: MediaStream | null = null;
 
+const stopCamera = () => {
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((t) => t.stop());
+    mediaStream = null;
+  }
+  cameraTarget.value = null;
+  cameraError.value = null;
+};
+
+const startCameraStream = async () => {
+  cameraError.value = null;
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((t) => t.stop());
+    mediaStream = null;
+  }
+  if (!navigator.mediaDevices?.getUserMedia) {
+    cameraError.value =
+      "Browser tidak mendukung kamera langsung. Silakan gunakan tombol Upload File.";
+    return;
+  }
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facingMode.value },
+      audio: false,
+    });
+    await nextTick();
+    if (videoRef.value) {
+      videoRef.value.srcObject = mediaStream;
+    }
+  } catch {
+    cameraError.value =
+      "Izin kamera ditolak atau kamera tidak ditemukan. Silakan gunakan tombol Upload File.";
+  }
+};
+
+const openCamera = async (target: "ktm" | "verification") => {
+  cameraTarget.value = target;
+  facingMode.value = target === "ktm" ? "environment" : "user";
+  await startCameraStream();
+};
+
+const switchCamera = async () => {
+  facingMode.value = facingMode.value === "user" ? "environment" : "user";
+  await startCameraStream();
+};
+
+const processImageFile = async (
+  file: File,
+  targetField: "ktm" | "verification",
+) => {
   errorMessage.value = null;
-  if (!file) return;
-
   const options = {
     maxSizeMB: 1,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
   };
-
   try {
-    isCompressing.value = true; // Nyalakan loading
-
+    isCompressing.value = true;
     const compressedFile = await imageCompression(file, options);
-
-    if (target === ktmInput.value) {
+    if (targetField === "ktm") {
       form.ktm = compressedFile;
-      urls.ktm = URL.createObjectURL(compressedFile); // Tampilkan preview instan
+      urls.ktm = URL.createObjectURL(compressedFile);
     } else {
       form.verification = compressedFile;
-      urls.verification = URL.createObjectURL(compressedFile); // Tampilkan preview instan
+      urls.verification = URL.createObjectURL(compressedFile);
     }
-  } catch (error) {
+  } catch {
     errorMessage.value =
       "Gagal mengompres gambar. Pastikan format gambar didukung.";
   } finally {
-    isCompressing.value = false; // Matikan loading
-    target.value = ""; // Reset input agar bisa pilih file yang sama lagi jika perlu
+    isCompressing.value = false;
   }
+};
+
+const capturePhoto = async () => {
+  if (!videoRef.value || !cameraTarget.value) return;
+  const video = videoRef.value;
+  const canvas = document.createElement("canvas");
+  canvas.width = video.videoWidth || 1280;
+  canvas.height = video.videoHeight || 720;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const target = cameraTarget.value;
+  stopCamera();
+
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", 0.9),
+  );
+  if (!blob) return;
+  const file = new File([blob], `${target}-${Date.now()}.jpg`, {
+    type: "image/jpeg",
+  });
+  await processImageFile(file, target);
+};
+
+onUnmounted(() => stopCamera());
+
+const handleInput = async (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (!file) return;
+
+  const targetField = target === ktmInput.value ? "ktm" : "verification";
+  target.value = "";
+  await processImageFile(file, targetField);
 };
 
 const submit = () => {
@@ -74,7 +165,6 @@ const submit = () => {
     form.post(route("verification.store"), {
       preserveScroll: true,
       onError: (errors) => {
-        // Tangkap pesan error spesifik dari validasi Laravel
         if (errors.ktm) {
           errorMessage.value = `KTM: ${errors.ktm}`;
         } else if (errors.verification) {
@@ -89,12 +179,6 @@ const submit = () => {
 </script>
 
 <template>
-  <div
-    v-if="isCompressing"
-    class="text-center text-white font-bold animate-pulse mb-4"
-  >
-    Sedang mengoptimasi gambar... Mohon tunggu.
-  </div>
   <input
     ref="ktmInput"
     type="file"
@@ -110,148 +194,355 @@ const submit = () => {
     @change="handleInput"
   />
 
-  <div
-    class="min-h-screen w-full relative overflow-x-hidden flex flex-col bg-blue-800 bg-[url('/background.webp')] bg-cover bg-center font-sans"
-  >
-    <img
-      src="/bubles.webp"
-      alt="Gelembung Air"
-      class="absolute top-[10%] left-[5%] md:left-[10%] w-28 md:w-40 lg:w-48 h-auto opacity-80 pointer-events-none mix-blend-screen animate-pulse z-0"
-    />
+  <div class="vote-royal-bg flex flex-col items-center justify-center py-10 px-4 sm:px-6">
+    <div class="max-w-lg w-full space-y-4 relative z-10">
+      <div
+        v-if="props.verification?.status === 'retake' || props.verification?.status === 'rejected'"
+        class="bg-amber-100/95 border border-amber-400 rounded-xl p-4 shadow-md text-amber-950 text-sm space-y-1"
+      >
+        <p class="font-bold">
+          {{
+            props.verification.status === "retake"
+              ? "Diminta Upload Ulang (Re-take)"
+              : "Verifikasi Sebelumnya Tidak Sah"
+          }}
+        </p>
+        <p v-if="props.verification.admin_note" class="text-xs">
+          Catatan Panitia: {{ props.verification.admin_note }}
+        </p>
+      </div>
 
-    <div
-      class="relative z-10 flex-1 flex flex-col items-center pt-20 pb-12 px-6 w-full"
-    >
-      <div class="max-w-md w-full space-y-4">
-        <div
-          v-if="errorMessage"
-          class="bg-red-500/10 border border-red-500/50 backdrop-blur-md rounded-xl p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-4"
+      <div
+        v-if="isCompressing"
+        class="text-center text-[#0c1d44] bg-[#fcf6e8]/95 border border-[#ab8240] rounded-xl py-2.5 px-4 font-bold animate-pulse shadow-md"
+      >
+        Sedang mengoptimasi gambar... Mohon tunggu.
+      </div>
+
+      <div
+        v-if="errorMessage"
+        class="bg-red-100/95 border border-red-400 rounded-xl p-4 flex items-center gap-3 shadow-md"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="size-6 text-red-700 shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="size-6 text-red-400 shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+        <p class="text-red-900 text-sm font-medium">{{ errorMessage }}</p>
+      </div>
+
+      <Card class="vote-parchment-card border-0">
+        <CardHeader class="text-center pt-7 pb-5 px-6">
+          <CardTitle
+            class="font-cinzel text-[#0c1d44] text-2xl sm:text-3xl font-extrabold tracking-wider uppercase"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-            />
-          </svg>
-          <p class="text-white text-sm font-medium">{{ errorMessage }}</p>
-        </div>
-        <Card
-          class="bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl overflow-hidden"
-        >
-          <CardHeader>
-            <CardTitle
-              class="text-white text-2xl font-extrabold tracking-widest"
-              >Proses Verifikasi</CardTitle
-            >
-            <CardDescription class="text-gray-100 text-base font-medium mt-1">
-              Pastikan foto KTM dan wajah kamu terlihat jelas yaa!
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card
-          class="bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl overflow-hidden"
-        >
-          <CardHeader>
-            <CardTitle
-              class="text-white text-2xl font-extrabold tracking-widest"
-              >Foto KTM</CardTitle
-            >
-            <CardDescription class="text-gray-100 text-base font-medium mt-1">
-              Pastikan foto KTM kamu terlihat jelas yaa!
-            </CardDescription>
-          </CardHeader>
-          <CardContent v-if="urls.ktm" class="px-6 pb-2">
-            <img :src="urls.ktm" class="w-full object-cover rounded-lg" />
-          </CardContent>
-          <CardFooter class="grid gap-2 px-6 pb-6">
+            Proses Verifikasi
+          </CardTitle>
+          <CardDescription class="text-[#3d4a66] text-sm sm:text-base font-medium mt-1">
+            Pastikan foto KTM dan wajah kamu terlihat jelas yaa!
+          </CardDescription>
+          <div class="pt-3 flex justify-center">
             <Button
-              :variant="form.ktm ? 'outline' : 'default'"
-              class="gap-1 bg-[#FF8A00] text-white hover:bg-[#e07a00] rounded-full font-bold shadow-md transition-colors duration-300 text-lg py-2.5 px-6"
-              @click="ktmInput?.click()"
+              type="button"
+              variant="outline"
+              size="sm"
+              class="vote-btn-outline rounded-lg gap-1.5 text-xs"
+              @click="showExampleModal = true"
             >
-              <BookImage class="size-4" />
-              Ambil gambar
+              <HelpCircle class="size-4" />
+              Lihat Contoh Foto yang Benar
             </Button>
-          </CardFooter>
-        </Card>
-
-        <Card
-          class="bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl overflow-hidden"
-        >
-          <CardHeader>
-            <CardTitle
-              class="text-white text-2xl font-extrabold tracking-widest"
-              >Foto KTM dan Wajah</CardTitle
-            >
-            <CardDescription class="text-gray-100 text-base font-medium mt-1">
-              Pastikan foto KTM dan wajah kamu terlihat jelas yaa!
-            </CardDescription>
-          </CardHeader>
-          <CardContent v-if="urls.verification" class="px-6 pb-2">
-            <img
-              :src="urls.verification"
-              class="w-full object-cover rounded-lg"
-            />
-          </CardContent>
-          <CardFooter class="grid gap-2 px-6 pb-6">
-            <Button
-              :variant="form.verification ? 'outline' : 'default'"
-              class="gap-1 bg-[#FF8A00] text-white hover:bg-[#e07a00] rounded-full font-bold shadow-md transition-colors duration-300 text-lg py-2.5 px-6"
-              @click="verificationInput?.click()"
-            >
-              <BookImage class="size-4" />
-              Ambil gambar
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <div
-          class="relative z-10 bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl overflow-hidden p-6"
-        >
-          <div class="flex flex-row-reverse justify-between gap-2">
-            <Button
-              v-if="!form.ktm || !form.verification"
-              disabled
-              class="bg-gray-400 text-gray-700 cursor-not-allowed rounded-full font-bold shadow-md text-lg py-2.5 px-6"
-            >
-              Proses
-            </Button>
-            <ConfirmationDialog
-              v-else
-              title="Apakah kamu yakin?"
-              description="Kedua foto akan dikirimkan untuk proses verifikasi dari panitia"
-              @accept="submit"
-            >
-              <Button
-                :disabled="form.processing || isCompressing || !form.ktm || !form.verification"
-                class="bg-[#FF8A00] text-white hover:bg-[#e07a00] rounded-full font-bold shadow-md transition-colors duration-300 text-lg py-2.5 px-6 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span v-if="form.processing">Mengunggah...</span>
-                <span v-else-if="isCompressing">Mengompres...</span>
-                <span v-else>Proses</span>
-              </Button>
-            </ConfirmationDialog>
-
-            <Link :href="route('index')">
-              <Button
-                variant="outline"
-                class="bg-white text-[#FF8A00] hover:bg-gray-100 px-8 py-2.5 rounded-full font-bold shadow-md transition-colors duration-300 text-lg"
-              >
-                Kembali
-              </Button>
-            </Link>
           </div>
+        </CardHeader>
+      </Card>
+
+      <Card class="vote-parchment-card border-0">
+        <CardHeader class="pb-3 pt-6 px-6">
+          <CardTitle
+            class="font-cinzel text-[#0c1d44] text-lg sm:text-xl font-bold tracking-wide uppercase"
+          >
+            Foto KTM
+          </CardTitle>
+          <CardDescription class="text-[#3d4a66] text-sm">
+            Pastikan foto KTM kamu terlihat jelas yaa!
+          </CardDescription>
+        </CardHeader>
+        <CardContent v-if="urls.ktm" class="px-6 pb-3">
+          <img
+            :src="urls.ktm"
+            class="w-full object-cover rounded-xl border border-[#ab8240]"
+          />
+        </CardContent>
+        <CardFooter class="grid grid-cols-2 gap-2 px-6 pb-6">
+          <Button
+            type="button"
+            class="gap-2 vote-btn-navy rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            @click="openCamera('ktm')"
+          >
+            <Camera class="size-4" />
+            Buka Kamera
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            class="gap-2 vote-btn-outline rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            @click="ktmInput?.click()"
+          >
+            <BookImage class="size-4" />
+            Upload File
+          </Button>
+        </CardFooter>
+      </Card>
+
+      <Card class="vote-parchment-card border-0">
+        <CardHeader class="pb-3 pt-6 px-6">
+          <CardTitle
+            class="font-cinzel text-[#0c1d44] text-lg sm:text-xl font-bold tracking-wide uppercase"
+          >
+            Foto KTM dan Wajah
+          </CardTitle>
+          <CardDescription class="text-[#3d4a66] text-sm">
+            Pastikan foto KTM dan wajah kamu terlihat jelas yaa!
+          </CardDescription>
+        </CardHeader>
+        <CardContent v-if="urls.verification" class="px-6 pb-3">
+          <img
+            :src="urls.verification"
+            class="w-full object-cover rounded-xl border border-[#ab8240]"
+          />
+        </CardContent>
+        <CardFooter class="grid grid-cols-2 gap-2 px-6 pb-6">
+          <Button
+            type="button"
+            class="gap-2 vote-btn-navy rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            @click="openCamera('verification')"
+          >
+            <Camera class="size-4" />
+            Buka Kamera
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            class="gap-2 vote-btn-outline rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            @click="verificationInput?.click()"
+          >
+            <BookImage class="size-4" />
+            Upload File
+          </Button>
+        </CardFooter>
+      </Card>
+
+      <div class="vote-parchment-card p-5">
+        <div class="flex flex-row-reverse justify-between gap-3">
+          <Button
+            v-if="!form.ktm || !form.verification"
+            disabled
+            class="bg-gray-400/70 text-gray-700 cursor-not-allowed rounded-xl font-cinzel font-bold text-sm py-5 px-7 uppercase"
+          >
+            Proses
+          </Button>
+          <ConfirmationDialog
+            v-else
+            title="Apakah kamu yakin?"
+            description="Kedua foto akan dikirimkan untuk proses verifikasi dari panitia"
+            @accept="submit"
+          >
+            <Button
+              :disabled="
+                form.processing || isCompressing || !form.ktm || !form.verification
+              "
+              class="vote-btn-navy rounded-xl text-sm py-5 px-7 uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span v-if="form.processing">Mengunggah...</span>
+              <span v-else-if="isCompressing">Mengompres...</span>
+              <span v-else>Proses</span>
+            </Button>
+          </ConfirmationDialog>
+
+          <Link :href="route('index')">
+            <Button
+              variant="outline"
+              class="vote-btn-outline px-7 py-5 rounded-xl text-sm uppercase"
+            >
+              Kembali
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Popup Contoh Foto -->
+  <div
+    v-if="showExampleModal"
+    class="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"
+    @click.self="showExampleModal = false"
+  >
+    <Card class="vote-parchment-card border-0 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <CardHeader class="flex-row items-center justify-between border-b border-[#9c8256]/35 pb-4">
+        <div>
+          <CardTitle class="font-cinzel text-[#0c1d44] text-lg font-bold uppercase">
+            Panduan Foto Verifikasi
+          </CardTitle>
+          <CardDescription class="text-[#3d4a66] text-xs mt-0.5">
+            Ikuti contoh berikut agar verifikasi kamu langsung disetujui panitia.
+          </CardDescription>
+        </div>
+        <Button variant="ghost" size="icon" @click="showExampleModal = false">
+          <X class="size-4 text-[#0c1d44]" />
+        </Button>
+      </CardHeader>
+      <CardContent class="p-5 space-y-4">
+        <div class="rounded-xl border border-[#ab8240]/50 bg-white/70 p-3 space-y-2">
+          <p class="text-xs font-bold text-[#0c1d44] uppercase">
+            1. Contoh Foto KTM
+          </p>
+          <div
+            v-if="props.exampleImages?.ktm"
+            class="aspect-[16/9] rounded-lg overflow-hidden border bg-white"
+          >
+            <img
+              :src="props.exampleImages.ktm"
+              alt="Contoh Foto KTM"
+              class="w-full h-full object-contain"
+            />
+          </div>
+          <div
+            v-else
+            class="aspect-[16/9] rounded-lg bg-[#0c1d44] text-white p-3 flex flex-col justify-between"
+          >
+            <div class="flex justify-between text-[10px] text-[#fce7ba] font-semibold">
+              <span>KARTU TANDA MAHASISWA</span>
+              <span>UPNVJT</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-14 rounded bg-white/15 border border-white/30 flex items-center justify-center text-[10px]">
+                FOTO
+              </div>
+              <div class="text-xs space-y-0.5">
+                <div class="font-bold">NAMA LENGKAP</div>
+                <div class="font-mono text-[11px] text-[#fce7ba]">25082010XXX</div>
+                <div class="text-[10px] text-white/75">FASILKOM</div>
+              </div>
+            </div>
+            <div class="text-[10px] text-emerald-300">
+              ✓ Pastikan Nama &amp; NPM terbaca jelas, tidak blur/silau
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-[#ab8240]/50 bg-white/70 p-3 space-y-2">
+          <p class="text-xs font-bold text-[#0c1d44] uppercase">
+            2. Contoh Foto Selfie Memegang KTM
+          </p>
+          <div
+            v-if="props.exampleImages?.selfie"
+            class="aspect-[16/9] rounded-lg overflow-hidden border bg-white"
+          >
+            <img
+              :src="props.exampleImages.selfie"
+              alt="Contoh Selfie Memegang KTM"
+              class="w-full h-full object-contain"
+            />
+          </div>
+          <div
+            v-else
+            class="aspect-[16/9] rounded-lg bg-[#0c1d44] text-white p-3 flex items-center justify-center gap-4"
+          >
+            <div class="flex flex-col items-center gap-1">
+              <div class="size-11 rounded-full bg-white/15 border border-white/40 flex items-center justify-center text-[10px]">
+                WAJAH
+              </div>
+              <div class="w-16 h-7 rounded-t-xl bg-white/15 border border-white/30" />
+            </div>
+            <div class="w-24 h-14 rounded bg-[#fce7ba] text-[#0c1d44] p-1.5 flex flex-col justify-between text-[9px] font-bold shadow">
+              <span>KTM ASLI</span>
+              <span class="font-mono text-[8px]">25082010XXX</span>
+            </div>
+          </div>
+          <ul class="text-xs text-[#3d4a66] space-y-1 list-disc list-inside">
+            <li>Wajah terlihat jelas (tanpa masker/kacamata hitam).</li>
+            <li>Pegang KTM asli di samping wajah, bukan foto dari layar HP lain.</li>
+          </ul>
+        </div>
+      </CardContent>
+      <CardFooter class="px-5 pb-5">
+        <Button
+          type="button"
+          class="w-full vote-btn-navy rounded-xl py-5 text-sm uppercase"
+          @click="showExampleModal = false"
+        >
+          Saya Paham, Mulai Foto
+        </Button>
+      </CardFooter>
+    </Card>
+  </div>
+
+  <!-- Popup Kamera Langsung -->
+  <div
+    v-if="cameraTarget"
+    class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+  >
+    <Card class="max-w-md w-full overflow-hidden">
+      <CardHeader class="flex-row items-center justify-between py-3 px-4 border-b">
+        <CardTitle class="text-base">
+          {{ cameraTarget === "ktm" ? "Kamera: Foto KTM" : "Kamera: Selfie Memegang KTM" }}
+        </CardTitle>
+        <div class="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            title="Ganti Kamera Depan/Belakang"
+            @click="switchCamera"
+          >
+            <RefreshCw class="size-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" @click="stopCamera">
+            <X class="size-4" />
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent class="p-4 space-y-3">
+        <div
+          v-if="cameraError"
+          class="rounded-lg bg-red-50 border border-red-300 p-3 text-xs text-red-800"
+        >
+          {{ cameraError }}
+        </div>
+        <div v-else class="rounded-lg overflow-hidden bg-black aspect-[4/3]">
+          <video
+            ref="videoRef"
+            autoplay
+            playsinline
+            muted
+            class="w-full h-full object-cover"
+          />
+        </div>
+      </CardContent>
+      <CardFooter class="flex justify-between gap-2 px-4 pb-4">
+        <Button type="button" variant="outline" @click="stopCamera">
+          Batal
+        </Button>
+        <Button
+          v-if="!cameraError"
+          type="button"
+          class="vote-btn-navy gap-2"
+          @click="capturePhoto"
+        >
+          <Camera class="size-4" />
+          Ambil Foto
+        </Button>
+      </CardFooter>
+    </Card>
   </div>
 </template>

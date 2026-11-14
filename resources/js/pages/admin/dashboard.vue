@@ -105,8 +105,10 @@ defineProps<{
             <Card>
                 <CardHeader class="flex-row justify-between gap-4">
                     <div class="space-y-1.5">
-                        <CardTitle>Organizations</CardTitle>
-                        <CardDescription>Dashboards</CardDescription>
+                        <CardTitle>Ringkasan Pemilihan</CardTitle>
+                        <CardDescription>
+                            Klik untuk menuju Kontrol Pemilihan (Buka/Tutup Vote &amp; Rekap)
+                        </CardDescription>
                     </div>
                     <LayoutDashboard class="size-4 text-muted-foreground" />
                 </CardHeader>
@@ -116,25 +118,32 @@ defineProps<{
                     >
                         <Link
                             v-for="organization in organizations"
-                            :href="
-                                route('organizations.dashboard', {
-                                    organization: organization.id,
-                                })
-                            "
+                            :key="organization.id"
+                            :href="route('admin.elections.index')"
                             class="block"
                         >
                             <Card class="cursor-pointer hover:outline">
                                 <CardHeader
-                                    class="flex-row justify-between gap-4"
+                                    class="flex-row items-center justify-between gap-4"
                                 >
                                     <div>
                                         <CardTitle>
                                             {{ organization.name }}
                                         </CardTitle>
                                         <CardDescription>
-                                            {{ organization.major ?? "-" }}
+                                            {{ organization.major ?? "Semua Prodi" }}
                                         </CardDescription>
                                     </div>
+                                    <span
+                                        class="text-xs font-semibold px-2 py-0.5 rounded-full border shrink-0"
+                                        :class="
+                                            organization.is_open
+                                                ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                                : 'bg-slate-100 text-slate-700 border-slate-300'
+                                        "
+                                    >
+                                        {{ organization.is_open ? "Dibuka" : "Ditutup" }}
+                                    </span>
                                 </CardHeader>
                             </Card>
                         </Link>

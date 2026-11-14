@@ -32,9 +32,10 @@ import {
   Check,
   ChevronsUpDown,
   Flame,
+  IdCard,
+  Layers,
   LayoutDashboard,
   LogOut,
-  Plus,
   Users,
   Vote,
 } from "lucide-vue-next";
@@ -48,6 +49,21 @@ const menu = {
       name: "Dashboard",
       url: route("admin.dashboard"),
       icon: LayoutDashboard,
+    },
+    {
+      name: "Verifikasi KTM",
+      url: route("admin.verifications.index"),
+      icon: IdCard,
+    },
+    {
+      name: "Kontrol Pemilihan",
+      url: route("admin.elections.index"),
+      icon: Vote,
+    },
+    {
+      name: "Calon & Tipe",
+      url: route("admin.candidates.index"),
+      icon: Layers,
     },
     {
       name: "Whitelists",
@@ -91,53 +107,13 @@ const menu = {
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in menu.items">
+            <SidebarMenuItem v-for="item in menu.items" :key="item.name">
               <SidebarMenuButton as-child>
                 <Link :href="item.url">
                   <component :is="item.icon" />
                   <span>{{ item.name }}</span>
                 </Link>
               </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel class="flex justify-between">
-            Organizations
-            <Link :href="route('admin.organizations.create')">
-              <Button size="icon" variant="ghost">
-                <Plus class="size-4 text-muted-foreground" />
-              </Button>
-            </Link>
-          </SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem v-for="organization in page.props.organizations">
-              <SidebarMenuButton as-child>
-                <Link
-                  :href="
-                    route('admin.organizations.show', {
-                      organization: organization.id,
-                    })
-                  "
-                >
-                  <Avatar class="size-6">
-                    <AvatarImage
-                      v-if="organization.logo"
-                      :src="organization.logo"
-                      :alt="organization.name"
-                    />
-                    <AvatarFallback>
-                      {{ organization.name[0] }}
-                    </AvatarFallback>
-                  </Avatar>
-                  {{ organization.name }}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem v-if="!page.props.organizations?.length">
-              <div class="px-2 text-xs text-muted-foreground">
-                No organizations yet
-              </div>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>

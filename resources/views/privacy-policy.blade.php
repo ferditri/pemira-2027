@@ -77,7 +77,7 @@
             <h2 class="font-cinzel font-bold text-xl text-[#0d1b38] mb-2">5. Hubungi Kami</h2>
             <p>
               Jika ada pertanyaan mengenai kebijakan privasi atau kendala akun pemilih, silakan hubungi tim IT Pemira melalui Instagram resmi di 
-              <a href="https://www.instagram.com/pemirafasilkom/" target="_blank" class="text-amber-800 font-bold underline hover:text-[#6e1324]">@pemirafasilkom</a>.
+              <a href="{{ config('pemira.instagram_url') }}" target="_blank" class="text-amber-800 font-bold underline hover:text-[#6e1324]">@pemirafasilkom</a>.
             </p>
           </section>
         </div>

@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { PageProps } from "@/types";
 import { Link, useForm, usePage } from "@inertiajs/vue3";
 import { Plus } from "lucide-vue-next";
@@ -65,14 +66,8 @@ const setLogo = (event: Event) => {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink
-            :href="
-              route('admin.organizations.show', {
-                organization: organization?.id,
-              })
-            "
-          >
-            {{ organization?.name }}
+          <BreadcrumbLink :href="route('admin.candidates.index')">
+            Calon &amp; Tipe
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
@@ -85,12 +80,12 @@ const setLogo = (event: Event) => {
               })
             "
           >
-            {{ group?.name }}
+            {{ organization?.name }} · {{ group?.name }}
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Add New Candidate</BreadcrumbPage>
+          <BreadcrumbPage>Tambah Calon</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -158,28 +153,21 @@ const setLogo = (event: Event) => {
           </div>
           <div class="space-y-2">
             <Label>Vision</Label>
-            <Input v-model="form.vision" />
+            <Textarea v-model="form.vision" rows="3" />
             <FormMessage v-if="form.errors.vision" variant="error">
               {{ form.errors.vision }}
             </FormMessage>
           </div>
           <div class="space-y-2">
             <Label>Mission</Label>
-            <Input v-model="form.mission" />
+            <Textarea v-model="form.mission" rows="4" />
             <FormMessage v-if="form.errors.mission" variant="error">
               {{ form.errors.mission }}
             </FormMessage>
           </div>
           <div class="flex flex-row-reverse justify-between">
             <Button type="submit">Add</Button>
-            <Link
-              :href="
-                route('admin.organizations.groups.show', {
-                  organization: organization?.id,
-                  group: group?.id,
-                })
-              "
-            >
+            <Link :href="route('admin.candidates.index')">
               <Button type="button" variant="outline"> Back </Button>
             </Link>
           </div>

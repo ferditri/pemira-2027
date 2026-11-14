@@ -25,17 +25,17 @@ class OrganizationDashboardController extends Controller
     public function open(Organization $organization, Request $request)
     {
         $organization->update(["is_open" => true]);
-        return redirect()->route("organizations.dashboard", [
-            "organization" => $organization,
-        ]);
+        return redirect()->back()
+            ->with("flash.message", "Pemilihan {$organization->name} berhasil dibuka!")
+            ->with("flash.type", "success");
     }
 
     public function close(Organization $organization)
     {
         $organization->update(["is_open" => false]);
-        return redirect()->route("organizations.dashboard", [
-            "organization" => $organization,
-        ]);
+        return redirect()->back()
+            ->with("flash.message", "Pemilihan {$organization->name} berhasil ditutup!")
+            ->with("flash.type", "success");
     }
 
     public function reset(Organization $organization, Request $request)

@@ -186,7 +186,7 @@ const recap = () => {
         <CardDescription>
           Butuh bantuan?
           <a
-            href="https://wa.me/62859183994546"
+            :href="`https://wa.me/${page.props.pemira?.support_whatsapp ?? '62859183994546'}`"
             target="_blank"
             class="text-blue-500 underline"
           >

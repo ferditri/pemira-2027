@@ -51,7 +51,7 @@ const massForm = useForm({
         </Breadcrumb>
     </Teleport>
     <div class="flex-1">
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <Card>
                     <CardHeader>

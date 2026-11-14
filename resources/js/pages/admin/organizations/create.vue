@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MAJOR_OPTIONS } from "@/lib/majors";
 
 const form = useForm({
   logo: <File | undefined>undefined,
@@ -74,7 +75,7 @@ const setLogo = (event: Event) => {
       <CardContent>
         <form
           class="space-y-4"
-          @submit.prevent="form.post(route('admin.organizations.show'))"
+          @submit.prevent="form.post(route('admin.organizations.store'))"
         >
           <div class="space-y-2 text-center">
             <Label class="block">Logo</Label>
@@ -114,17 +115,31 @@ const setLogo = (event: Event) => {
           </div>
           <div class="space-y-2">
             <Label>
-              Major
-              <span class="text-muted-foreground"> - Optional </span>
+              Prodi / Major
+              <span class="text-muted-foreground"> - Opsional </span>
             </Label>
-            <Input v-model="form.major" />
+            <select
+              v-model="form.major"
+              class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              <option
+                v-for="opt in MAJOR_OPTIONS"
+                :key="opt.value"
+                :value="opt.value"
+              >
+                {{ opt.label }}
+              </option>
+            </select>
+            <FormMessage>
+              Pilih "Semua Prodi" jika organisasi berlaku untuk seluruh fakultas.
+            </FormMessage>
             <FormMessage v-if="form.errors.major" variant="error">
               {{ form.errors.major }}
             </FormMessage>
           </div>
           <div class="flex flex-row-reverse justify-between">
             <Button type="submit">Add</Button>
-            <Link :href="route('admin.dashboard')">
+            <Link :href="route('admin.candidates.index')">
               <Button type="button" variant="outline"> Back </Button>
             </Link>
           </div>

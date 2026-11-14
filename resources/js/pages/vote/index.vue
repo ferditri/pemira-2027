@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import Flash from "@/components/Flash.vue";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,33 +24,38 @@ const user = page.props.auth.user;
 </script>
 
 <template>
-  <div
-    class="min-h-dvh flex items-center justify-center p-4 relative overflow-hidden"
-  >
-    <img src="/background.webp" class="absolute size-full object-cover -z-10" />
+  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6">
     <Flash />
-    <div class="max-w-md w-full space-y-4 relative z-10">
-      <Card
-        class="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
-      >
+    <div class="max-w-lg w-full space-y-5 relative z-10">
+      <Card class="vote-parchment-card border-0">
         <CardHeader
-          class="space-y-2 border-b border-white/20 text-center text-pretty"
+          class="space-y-2 border-b border-[#9c8256]/35 text-center text-pretty pt-8 pb-6 px-6"
         >
-          <Avatar class="size-24 mx-auto border-2 border-white/20 shadow-md">
+          <Avatar
+            class="size-24 mx-auto border-2 border-[#c8a35a] bg-[#0c1d44] shadow-md"
+          >
             <AvatarImage
               v-if="user.avatar"
               :alt="user.name"
               :src="user.avatar"
               referrerpolicy="no-referrer"
             />
-          </Avatar>
-          <div class="space-y-1.5">
-            <CardDescription class="text-gray-200 font-medium"
-              >Selamat datang!</CardDescription
+            <AvatarFallback
+              class="bg-[#0c1d44] text-[#fce7ba] font-cinzel text-xl font-bold"
             >
-            <CardTitle class="text-2xl font-extrabold text-white">{{
-              user.name
-            }}</CardTitle>
+              {{ user.name?.slice(0, 2).toUpperCase() }}
+            </AvatarFallback>
+          </Avatar>
+
+          <div class="space-y-1 pt-1">
+            <CardDescription class="text-[#3d4a66] font-medium text-sm">
+              Selamat Datang
+            </CardDescription>
+            <CardTitle
+              class="font-cinzel text-xl sm:text-2xl font-extrabold text-[#0c1d44] leading-snug"
+            >
+              {{ user.name }}
+            </CardTitle>
           </div>
         </CardHeader>
 
@@ -58,22 +63,50 @@ const user = page.props.auth.user;
           v-if="
             verification === null ||
             verification.ktm === null ||
-            verification.verification === null
+            verification.verification === null ||
+            verification.status === 'retake' ||
+            verification.status === 'rejected'
           "
-          class="p-6 space-y-4 border-b border-white/20"
+          class="p-6 sm:px-10 space-y-4 border-b border-[#9c8256]/35"
         >
           <div class="text-center space-y-1.5">
-            <CardTitle class="text-white text-xl">Upload KTM</CardTitle>
-            <CardDescription class="text-gray-200">
-              Sebelum pemilihan silakan upload KTM kamu dulu yaa!
+            <CardTitle class="font-cinzel text-[#0c1d44] text-lg font-bold">
+              {{
+                verification?.status === "retake"
+                  ? "ULANGI UPLOAD KTM (RE-TAKE)"
+                  : verification?.status === "rejected"
+                    ? "VERIFIKASI TIDAK SAH"
+                    : "UPLOAD KTM"
+              }}
+            </CardTitle>
+            <CardDescription class="text-[#3d4a66] text-sm">
+              <template v-if="verification?.status === 'retake'">
+                Panitia meminta kamu mengunggah ulang foto KTM &amp; selfie agar dapat divalidasi.
+              </template>
+              <template v-else-if="verification?.status === 'rejected'">
+                Foto verifikasi sebelumnya dinyatakan tidak sah oleh panitia. Silakan unggah ulang foto yang benar.
+              </template>
+              <template v-else>
+                Sebelum pemilihan silakan upload KTM kamu dulu yaa!
+              </template>
             </CardDescription>
+            <div
+              v-if="verification?.admin_note && (verification?.status === 'retake' || verification?.status === 'rejected')"
+              class="mt-2 rounded-lg bg-amber-100/90 border border-amber-400 px-3 py-2 text-xs text-amber-950 font-medium"
+            >
+              Catatan Panitia: {{ verification.admin_note }}
+            </div>
           </div>
-          <div class="flex justify-center space-x-4">
+          <div class="flex justify-center">
             <Link :href="route('verification')" class="w-full">
               <Button
-                class="w-full bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full py-6 text-md shadow-lg transition-transform hover:-translate-y-1"
+                class="w-full vote-btn-navy rounded-xl py-6 text-sm uppercase"
               >
-                Selanjutnya
+                {{
+                  verification?.status === "retake" || verification?.status === "rejected"
+                    ? "Upload Ulang Foto"
+                    : "Selanjutnya"
+                }}
               </Button>
             </Link>
           </div>
@@ -81,89 +114,106 @@ const user = page.props.auth.user;
 
         <CardContent
           v-else-if="organizations.length > 0"
-          class="p-6 space-y-4 border-b border-white/20"
+          class="p-6 sm:px-10 space-y-4 border-b border-[#9c8256]/35"
         >
-          <div class="text-center">
-            <CardTitle class="text-white text-xl">Organisasi</CardTitle>
-            <CardDescription class="text-gray-200">
-              Pilih organisasi yang ingin kamu buka
+          <div class="text-center space-y-1">
+            <CardTitle
+              class="font-cinzel text-[#0c1d44] text-lg font-bold tracking-wide"
+            >
+              ORGANISASI
+            </CardTitle>
+            <CardDescription class="text-[#3d4a66] text-xs sm:text-sm">
+              Pilih Organisasi Yang Ingin Kamu Buka
             </CardDescription>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+
+          <div
+            :class="[
+              organizations.length === 1
+                ? 'grid grid-cols-1 max-w-sm mx-auto'
+                : 'grid grid-cols-1 sm:grid-cols-2',
+              'gap-3.5',
+            ]"
+          >
             <Link
               v-for="organization in organizations"
+              :key="organization.id"
               :href="
                 route('vote.organization', {
                   organization: organization.id,
                 })
               "
+              class="block"
             >
-              <Card
-                class="overflow-hidden bg-white/10 border border-white/20 cursor-pointer hover:bg-white/30 transition-colors shadow-md"
+              <Button
+                class="w-full vote-btn-navy rounded-xl py-6 px-5 text-sm sm:text-base uppercase flex items-center justify-center gap-3 h-auto"
               >
-                <img :src="organization.logo" class="w-full object-cover" />
-                <CardHeader class="p-3">
-                  <CardTitle class="text-center text-white text-sm">
-                    {{ organization.name }}
-                  </CardTitle>
-                </CardHeader>
-              </Card>
+                <img
+                  v-if="organization.logo"
+                  :src="organization.logo"
+                  :alt="organization.name"
+                  class="size-7 rounded-full object-cover border border-amber-200/40 shrink-0"
+                />
+                <span>{{ organization.name }}</span>
+              </Button>
             </Link>
           </div>
         </CardContent>
 
-        <CardContent v-else class="p-6 border-b border-white/20">
+        <CardContent v-else class="p-6 border-b border-[#9c8256]/35">
           <div class="text-center space-y-1.5">
-            <CardTitle class="text-white text-xl"
-              >Belum ada pemilihan</CardTitle
-            >
-            <CardDescription class="text-gray-200">
+            <CardTitle class="font-cinzel text-[#0c1d44] text-lg font-bold">
+              BELUM ADA PEMILIHAN
+            </CardTitle>
+            <CardDescription class="text-[#3d4a66] text-sm">
               Wah kamu rajin sekali! tunggu info selanjutnya yaa! 🤩
             </CardDescription>
           </div>
         </CardContent>
 
         <CardFooter
-          class="p-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
+          class="px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3"
         >
-          <CardDescription class="text-gray-200">
-            Butuh bantuan?
+          <p class="text-xs sm:text-sm text-[#2f3d59] text-center sm:text-left">
+            Butuh Bantuan?
             <a
-              href="https://wa.me/62859183994546"
+              :href="`https://wa.me/${page.props.pemira?.support_whatsapp ?? '62859183994546'}`"
               target="_blank"
-              class="text-[#FF8A00] hover:text-[#e07a00] underline font-semibold ml-1 transition-colors"
+              rel="noopener noreferrer"
+              class="text-[#c6831c] hover:text-[#a66a10] underline font-bold ml-1 transition-colors"
             >
-              Hubungi kami disini
+              Hubungi Kami Disini
             </a>
-          </CardDescription>
-          <Link :href="route('logout')" class="w-full md:w-fit">
+          </p>
+          <Link :href="route('logout')" class="w-full sm:w-fit">
             <Button
               variant="outline"
-              class="w-full gap-2 bg-transparent text-white border-white/30 hover:bg-white/10 hover:text-white rounded-full"
+              class="w-full gap-2 vote-btn-outline rounded-full px-5 text-xs uppercase"
             >
-              <LogOut class="size-4" />
+              <LogOut class="size-3.5" />
               Keluar Akun
             </Button>
           </Link>
         </CardFooter>
       </Card>
 
-      <Card
-        v-if="user.type === 'admin'"
-        class="max-w-md mx-auto bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl"
-      >
-        <CardHeader>
-          <CardTitle class="text-white text-xl">Admin</CardTitle>
-          <CardDescription class="text-gray-200"
-            >Kamu punya akses admin</CardDescription
+      <Card v-if="user.type === 'admin'" class="vote-parchment-card border-0">
+        <CardHeader class="pb-3 pt-6 px-6 sm:px-10">
+          <CardTitle
+            class="font-cinzel text-[#0c1d44] text-lg font-bold tracking-wide"
           >
+            ADMIN
+          </CardTitle>
+          <CardDescription class="text-[#3d4a66] text-xs sm:text-sm">
+            Kamu punya akses ke Admin
+          </CardDescription>
         </CardHeader>
-        <CardFooter class="grid pb-6">
+        <CardFooter class="grid px-6 sm:px-10 pb-6">
           <Link :href="route('admin.dashboard')">
             <Button
-              class="w-full bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full py-6 text-md shadow-lg transition-transform hover:-translate-y-1"
+              class="w-full vote-btn-navy rounded-xl py-5 text-sm uppercase"
             >
-              Masuk ke Dashboard
+              Masuk Ke Dashboard
             </Button>
           </Link>
         </CardFooter>

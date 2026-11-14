@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/card";
 import { DonutChart } from "@/components/ui/chart-donut";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "@inertiajs/vue3";
+import { PageProps } from "@/types";
+import { Link, usePage } from "@inertiajs/vue3";
+
+const page = usePage<PageProps>();
+const isAdmin = page.props.auth.user.type === "admin";
 
 const props = defineProps<{
   organization: Organization;
@@ -80,7 +84,7 @@ const ballotsChart = [
             </div>
           </TabsContent>
           <TabsContent v-for="group in groups" :value="`grp${group.id}`">
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card v-for="candidate in group.candidates" class="relative">
                 <div
                   class="absolute top-4 right-4 size-12 bg-white border rounded-full text-lg font-bold shadow text-black flex items-center justify-center"
@@ -107,7 +111,7 @@ const ballotsChart = [
             </div>
           </TabsContent>
           <TabsContent value="overview">
-            <div class="grid grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <Card v-for="group in groups">
                 <CardHeader class="p-4 border-b">
                   <CardTitle>{{ group.name }}</CardTitle>
@@ -141,9 +145,11 @@ const ballotsChart = [
       <CardFooter class="justify-center">
         <Link
           :href="
-            route('organizations.dashboard', {
-              organization: props.organization.id,
-            })
+            isAdmin
+              ? route('admin.elections.index')
+              : route('organizations.dashboard', {
+                  organization: props.organization.id,
+                })
           "
         >
           <Button>Selesai</Button>

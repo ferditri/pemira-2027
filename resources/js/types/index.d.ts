@@ -25,4 +25,7 @@ export type PageProps<
   organizations?: Organization[] | null;
   organization: Organization | null;
   group: Group | null;
+  pemira?: {
+    support_whatsapp: string;
+  };
 };

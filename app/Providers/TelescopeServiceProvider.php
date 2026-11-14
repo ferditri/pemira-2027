@@ -56,9 +56,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     protected function gate(): void
     {
         Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+            return in_array(strtolower($user->email), config('pemira.admin_emails', []), true)
+                || $user->type === 'admin';
         });
     }
 }

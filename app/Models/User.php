@@ -19,7 +19,15 @@ class User extends Authenticatable
 
     public function verification()
     {
-        return $this->hasOne(UserVerification::class);
+        return $this->hasOne(UserVerification::class)
+            ->where("is_active", true)
+            ->latestOfMany();
+    }
+
+    public function verificationHistories()
+    {
+        return $this->hasMany(UserVerification::class)
+            ->orderByDesc("created_at");
     }
 
     public function ballot()

@@ -46,9 +46,9 @@ class GroupController extends Controller
         // 2. Simpan Group baru sebagai anak dari Organization
         $organization->groups()->create($validated);
 
-        // 3. Redirect kembali ke halaman Detail Organisasi
+        // 3. Redirect kembali ke halaman Calon & Tipe
         return redirect()
-            ->route('admin.organizations.show', $organization->id)
+            ->route('admin.candidates.index')
             ->with('flash.message', 'Group successfully added!')
             ->with('flash.type', 'success');
     }
@@ -88,9 +88,9 @@ class GroupController extends Controller
         // 2. Update data ke MySQL
         $group->update($validated);
 
-        // 3. Kembali ke halaman sebelumnya dengan pesan sukses
+        // 3. Kembali ke halaman Calon & Tipe dengan pesan sukses
         return redirect()
-            ->back()
+            ->route('admin.candidates.index')
             ->with('flash.message', 'Group successfully updated!')
             ->with('flash.type', 'success');
     }
@@ -104,7 +104,7 @@ class GroupController extends Controller
             $group->delete();
 
             return redirect()
-                ->route('admin.organizations.show', $organization->id)
+                ->route('admin.candidates.index')
                 ->with('flash.message', 'Group successfully deleted!')
                 ->with('flash.type', 'success');
 

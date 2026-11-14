@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Link, router, useForm } from "@inertiajs/vue3";
+import { Check, X } from "lucide-vue-next";
 import { ref } from "vue";
 
 const props = defineProps<{
@@ -22,8 +23,9 @@ const form = useForm({
 });
 
 const isSubmitting = ref(false);
+const activeCandidate = ref<(Candidate & { index: number }) | null>(null);
 
-const selected = ref(
+const selected = ref<number[]>(
   props.ballotDetails?.map((detail) => detail.candidate_id) ?? [],
 );
 
@@ -35,6 +37,14 @@ const select = (id: number) => {
   } else if (selected.value.length < props.group.min_candidates) {
     selected.value.push(id);
   }
+};
+
+const openVisionModal = (candidate: Candidate, index: number) => {
+  activeCandidate.value = { ...candidate, index };
+};
+
+const closeVisionModal = () => {
+  activeCandidate.value = null;
 };
 
 const submit = () => {
@@ -77,22 +87,27 @@ const submit = () => {
 </script>
 
 <template>
-  <div
-    class="min-h-dvh flex justify-center p-4 sm:p-6 lg:p-8 bg-blue-800 bg-[url('/background.webp')] bg-cover bg-center bg-fixed font-sans relative"
-  >
-    <div class="max-w-screen-xl w-full space-y-4 relative z-10">
-      <Card
-        class="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
-      >
-        <CardHeader class="text-center border-b border-white/20 pb-6">
-          <CardTitle class="text-3xl font-extrabold text-white">{{
-            group.name
-          }}</CardTitle>
-          <CardDescription class="text-gray-200 text-lg mt-1">
-            Pilihlah {{ group.min_candidates }} kandidat di bawah ini!
+  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div class="max-w-5xl w-full relative z-10">
+      <Card class="vote-parchment-card border-0">
+        <CardHeader class="text-center pt-8 pb-5 px-6">
+          <CardTitle
+            class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
+          >
+            {{ group.name }}
+          </CardTitle>
+          <CardDescription
+            class="font-cinzel text-[#1e2f54] text-sm sm:text-base font-bold mt-1.5 tracking-wide uppercase"
+          >
+            <template v-if="group.min_candidates === 1">
+              Pilih Satu Kandidat
+            </template>
+            <template v-else>
+              Pilihlah {{ group.min_candidates }} Kandidat di Bawah Ini
+            </template>
           </CardDescription>
 
-          <div class="flex justify-center gap-4 mt-6">
+          <div class="flex flex-wrap justify-center gap-3.5 mt-5">
             <Link
               :href="
                 route('vote.group.previous', {
@@ -102,8 +117,7 @@ const submit = () => {
               "
             >
               <Button
-                variant="ghost"
-                class="bg-white/10 backdrop-blur-lg border border-white/10 text-white rounded-full px-8 shadow-lg hover:bg-white/20 transition-all"
+                class="vote-btn-navy rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase"
               >
                 Kembali
               </Button>
@@ -112,7 +126,7 @@ const submit = () => {
             <Button
               :disabled="isSubmitting || !selected || selected.length === 0"
               @click="submit"
-              class="bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full px-8 shadow-lg disabled:bg-gray-400 disabled:opacity-70 transition-all"
+              class="vote-btn-outline rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase disabled:opacity-45 disabled:cursor-not-allowed"
             >
               <span v-if="isSubmitting">Menyimpan...</span>
               <span v-else>Selanjutnya</span>
@@ -121,86 +135,171 @@ const submit = () => {
 
           <div
             v-if="form.errors.candidate_ids"
-            class="text-red-400 text-sm font-bold mt-4 drop-shadow-md"
+            class="text-red-700 bg-red-100/80 border border-red-300 rounded-lg px-4 py-2 text-xs sm:text-sm font-bold mt-4 max-w-md mx-auto"
           >
             {{ form.errors.candidate_ids }}
           </div>
         </CardHeader>
 
-        <CardContent class="pt-6">
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card
+        <CardContent class="pt-3 pb-10 px-6 sm:px-10">
+          <div class="flex flex-wrap justify-center gap-7 sm:gap-9">
+            <div
               v-for="(candidate, number) in candidates"
-              :class="[
-                selected.includes(candidate.id)
-                  ? 'ring-4 ring-[#FF8A00] bg-white/30 scale-[1.02] shadow-xl border-transparent'
-                  : 'border-white/20 bg-white/10 hover:bg-white/20 hover:scale-[1.01] shadow-lg',
-                'transition-all duration-300 backdrop-blur-md aspect-square cursor-pointer overflow-hidden',
-              ]"
+              :key="candidate.id"
               @click="select(candidate.id)"
+              :class="[
+                'vote-candidate-arch w-full max-w-[260px] px-5 pt-7 pb-6 text-center cursor-pointer relative flex flex-col items-center justify-between',
+                selected.includes(candidate.id) ? 'is-selected' : '',
+              ]"
             >
-              <div class="size-full grid grid-cols-2 divide-x divide-white/20">
-                <div class="flex flex-col h-full">
-                  <div class="relative grow overflow-hidden">
-                    <div
-                      class="absolute bottom-2 left-2 size-8 flex items-center justify-center shadow-md bg-[#FF8A00] text-white rounded-full text-lg font-bold z-10"
-                    >
-                      {{ number + 1 }}
-                    </div>
-                    <img
-                      :src="candidate.picture"
-                      :alt="candidate.name_1"
-                      class="w-full h-full object-cover absolute inset-0"
-                    />
-                  </div>
-                  <CardHeader
-                    class="p-4 text-center border-t border-white/20 shrink-0 bg-black/20"
-                  >
-                    <CardTitle
-                      class="leading-normal text-white text-sm lg:text-base font-bold drop-shadow-md"
-                    >
-                      {{ candidate.name_1 }}
-                      <template v-if="candidate.name_2">
-                        <br />
-                        &
-                        <br />
-                        {{ candidate.name_2 }}
-                      </template>
-                    </CardTitle>
-                  </CardHeader>
-                </div>
+              <!-- Selected Checkmark Badge -->
+              <div
+                v-if="selected.includes(candidate.id)"
+                class="absolute top-3 right-3 size-7 rounded-full bg-[#d98218] text-white flex items-center justify-center shadow-md z-20"
+                title="Terpilih"
+              >
+                <Check class="size-4 stroke-[3]" />
+              </div>
 
-                <div class="overflow-y-auto">
-                  <CardHeader class="p-4 pb-2">
-                    <CardDescription
-                      class="text-white font-bold text-xs uppercase tracking-wider mb-1"
-                    >
-                      Visi
-                    </CardDescription>
-                    <pre
-                      class="font-sans text-xs text-gray-200 text-wrap whitespace-pre-wrap"
-                      >{{ candidate.vision }}</pre
-                    >
-                  </CardHeader>
-                  <CardContent
-                    class="px-4 pb-4 border-t border-white/10 mt-2 pt-2 flex-1"
-                  >
-                    <CardDescription
-                      class="text-white font-bold text-xs uppercase tracking-wider mb-1"
-                    >
-                      Misi
-                    </CardDescription>
-                    <pre
-                      class="font-sans text-xs text-gray-200 text-wrap whitespace-pre-wrap"
-                      >{{ candidate.mission }}</pre
-                    >
-                  </CardContent>
+              <!-- Circular Portrait with Top Diamond Ornament -->
+              <div class="relative mb-4">
+                <div
+                  class="absolute -top-1.5 left-1/2 -translate-x-1/2 size-3 rotate-45 bg-[#d99b38] border border-[#5c3d12] z-10"
+                ></div>
+                <div
+                  class="size-32 sm:size-36 rounded-full p-1 bg-gradient-to-b from-[#e4b35a] to-[#a9782a] shadow-md"
+                >
+                  <img
+                    :src="candidate.picture"
+                    :alt="candidate.name_1"
+                    class="w-full h-full rounded-full object-cover bg-[#0c1d44]"
+                  />
                 </div>
               </div>
-            </Card>
+
+              <!-- Candidate Label & Name -->
+              <div class="space-y-1 mb-5">
+                <p
+                  class="font-cinzel text-base sm:text-lg font-extrabold text-[#5c1624] tracking-wide uppercase"
+                >
+                  Calon {{ number + 1 }}
+                </p>
+                <h3
+                  class="font-cinzel text-xs sm:text-sm font-bold text-[#0c1d44] leading-snug uppercase"
+                >
+                  {{ candidate.name_1 }}
+                  <template v-if="candidate.name_2">
+                    <br />
+                    &amp;
+                    <br />
+                    {{ candidate.name_2 }}
+                  </template>
+                </h3>
+              </div>
+
+              <!-- Visi & Misi Modal Button -->
+              <button
+                type="button"
+                @click.stop="openVisionModal(candidate, number)"
+                class="vote-btn-maroon rounded-md px-6 py-2 text-[11px] uppercase tracking-wider"
+              >
+                Visi &amp; Misi
+              </button>
+            </div>
           </div>
         </CardContent>
       </Card>
+    </div>
+
+    <!-- Visi & Misi Royal Modal -->
+    <div
+      v-if="activeCandidate"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050c1a]/80 backdrop-blur-sm"
+      @click.self="closeVisionModal"
+    >
+      <div
+        class="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-2xl bg-[#fbf5e8] border-2 border-[#bba070] p-6 sm:p-8 shadow-2xl"
+      >
+        <button
+          type="button"
+          @click="closeVisionModal"
+          class="absolute top-4 right-4 size-9 rounded-full bg-[#6e1324] text-[#faebd7] border border-[#d4a446] flex items-center justify-center hover:bg-[#8a1a2f] transition"
+          aria-label="Tutup modal"
+        >
+          <X class="size-4" />
+        </button>
+
+        <div class="text-center mb-5">
+          <img
+            :src="activeCandidate.picture"
+            :alt="activeCandidate.name_1"
+            class="size-24 rounded-full object-cover mx-auto mb-3 border-2 border-[#ab8240] shadow-md"
+          />
+          <span
+            class="inline-block px-3.5 py-1 rounded-full text-xs font-cinzel font-bold bg-[#6e1324] text-[#fce7ba] mb-1.5"
+          >
+            CALON {{ activeCandidate.index + 1 }}
+          </span>
+          <h3
+            class="font-cinzel text-lg sm:text-xl font-extrabold text-[#0c1d44] uppercase"
+          >
+            {{ activeCandidate.name_1 }}
+            <template v-if="activeCandidate.name_2">
+              &amp; {{ activeCandidate.name_2 }}
+            </template>
+          </h3>
+        </div>
+
+        <div class="space-y-4 text-left">
+          <div class="bg-white/70 border border-[#d4ba8a] rounded-xl p-4">
+            <h4
+              class="font-cinzel text-xs font-extrabold text-[#6e1324] uppercase tracking-wider mb-1.5"
+            >
+              Visi
+            </h4>
+            <pre
+              class="font-sans text-xs sm:text-sm text-[#3c2d17] whitespace-pre-wrap leading-relaxed"
+              >{{ activeCandidate.vision }}</pre
+            >
+          </div>
+
+          <div class="bg-white/70 border border-[#d4ba8a] rounded-xl p-4">
+            <h4
+              class="font-cinzel text-xs font-extrabold text-[#6e1324] uppercase tracking-wider mb-1.5"
+            >
+              Misi
+            </h4>
+            <pre
+              class="font-sans text-xs sm:text-sm text-[#3c2d17] whitespace-pre-wrap leading-relaxed"
+              >{{ activeCandidate.mission }}</pre
+            >
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-center gap-3">
+          <Button
+            type="button"
+            @click="
+              select(activeCandidate.id);
+              closeVisionModal();
+            "
+            class="vote-btn-navy rounded-lg px-7 py-2.5 text-xs uppercase"
+          >
+            {{
+              selected.includes(activeCandidate.id)
+                ? "Batalkan Pilihan"
+                : "Pilih Kandidat Ini"
+            }}
+          </Button>
+          <Button
+            type="button"
+            @click="closeVisionModal"
+            class="vote-btn-outline rounded-lg px-6 py-2.5 text-xs uppercase"
+          >
+            Tutup
+          </Button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

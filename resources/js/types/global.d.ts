@@ -77,6 +77,14 @@ declare global {
         user_id: number;
         ktm: string | null;
         verification: string | null;
+        status?: "pending" | "approved" | "rejected" | "retake";
+        is_active?: boolean;
+        admin_note?: string | null;
+        reviewed_by?: number | null;
+        reviewed_at?: string | null;
+        created_at?: string;
+        user?: User;
+        reviewer?: User | null;
     }
 
     interface BallotDetail {

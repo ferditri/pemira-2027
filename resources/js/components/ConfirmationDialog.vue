@@ -14,6 +14,9 @@ import {
 const props = defineProps<{
     title: string;
     description: string;
+    destructive?: boolean;
+    confirmText?: string;
+    cancelText?: string;
 }>();
 </script>
 
@@ -31,10 +34,17 @@ const props = defineProps<{
             </AlertDialogHeader>
             <AlertDialogFooter>
                 <AlertDialogCancel @click="$emit('reject')">
-                    Tidak
+                    {{ props.cancelText ?? "Tidak" }}
                 </AlertDialogCancel>
-                <AlertDialogAction @click="$emit('accept')">
-                    Ya
+                <AlertDialogAction
+                    :class="
+                        props.destructive
+                            ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                            : ''
+                    "
+                    @click="$emit('accept')"
+                >
+                    {{ props.confirmText ?? "Ya" }}
                 </AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>

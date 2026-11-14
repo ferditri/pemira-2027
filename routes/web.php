@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AdminCandidateController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminElectionController;
+use App\Http\Controllers\AdminVerificationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\GroupController;
@@ -62,6 +65,21 @@ Route::middleware("auth")->group(function () {
         Route::get("/", [AdminDashboardController::class, "index"])
             ->name("dashboard");
 
+        Route::get("/verifications", [AdminVerificationController::class, "index"])
+            ->name("verifications.index");
+        Route::post("/verifications/examples", [AdminVerificationController::class, "updateExamples"])
+            ->name("verifications.examples");
+        Route::post("/verifications/{verification}/review", [AdminVerificationController::class, "review"])
+            ->name("verifications.review");
+        Route::post("/verifications/{verification}/archive", [AdminVerificationController::class, "archive"])
+            ->name("verifications.archive");
+
+        Route::get("/elections", [AdminElectionController::class, "index"])
+            ->name("elections.index");
+
+        Route::get("/candidates", [AdminCandidateController::class, "index"])
+            ->name("candidates.index");
+
         Route::resource("whitelists", WhitelistController::class);
         Route::post("/whitelists/validate", [WhitelistController::class, "validate"])
             ->name("whitelists.validate");
@@ -69,9 +87,7 @@ Route::middleware("auth")->group(function () {
             ->name("whitelists.store.single");
 
         Route::resource("users", UserController::class);
-        Route::resource("organizations", OrganizationController::class)->except([
-             'store'
-        ]); 
+        Route::resource("organizations", OrganizationController::class);
         Route::resource("organizations.groups", GroupController::class);
         Route::resource(
             "organizations.groups.candidates",

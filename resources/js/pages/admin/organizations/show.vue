@@ -12,8 +12,10 @@ import OrganizationEditCard from "@/components/OrganizationEditCard.vue";
 import {
     Breadcrumb,
     BreadcrumbItem,
+    BreadcrumbLink,
     BreadcrumbList,
     BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
     Card,
@@ -37,6 +39,12 @@ const organization = page.props.organization;
     <Teleport defer to="#header">
         <Breadcrumb>
             <BreadcrumbList>
+                <BreadcrumbItem>
+                    <BreadcrumbLink :href="route('admin.candidates.index')">
+                        Calon &amp; Tipe
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
                 <BreadcrumbItem>
                     <BreadcrumbPage>{{ organization?.name }}</BreadcrumbPage>
                 </BreadcrumbItem>

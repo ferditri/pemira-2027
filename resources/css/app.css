@@ -85,3 +85,106 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Royal Vote UI Theme (matching CONTOH-HASIL-UI-VOTE.png) */
+.font-cinzel {
+    font-family: 'Cinzel', Georgia, serif;
+}
+
+.vote-royal-bg {
+    min-height: 100dvh;
+    background-color: #f4dfba;
+    background-image: url('/assets/images/vote/bg-vote.webp');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    font-family: 'Plus Jakarta Sans', 'Geist', sans-serif;
+}
+
+.vote-parchment-card {
+    background: linear-gradient(180deg, rgba(249, 237, 211, 0.94) 0%, rgba(242, 224, 187, 0.94) 100%);
+    border: 1.5px solid rgba(183, 146, 86, 0.45);
+    border-radius: 1.5rem;
+    box-shadow:
+        0 20px 50px rgba(42, 28, 10, 0.28),
+        0 4px 16px rgba(42, 28, 10, 0.14),
+        inset 0 1px 0 rgba(255, 252, 242, 0.75);
+}
+
+.vote-btn-navy {
+    background: linear-gradient(180deg, #102554 0%, #091738 100%);
+    color: #ffffff;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(212, 168, 86, 0.35);
+    box-shadow: 0 6px 16px rgba(9, 23, 56, 0.28);
+    transition: all 0.2s ease;
+}
+
+.vote-btn-navy:hover:not(:disabled) {
+    background: linear-gradient(180deg, #163270 0%, #0d204d 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(9, 23, 56, 0.35);
+}
+
+.vote-btn-outline {
+    background: rgba(255, 249, 235, 0.65);
+    color: #0c1d44;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1.5px solid rgba(12, 29, 68, 0.55);
+    transition: all 0.2s ease;
+}
+
+.vote-btn-outline:hover:not(:disabled) {
+    background: #0c1d44;
+    color: #ffffff;
+    border-color: #0c1d44;
+    transform: translateY(-1px);
+}
+
+.vote-candidate-arch {
+    background: linear-gradient(180deg, #fcf6e8 0%, #f7ebd2 100%);
+    border: 1.5px solid #ab8240;
+    border-radius: 135px 135px 16px 16px;
+    box-shadow:
+        0 10px 25px rgba(78, 54, 21, 0.14),
+        inset 0 0 0 4px #fcf6e8,
+        inset 0 0 0 5.5px #d4ba8a;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vote-candidate-arch:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 16px 32px rgba(78, 54, 21, 0.22),
+        inset 0 0 0 4px #fcf6e8,
+        inset 0 0 0 6px #c8963e;
+}
+
+.vote-candidate-arch.is-selected {
+    border-color: #d98218;
+    box-shadow:
+        0 0 0 4px rgba(235, 160, 42, 0.55),
+        0 18px 36px rgba(78, 54, 21, 0.28),
+        inset 0 0 0 4px #fcf6e8,
+        inset 0 0 0 6px #d98218;
+    transform: translateY(-4px) scale(1.015);
+}
+
+.vote-btn-maroon {
+    background: linear-gradient(180deg, #7d192c 0%, #590f1d 100%);
+    color: #faebd7;
+    font-family: 'Cinzel', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    border: 1px solid rgba(212, 164, 70, 0.5);
+    transition: all 0.2s ease;
+}
+
+.vote-btn-maroon:hover {
+    background: linear-gradient(180deg, #941f35 0%, #6b1324 100%);
+    box-shadow: 0 4px 12px rgba(92, 22, 36, 0.35);
+}
