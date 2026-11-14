@@ -205,6 +205,7 @@ function openCandidateModal(id) {
   `;
 
   candidateModal.classList.add('active');
+  document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
 }
 
@@ -213,6 +214,7 @@ function closeCandidateModal(e) {
     return;
   }
   candidateModal.classList.remove('active');
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
 }
 
@@ -224,6 +226,7 @@ const youtubeUrl = 'https://www.youtube.com/embed/_Zpm7Rbca1A?autoplay=1';
 function openVideoModal() {
   ytPlayer.src = youtubeUrl;
   videoModal.classList.add('active');
+  document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
 }
 
@@ -233,6 +236,7 @@ function closeVideoModal(e) {
   }
   ytPlayer.src = '';
   videoModal.classList.remove('active');
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
 }
 

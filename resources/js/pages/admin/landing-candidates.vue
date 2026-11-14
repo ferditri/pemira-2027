@@ -256,31 +256,34 @@ const onDragEnd = () => {
   </Teleport>
 
   <div class="flex-1 space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Kandidat Landing Page</h1>
+      <p class="text-sm text-muted-foreground">
+        Atur daftar Calon Ketua/Wakil BEM dan Calon BLM dari menu "Calon &amp; Tipe". Geser kartu untuk mengubah urutan tampil.
+      </p>
+    </div>
+
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight">Kandidat Landing Page</h1>
-        <p class="text-sm text-muted-foreground">
-          Atur daftar Calon Ketua/Wakil BEM dan Calon BLM dari menu "Calon &amp; Tipe". Geser kartu untuk mengubah urutan tampil.
-        </p>
-      </div>
-      <div class="flex flex-wrap gap-2">
+      <div class="inline-flex w-fit rounded-lg border bg-muted/40 p-1">
         <Button
-          :variant="activeSection === 'bem' ? 'default' : 'outline'"
+          size="sm"
+          :variant="activeSection === 'bem' ? 'default' : 'ghost'"
           @click="activeSection = 'bem'"
         >
           Ketua &amp; Wakil BEM
         </Button>
         <Button
-          :variant="activeSection === 'blm' ? 'default' : 'outline'"
+          size="sm"
+          :variant="activeSection === 'blm' ? 'default' : 'ghost'"
           @click="activeSection = 'blm'"
         >
           Calon BLM
         </Button>
-        <Button class="gap-1.5" @click="openCreateModal">
-          <Plus class="size-4" />
-          Tambah dari Calon &amp; Tipe
-        </Button>
       </div>
+      <Button class="w-fit shrink-0 gap-1.5" @click="openCreateModal">
+        <Plus class="size-4" />
+        Tambah dari Calon &amp; Tipe
+      </Button>
     </div>
 
     <Card>

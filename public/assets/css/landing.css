@@ -528,9 +528,7 @@ section[id], header[id] {
 .royal-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(5, 12, 26, 0.82);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(5, 12, 26, 0.86);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -538,7 +536,7 @@ section[id], header[id] {
   padding: 20px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .royal-modal-backdrop.active {
@@ -556,10 +554,12 @@ section[id], header[id] {
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 6px #fbf5e8, inset 0 0 0 7.5px #ab8240;
   padding: 36px 30px;
-  transform: scale(0.92) translateY(20px);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.94) translateY(16px);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 

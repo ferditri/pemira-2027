@@ -169,7 +169,11 @@ const menu = {
                       v-if="user.avatar"
                       :src="user.avatar"
                       :alt="user.name"
+                      referrerpolicy="no-referrer"
                     />
+                    <AvatarFallback>
+                      {{ user.name?.[0]?.toUpperCase() ?? "A" }}
+                    </AvatarFallback>
                   </Avatar>
                   <div class="grid flex-1 text-left text-sm leading-tight">
                     <span class="truncate font-semibold">
@@ -197,7 +201,11 @@ const menu = {
                         v-if="user.avatar"
                         :src="user.avatar"
                         :alt="user.name"
+                        referrerpolicy="no-referrer"
                       />
+                      <AvatarFallback>
+                        {{ user.name?.[0]?.toUpperCase() ?? "A" }}
+                      </AvatarFallback>
                     </Avatar>
                     <div class="grid flex-1 text-left text-sm leading-tight">
                       <span class="truncate font-semibold">
