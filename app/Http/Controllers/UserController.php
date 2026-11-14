@@ -45,7 +45,7 @@ class UserController extends Controller
             "type" => "required|in:admin,committee,voter",
             "name" => "required|string|max:255",
             "email" => "required|email|max:255|unique:users,email",
-            "npm" => "required|string|size:11|unique:users,npm",
+            "npm" => "required|string|size:11|regex:/^[0-9]{11}$/|unique:users,npm",
         ]);
 
         $npm = $request->input("npm");
@@ -90,7 +90,7 @@ class UserController extends Controller
             "type" => "required|in:admin,committee,voter",
             "name" => "required|string|max:255",
            "email" => "required|email|max:255|unique:users,email," . $user->id,
-            "npm" => "required|string|max:11|unique:users,npm," . $user->id,
+            "npm" => "required|string|size:11|regex:/^[0-9]{11}$/|unique:users,npm," . $user->id,
         ]);
 
         $npm = $request->input("npm");

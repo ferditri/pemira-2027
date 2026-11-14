@@ -186,7 +186,7 @@ const menu = {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   class="cursor-pointer"
-                  @click="router.visit(route('logout'))"
+                  @click="router.post(route('logout'))"
                 >
                   <LogOut />
                   Log out

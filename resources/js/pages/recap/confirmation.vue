@@ -55,8 +55,10 @@ const props = defineProps<{
                             organization: props.organization.id,
                         })
                     "
+                    method="post"
+                    as="button"
                 >
-                    <Button variant="destructive">Mulai Ulang</Button>
+                    <Button variant="destructive" class="taste-press">Mulai Ulang</Button>
                 </Link>
             </CardFooter>
         </Card>

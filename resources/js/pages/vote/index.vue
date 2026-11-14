@@ -189,10 +189,10 @@ useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
               Hubungi Kami Disini
             </a>
           </p>
-          <Link :href="route('logout')" class="w-full sm:w-fit">
+          <Link :href="route('logout')" method="post" as="button" class="w-full sm:w-fit">
             <Button
               variant="outline"
-              class="w-full gap-2 vote-btn-outline rounded-full px-5 text-xs uppercase"
+              class="w-full gap-2 vote-btn-outline taste-press rounded-full px-5 text-xs uppercase min-h-[44px]"
             >
               <LogOut class="size-3.5" />
               Keluar Akun

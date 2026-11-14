@@ -35,7 +35,7 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             \Illuminate\Support\Facades\Log::error("Google OAuth error: " . $th->getMessage());
             return redirect(route("login"))
-                ->with("flash.message", "Gagal autentikasi Google: " . $th->getMessage())
+                ->with("flash.message", "Gagal autentikasi Google. Silakan coba lagi.")
                 ->with("flash.type", "destructive");
         }
 

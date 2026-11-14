@@ -59,7 +59,7 @@ Route::middleware("auth")->group(function () {
     Route::post("/verification", [UserVerificationController::class, "store"])
         ->name("verification.store");
 
-    Route::get("/logout", [AuthController::class, "logout"])->name("logout");
+    Route::post("/logout", [AuthController::class, "logout"])->name("logout");
 
     Route::prefix("admin")->as("admin.")->middleware(AdminMiddleware::class)->group(function () {
         Route::get("/", [AdminDashboardController::class, "index"])
@@ -110,7 +110,7 @@ Route::middleware("auth")->group(function () {
                 ->name("organizations.recap.confirmation");
             Route::get("/validate", [RecapController::class, "validate"])
                 ->name("organizations.recap.validate");
-            Route::get("/reset", [RecapController::class, "reset"])
+            Route::post("/reset", [RecapController::class, "reset"])
                 ->name("organizations.recap.reset");
             Route::post("/validate", [RecapController::class, "validateStore"])
                 ->name("organizations.recap.validate.store");

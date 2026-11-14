@@ -599,5 +599,6 @@
 
     <!-- ================= JAVASCRIPT ================= -->
     <script src="{{ asset('assets/js/landing.js') }}"></script>
+    @vite(['resources/js/landing-motion.ts'])
   </body>
 </html>

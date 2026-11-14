@@ -148,6 +148,15 @@ class VoteController extends Controller
                 ->withInput();
         }
 
+        if (count($request->candidate_ids) > $minCandidates) {
+            return redirect()
+                ->back()
+                ->withErrors([
+                    "candidate_ids" => "Maksimal pilih {$minCandidates} kandidat",
+                ])
+                ->withInput();
+        }
+
         $user = $request->user();
 
         return DB::transaction(function () use ($user, $organization, $group, $request) {
