@@ -18,6 +18,7 @@ class UserController extends Controller
         $type = $request->input("type", "admin");
         return Inertia::render("admin/users", [
             "type" => $type,
+            "superAdminEmails" => config("pemira.admin_emails", []),
             "users" => User::query()
                 ->where("type", $type)
                 ->orderBy("npm")
@@ -76,9 +77,19 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(Request $request, User $user)
     {
-        return Inertia::render("admin/users/edit", ["user" => $user]);
+        if ($user->isSuperAdmin() && !$request->user()->isSuperAdmin()) {
+            return redirect()
+                ->route("admin.users.index", ["type" => $user->type])
+                ->with("flash.message", "Akun Super Admin (.env) tidak dapat diubah oleh admin lain.")
+                ->with("flash.type", "destructive");
+        }
+
+        return Inertia::render("admin/users/edit", [
+            "user" => $user,
+            "isTargetSuperAdmin" => $user->isSuperAdmin(),
+        ]);
     }
 
     /**
@@ -86,12 +97,29 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if ($user->isSuperAdmin() && !$request->user()->isSuperAdmin()) {
+            return redirect()
+                ->back()
+                ->with("flash.message", "Akun Super Admin (.env) tidak dapat diubah oleh admin lain.")
+                ->with("flash.type", "destructive");
+        }
+
         $request->validate([
             "type" => "required|in:admin,committee,voter",
             "name" => "required|string|max:255",
-           "email" => "required|email|max:255|unique:users,email," . $user->id,
+            "email" => "required|email|max:255|unique:users,email," . $user->id,
             "npm" => "required|string|size:11|regex:/^[0-9]{11}$/|unique:users,npm," . $user->id,
         ]);
+
+        if ($user->isSuperAdmin() && $request->input("type") !== "admin") {
+            return redirect()
+                ->back()
+                ->withErrors([
+                    "type" => "Peran akun Super Admin (.env) tidak dapat diturunkan.",
+                ])
+                ->with("flash.message", "Peran akun Super Admin (.env) tidak dapat diturunkan.")
+                ->with("flash.type", "destructive");
+        }
 
         if ($user->id === $request->user()->id && $request->input("type") !== "admin") {
             return redirect()
@@ -125,6 +153,13 @@ class UserController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
+        if ($user->isSuperAdmin()) {
+            return redirect()
+                ->back()
+                ->with("flash.message", "Akun Super Admin (.env) tidak dapat dihapus dari dashboard.")
+                ->with("flash.type", "destructive");
+        }
+
         if ($user->id === $request->user()->id) {
             return redirect()
                 ->back()

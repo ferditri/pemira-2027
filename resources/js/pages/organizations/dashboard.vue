@@ -35,6 +35,17 @@ const props = defineProps<{
 const page = usePage<PageProps>();
 const user = page.props.auth.user;
 
+const formatWaktu = (dateStr?: string) => {
+  if (!dateStr) return "-";
+  const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return dateStr;
+  return `${new Intl.DateTimeFormat("id-ID", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Jakarta",
+  }).format(date)} WIB`;
+};
+
 const prev = () => {
   if (props.ballots.prev_page_url) {
     router.visit(props.ballots.prev_page_url);
@@ -77,7 +88,7 @@ const recap = () => {
       <div class="flex justify-between gap-4">
         <CardHeader>
           <CardTitle class="font-extrabold">PEMIRA</CardTitle>
-          <CardDescription> Fakultas Ilmu Komputer 2025 </CardDescription>
+          <CardDescription> Fakultas Ilmu Komputer </CardDescription>
         </CardHeader>
         <CardHeader class="flex-row gap-4">
           <ConfirmationDialog
@@ -141,14 +152,14 @@ const recap = () => {
           <TableHeader>
             <TableRow>
               <TableHead class="w-[150px] pl-6">NPM</TableHead>
-              <TableHead>Username</TableHead>
+              <TableHead>Nama</TableHead>
               <TableHead class="pr-6 text-right"> Waktu </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow v-if="!ballots.data.length">
               <TableCell class="text-center" colspan="4">
-                No data yet
+                Belum ada surat suara masuk
               </TableCell>
             </TableRow>
             <TableRow v-for="ballot in ballots.data">
@@ -159,7 +170,7 @@ const recap = () => {
                 {{ ballot.user?.name }}
               </TableCell>
               <TableCell class="pr-6 text-right">
-                {{ ballot.created_at }}
+                {{ formatWaktu(ballot.created_at) }}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -200,7 +211,9 @@ const recap = () => {
         </CardDescription>
         <Link
           :href="
-            user.type === 'admin' ? route('admin.dashboard') : route('index')
+            user.type === 'admin'
+              ? route('admin.elections.index')
+              : route('index')
           "
           class="w-full md:w-fit"
         >

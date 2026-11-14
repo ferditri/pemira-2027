@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class OrganizationDashboardController extends Controller
@@ -48,7 +49,27 @@ class OrganizationDashboardController extends Controller
                 ->with("flash.type", "destructive");
         }
 
-        DB::transaction(function () use ($organization) {
+        DB::transaction(function () use ($organization, $request) {
+            $ballotsSnapshot = $organization->ballots()
+                ->with(["user:id,npm,name,email", "details"])
+                ->get();
+
+            if ($ballotsSnapshot->isNotEmpty()) {
+                $timestamp = now()->format("Y-m-d_His");
+                $backupPayload = [
+                    "reset_at" => now()->toIso8601String(),
+                    "reset_by" => $request->user()?->only(["id", "npm", "name", "email"]),
+                    "organization" => $organization->only(["id", "name", "major"]),
+                    "ballots_count" => $ballotsSnapshot->count(),
+                    "ballots" => $ballotsSnapshot->toArray(),
+                ];
+
+                Storage::disk("local")->put(
+                    "reset-backups/org_{$organization->id}_{$timestamp}.json",
+                    json_encode($backupPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+                );
+            }
+
             $organization->ballotDetails()->delete();
             $organization->ballots()->delete();
         });
@@ -56,7 +77,7 @@ class OrganizationDashboardController extends Controller
         return redirect()->route("organizations.dashboard", [
             "organization" => $organization,
         ])
-            ->with("flash.message", "Data suara berhasil direset!")
+            ->with("flash.message", "Data suara direset! Data lama tetap diarsipkan (soft-delete + backup JSON) dan tidak ikut dihitung.")
             ->with("flash.type", "success");
     }
 }

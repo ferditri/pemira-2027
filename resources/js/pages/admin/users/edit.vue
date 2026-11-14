@@ -33,10 +33,12 @@ import { SelectItem } from "@/components/ui/select";
 
 const props = defineProps<{
     user: User;
+    isTargetSuperAdmin?: boolean;
 }>();
 
 const page = usePage<PageProps>();
 const isSelf = page.props.auth.user.id === props.user.id;
+const isRoleLocked = isSelf || !!props.isTargetSuperAdmin;
 
 const form = useForm({
     type: props.user.type,
@@ -83,12 +85,15 @@ const form = useForm({
                 >
                     <div class="space-y-2">
                         <Label>Peran</Label>
-                        <Select v-model="form.type" :disabled="isSelf">
+                        <Select v-model="form.type" :disabled="isRoleLocked">
                             <SelectItem value="admin">Admin</SelectItem>
                             <SelectItem value="committee">Panitia</SelectItem>
                             <SelectItem value="voter">Pemilih</SelectItem>
                         </Select>
-                        <p v-if="isSelf" class="text-xs text-muted-foreground">
+                        <p v-if="isTargetSuperAdmin" class="text-xs text-muted-foreground">
+                            Akun Super Admin (PEMIRA_ADMIN_EMAILS) dilindungi dan perannya tidak dapat diubah.
+                        </p>
+                        <p v-else-if="isSelf" class="text-xs text-muted-foreground">
                             Peran akun Anda sendiri tidak dapat diturunkan selama sedang login.
                         </p>
                         <FormMessage v-if="form.errors.type" variant="error">

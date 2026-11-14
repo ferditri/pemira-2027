@@ -39,4 +39,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Ballot::class);
     }
+
+    public function isSuperAdmin(): bool
+    {
+        return in_array(
+            strtolower((string) $this->email),
+            config("pemira.admin_emails", []),
+            true
+        );
+    }
 }

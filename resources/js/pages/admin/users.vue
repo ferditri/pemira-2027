@@ -27,8 +27,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { User } from "@/types";
-import { Link, router } from "@inertiajs/vue3";
+import { PageProps, User } from "@/types";
+import { Link, router, usePage } from "@inertiajs/vue3";
 import { Edit, Trash2 } from "lucide-vue-next";
 import { ref } from "vue";
 
@@ -36,11 +36,24 @@ const props = withDefaults(
     defineProps<{
         users: Pagination<User>;
         type?: string;
+        superAdminEmails?: string[];
     }>(),
     {
         type: "admin",
+        superAdminEmails: () => [],
     }
 );
+
+const page = usePage<PageProps>();
+const superAdminSet = new Set(
+    props.superAdminEmails.map((email) => email.toLowerCase())
+);
+const isSuperAdmin = (target: User) =>
+    superAdminSet.has((target.email ?? "").toLowerCase());
+const isViewerSuperAdmin = superAdminSet.has(
+    (page.props.auth.user?.email ?? "").toLowerCase()
+);
+const canEdit = (target: User) => !isSuperAdmin(target) || isViewerSuperAdmin;
 
 const type = ref(props.type);
 
@@ -139,10 +152,17 @@ const next = () => {
                                         </AvatarFallback>
                                     </Avatar>
                                     {{ user.name }}
+                                    <span
+                                        v-if="isSuperAdmin(user)"
+                                        class="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800"
+                                    >
+                                        Super Admin
+                                    </span>
                                 </div>
                             </TableCell>
                             <TableCell class="flex justify-end gap-2">
                                 <Button
+                                    v-if="canEdit(user)"
                                     size="icon"
                                     variant="outline"
                                     @click="edit(user)"
@@ -150,6 +170,7 @@ const next = () => {
                                     <Edit class="size-4" />
                                 </Button>
                                 <ConfirmationDialog
+                                    v-if="!isSuperAdmin(user)"
                                     title="Hapus Pengguna?"
                                     :description="`Akun ${user.name} (${user.npm}) akan dihapus dari sistem.`"
                                     destructive
