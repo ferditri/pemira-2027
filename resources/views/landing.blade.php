@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PEMIRA FASILKOM 2027 - Pemilihan Raya Mahasiswa</title>
+    <meta
+      name="description"
+      content="Portal resmi Pemilihan Raya Mahasiswa (PEMIRA) Fakultas Ilmu Komputer UPN Veteran Jawa Timur. Gunakan hak suaramu secara langsung, bebas, rahasia, jujur, dan adil."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PEMIRA FASILKOM 2027 - Pemilihan Raya Mahasiswa" />
+    <meta
+      property="og:description"
+      content="Portal resmi Pemilihan Raya Mahasiswa (PEMIRA) Fakultas Ilmu Komputer UPN Veteran Jawa Timur. Cek kandidat dan gunakan hak suaramu."
+    />
+    <meta property="og:image" content="{{ asset('assets/images/nav_logo_transparent.png') }}" />
     <link rel="icon" type="image/png" href="{{ asset('assets/images/nav_logo_transparent.png') }}" />
 
     <!-- Google Fonts (Cinzel, MedievalSharp, Montserrat) -->
