@@ -256,7 +256,7 @@ section[id], header[id] {
 .section-parchment {
   position: relative;
   background-color: #f6e3be;
-  background-image: url('../images/me/bg-calonbem-calonblm.webp');
+  background-image: url('../images/me/bg-calonbem-calonblm.webp?v=2');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center top;
@@ -378,7 +378,7 @@ section[id], header[id] {
   background-color: #0a1835;
   background-image:
     linear-gradient(180deg, rgba(8, 19, 44, 0.55) 0%, rgba(10, 24, 53, 0.38) 50%, rgba(10, 24, 53, 0.72) 100%),
-    url('../images/me/bg-tutorial-voting.webp');
+    url('../images/me/bg-tutorial-voting.webp?v=2');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

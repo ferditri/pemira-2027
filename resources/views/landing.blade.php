@@ -99,8 +99,10 @@
       <div class="hero-layered-container">
         <!-- Pristine 2K Background: Knights, Moon, Castle, Marble Floor (No baked navbar/text) -->
         <img 
-          src="{{ asset('assets/images/me/bg-hero-section.webp') }}" 
+          src="{{ asset('assets/images/me/bg-hero-section.webp') }}?v=2" 
           alt="Kastil PEMIRA FASILKOM 2027" 
+          decoding="async"
+          fetchpriority="high"
           class="hero-bg-img"
         />
 
@@ -416,8 +418,10 @@
       <!-- Desktop Timeline Display (Clean 2K Background + Sharp Vector Typography & Cards) -->
       <div class="hidden md:block timeline-layered-container">
         <img 
-          src="{{ asset('assets/images/me/bg-jadwalpelaksanaan.webp') }}" 
+          src="{{ asset('assets/images/me/bg-jadwalpelaksanaan.webp') }}?v=2" 
           alt="Latar Jadwal Pelaksanaan" 
+          loading="lazy"
+          decoding="async"
           class="timeline-bg-img"
         />
 
