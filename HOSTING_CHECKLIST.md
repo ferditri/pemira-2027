@@ -157,7 +157,37 @@ Jadwalkan di `crontab -e` (misal jalan otomatis **setiap 1 jam** selama hari-H):
 ```cron
 0 * * * * /bin/bash /home/user/backup_pemira.sh
 ```
-*(Tips tambahan: H-0 setelah pemilihan ditutup, langsung download salinan `db_*.sql.gz` dan `storage_*.tar.gz` ke laptop/Google Drive panitia.)*
+
+### Opsional: Kirim Otomatis ke Bot Telegram (Off-Site Backup)
+Agar file backup langsung terkirim ke Telegram (keluar dari server), buat bot di `@BotFather` (`BOT_TOKEN`) dan ambil `CHAT_ID` tujuan (chat pribadi / grup privat panitia inti, **jangan grup terbuka** karena berisi data & foto KTM). Tambahkan di `backup_pemira.sh` sebelum baris `find`:
+
+```bash
+BOT_TOKEN="ISI_TOKEN_BOT_KAMU"
+CHAT_ID="ISI_CHAT_ID_KAMU"
+
+# Kirim DB
+curl -s -F document=@"$BACKUP_DIR/db_$DATE.sql.gz" \
+     -F caption="Backup DB PEMIRA ($DATE)" \
+     "https://api.telegram.org/bot$BOT_TOKEN/sendDocument?chat_id=$CHAT_ID" > /dev/null
+
+# Kirim Storage (Telegram limit 50 MB: jika lebih, otomatis di-split per 45 MB)
+if [ "$(stat -c%s "$BACKUP_DIR/storage_$DATE.tar.gz")" -le 51380224 ]; then
+  curl -s -F document=@"$BACKUP_DIR/storage_$DATE.tar.gz" \
+       -F caption="Backup Storage ($DATE)" \
+       "https://api.telegram.org/bot$BOT_TOKEN/sendDocument?chat_id=$CHAT_ID" > /dev/null
+else
+  split -b 45M "$BACKUP_DIR/storage_$DATE.tar.gz" "$BACKUP_DIR/storage_$DATE.tar.gz.part_"
+  for part in "$BACKUP_DIR/storage_$DATE.tar.gz.part_"*; do
+    curl -s -F document=@"$part" \
+         -F caption="Backup Storage ($DATE) - $(basename "$part")" \
+         "https://api.telegram.org/bot$BOT_TOKEN/sendDocument?chat_id=$CHAT_ID" > /dev/null
+  done
+  rm -f "$BACKUP_DIR/storage_$DATE.tar.gz.part_"*
+fi
+```
+*(Untuk menggabungkan file `.part_*` jika terpecah: `cat storage_*.tar.gz.part_* > storage.tar.gz`.)*
+
+*(Tips tambahan: H-0 setelah pemilihan ditutup, pastikan salinan `db_*.sql.gz` dan `storage_*.tar.gz` sudah aman tersimpan di laptop/Google Drive panitia.)*
 
 ---
 
