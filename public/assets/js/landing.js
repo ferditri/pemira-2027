@@ -95,15 +95,20 @@ const candidateData = {
   }
 };
 
-// 1. Navbar Scroll Effect
+// 1. Navbar Scroll Effect (passive + guarded to avoid scroll jank)
 const navbar = document.getElementById('main-navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 40) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
-});
+if (navbar) {
+  let isScrolled = false;
+  const syncNavbar = () => {
+    const nextScrolled = window.scrollY > 40;
+    if (nextScrolled !== isScrolled) {
+      isScrolled = nextScrolled;
+      navbar.classList.toggle('scrolled', isScrolled);
+    }
+  };
+  syncNavbar();
+  window.addEventListener('scroll', syncNavbar, { passive: true });
+}
 
 // 2. Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');

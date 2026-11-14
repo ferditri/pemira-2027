@@ -215,6 +215,8 @@
             <img 
               src="{{ asset('assets/images/card1_ketua.webp') }}" 
               alt="Calon Ketua" 
+              loading="lazy"
+              decoding="async"
               class="w-full h-auto drop-shadow-xl"
             />
             <button 
@@ -231,6 +233,8 @@
             <img 
               src="{{ asset('assets/images/card2_wakil.webp') }}" 
               alt="Calon Wakil" 
+              loading="lazy"
+              decoding="async"
               class="w-full h-auto drop-shadow-xl"
             />
             <button 
@@ -283,7 +287,7 @@
           <!-- BLM 1 -->
           <div class="blm-card">
             <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm1.webp') }}" alt="Mohammad Bintang Adrian" class="w-full h-full object-cover" />
+              <img src="{{ asset('assets/images/blm1.webp') }}" alt="Mohammad Bintang Adrian" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </div>
             <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 1</h3>
             <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Mohammad Bintang Adrian</p>
@@ -295,7 +299,7 @@
           <!-- BLM 2 -->
           <div class="blm-card">
             <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm2.webp') }}" alt="M. Naufal Baihaqi" class="w-full h-full object-cover" />
+              <img src="{{ asset('assets/images/blm2.webp') }}" alt="M. Naufal Baihaqi" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </div>
             <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 2</h3>
             <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">M. Naufal Baihaqi</p>
@@ -307,7 +311,7 @@
           <!-- BLM 3 -->
           <div class="blm-card">
             <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm3.webp') }}" alt="Ananda Putri" class="w-full h-full object-cover" />
+              <img src="{{ asset('assets/images/blm3.webp') }}" alt="Ananda Putri" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </div>
             <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 3</h3>
             <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Ananda Putri</p>
@@ -319,7 +323,7 @@
           <!-- BLM 4 -->
           <div class="blm-card sm:col-span-1 lg:col-start-1 lg:col-span-1">
             <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm4.webp') }}" alt="Bunga Citra Amelya" class="w-full h-full object-cover" />
+              <img src="{{ asset('assets/images/blm4.webp') }}" alt="Bunga Citra Amelya" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </div>
             <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 4</h3>
             <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Bunga Citra Amelya</p>
@@ -331,7 +335,7 @@
           <!-- BLM 5 -->
           <div class="blm-card sm:col-span-1 lg:col-span-1">
             <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md">
-              <img src="{{ asset('assets/images/blm5.webp') }}" alt="Muhammad Ammar" class="w-full h-full object-cover" />
+              <img src="{{ asset('assets/images/blm5.webp') }}" alt="Muhammad Ammar" loading="lazy" decoding="async" class="w-full h-full object-cover" />
             </div>
             <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1">NO. URUT 5</h3>
             <p class="font-cinzel font-semibold text-slate-800 text-sm mb-4">Muhammad Ammar</p>
@@ -369,6 +373,8 @@
               <img 
                 src="https://img.youtube.com/vi/{{ config('pemira.tutorial_video_id') }}/maxresdefault.jpg" 
                 alt="Thumbnail Tutorial Voting" 
+                loading="lazy"
+                decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
               <!-- Subtle Dark Overlay -->
@@ -379,6 +385,8 @@
             <img 
               src="{{ asset('assets/images/me/kotak-tutorialvoting.webp') }}" 
               alt="Bingkai Emas Ornamen" 
+              loading="lazy"
+              decoding="async"
               class="absolute inset-0 w-full h-full object-fill pointer-events-none z-10"
             />
 
