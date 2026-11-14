@@ -6,24 +6,45 @@ const reducedMotion =
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+function animateWithoutCssConflict(
+  elements: HTMLElement[],
+  keyframes: Record<string, unknown>,
+  options: Record<string, unknown>
+) {
+  if (!elements.length) return;
+  for (const el of elements) {
+    el.style.transition = "none";
+  }
+  const controls = animate(elements, keyframes as any, options as any);
+  controls.finished
+    .then(() => {
+      for (const el of elements) {
+        el.style.transition = "";
+      }
+    })
+    .catch(() => {
+      for (const el of elements) {
+        el.style.transition = "";
+      }
+    });
+}
+
 function initLandingMotion() {
   if (reducedMotion) return;
 
-  // 1. Hero entrance (runs once): Fade-in + Slide-up + Stagger
+  // 1. Hero entrance (runs once): animate wrapper divs so .btn-gold CSS hover never double-bounces
   const heroTargets = Array.from(
     document.querySelectorAll<HTMLElement>(
-      ".hero-layered-overlay .hero-title-graphic, .hero-layered-overlay .hero-tagline-text, .hero-layered-overlay .btn-gold"
+      ".hero-layered-overlay .hero-title-graphic, .hero-layered-overlay .hero-tagline-text, .hero-layered-overlay > div"
     )
   );
-  if (heroTargets.length) {
-    animate(
-      heroTargets,
-      { opacity: [0, 1], y: [22, 0] },
-      { duration: 0.6, delay: stagger(0.09), ease: EASE_EXPO }
-    );
-  }
+  animateWithoutCssConflict(
+    heroTargets,
+    { opacity: [0, 1], y: [20, 0] },
+    { duration: 0.58, delay: stagger(0.09), ease: EASE_EXPO }
+  );
 
-  // 2. Section stagger reveal (runs strictly once per container, no nested duplicate selectors)
+  // 2. Section stagger reveal (runs strictly once per container)
   const revealOnce = (
     containerSelector: string,
     itemSelector: string,
@@ -44,9 +65,7 @@ function initLandingMotion() {
           container.querySelectorAll<HTMLElement>(itemSelector)
         ).filter((el) => el.offsetParent !== null);
 
-        if (!items.length) return;
-
-        animate(
+        animateWithoutCssConflict(
           items,
           bounce
             ? { opacity: [0, 1], y: [y, 0], scale: [0.96, 1] }
