@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { router, useForm } from "@inertiajs/vue3";
 import {
   ArrowDown,
@@ -34,7 +33,6 @@ import {
   GripVertical,
   Plus,
   Trash2,
-  Upload,
   X,
 } from "lucide-vue-next";
 import { computed, ref } from "vue";
@@ -70,23 +68,14 @@ const props = defineProps<{
 const activeSection = ref<"bem" | "blm">("bem");
 const modalOpen = ref(false);
 const editingId = ref<number | null>(null);
-const selectedSourceId = ref<string>("");
-const pictureInput = ref<HTMLInputElement | null>(null);
-const previewUrl = ref<string | null>(null);
 const draggingId = ref<number | null>(null);
 const dragOverId = ref<number | null>(null);
 
 const form = useForm({
-  _method: "post" as "post" | "put",
   section: "bem" as "bem" | "blm",
-  candidate_id: null as number | null,
+  candidate_id: "" as string,
   role_label: "",
-  name: "",
-  vision: "",
-  mission: "",
   sort_order: 1,
-  photo_url: "" as string | null,
-  picture: undefined as File | undefined,
 });
 
 const sectionItems = computed(() =>
@@ -102,11 +91,9 @@ const defaultRoleLabel = (section: "bem" | "blm", count: number) => {
 
 const openCreateModal = () => {
   editingId.value = null;
-  selectedSourceId.value = "";
-  previewUrl.value = null;
   form.reset();
-  form._method = "post";
   form.section = activeSection.value;
+  form.candidate_id = "";
   form.sort_order = sectionItems.value.length + 1;
   form.role_label = defaultRoleLabel(activeSection.value, sectionItems.value.length);
   form.clearErrors();
@@ -116,18 +103,10 @@ const openCreateModal = () => {
 const openEditModal = (item: LandingCandidateItem) => {
   editingId.value = item.id;
   activeSection.value = item.section;
-  selectedSourceId.value = item.candidate_id ? String(item.candidate_id) : "";
-  form._method = "put";
   form.section = item.section;
-  form.candidate_id = item.candidate_id;
+  form.candidate_id = item.candidate_id ? String(item.candidate_id) : "";
   form.role_label = item.role_label;
-  form.name = item.name;
-  form.vision = item.vision;
-  form.mission = (item.mission ?? []).join("\n");
   form.sort_order = item.sort_order;
-  form.photo_url = item.photo ?? "";
-  form.picture = undefined;
-  previewUrl.value = item.photo;
   form.clearErrors();
   modalOpen.value = true;
 };
@@ -137,52 +116,14 @@ const closeModal = () => {
   editingId.value = null;
 };
 
-const applySourceCandidate = () => {
-  const id = Number(selectedSourceId.value);
-  const found = props.sourceCandidates.find((c) => c.id === id);
-  if (!found) {
-    form.candidate_id = null;
-    return;
-  }
-
-  form.candidate_id = found.id;
-  form.name = found.name_2 ? `${found.name_1} & ${found.name_2}` : found.name_1;
-  form.vision = found.vision;
-  form.mission = found.mission;
-  form.photo_url = found.picture ?? "";
-  form.picture = undefined;
-  previewUrl.value = found.picture ?? null;
-
-  if (!form.role_label.trim()) {
-    form.role_label = defaultRoleLabel(form.section, sectionItems.value.length);
-  }
-};
-
-const onFileChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (!file) return;
-
-  form.picture = file;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    previewUrl.value = (e.target?.result as string) || null;
-  };
-  reader.readAsDataURL(file);
-};
-
 const submit = () => {
   if (editingId.value) {
-    form._method = "put";
-    form.post(route("admin.landing-candidates.update", editingId.value), {
-      forceFormData: true,
+    form.put(route("admin.landing-candidates.update", editingId.value), {
       preserveScroll: true,
       onSuccess: () => closeModal(),
     });
   } else {
-    form._method = "post";
     form.post(route("admin.landing-candidates.store"), {
-      forceFormData: true,
       preserveScroll: true,
       onSuccess: () => closeModal(),
     });
@@ -392,21 +333,21 @@ const onDragEnd = () => {
     </Card>
   </div>
 
-  <!-- Modal Tambah / Edit dari Calon & Tipe -->
+  <!-- Modal Simpel: Pilih Calon dari Calon & Tipe -->
   <Teleport to="body">
     <div
       v-if="modalOpen"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       @click.self="closeModal"
     >
-      <Card class="max-h-[90vh] w-full max-w-lg overflow-y-auto shadow-xl">
+      <Card class="w-full max-w-md shadow-xl">
         <CardHeader class="flex flex-row items-start justify-between gap-4">
           <div>
             <CardTitle>
               {{ editingId ? "Ubah Kandidat Landing" : "Tambah dari Calon & Tipe" }}
             </CardTitle>
             <CardDescription>
-              Pilih kandidat dari menu "Calon &amp; Tipe" untuk ditampilkan di landing page.
+              Pilih kandidat dari menu "Calon &amp; Tipe". Foto, nama, visi, dan misi otomatis diambil dari sana.
             </CardDescription>
           </div>
           <Button size="icon" variant="ghost" @click="closeModal">
@@ -418,10 +359,9 @@ const onDragEnd = () => {
             <div class="space-y-2">
               <Label>Pilih Calon dari Calon &amp; Tipe</Label>
               <select
-                v-model="selectedSourceId"
+                v-model="form.candidate_id"
                 required
                 class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                @change="applySourceCandidate"
               >
                 <option value="">-- Pilih calon dari Calon &amp; Tipe --</option>
                 <option
@@ -452,7 +392,7 @@ const onDragEnd = () => {
                 <Label>Label / Jabatan / No. Urut</Label>
                 <Input
                   v-model="form.role_label"
-                  placeholder="Misal: CALON KETUA BEM / NO. URUT 1"
+                  placeholder="CALON KETUA BEM / NO. URUT 1"
                 />
                 <FormMessage v-if="form.errors.role_label" variant="error">
                   {{ form.errors.role_label }}
@@ -460,67 +400,12 @@ const onDragEnd = () => {
               </div>
             </div>
 
-            <div class="space-y-2">
-              <Label>Foto Kandidat</Label>
-              <input
-                ref="pictureInput"
-                type="file"
-                class="hidden"
-                accept="image/jpeg, image/png, image/webp"
-                @change="onFileChange"
-              />
-              <div class="flex items-center gap-4">
-                <Avatar class="size-16 border">
-                  <AvatarImage v-if="previewUrl" :src="previewUrl" />
-                  <AvatarFallback>
-                    <Plus class="size-5 text-muted-foreground" />
-                  </AvatarFallback>
-                </Avatar>
-                <Button
-                  type="button"
-                  variant="outline"
-                  class="gap-2"
-                  @click="pictureInput?.click()"
-                >
-                  <Upload class="size-4" />
-                  Ganti Foto
-                </Button>
-              </div>
-              <FormMessage v-if="form.errors.picture" variant="error">
-                {{ form.errors.picture }}
-              </FormMessage>
-            </div>
-
-            <div class="space-y-2">
-              <Label>Nama Kandidat</Label>
-              <Input v-model="form.name" placeholder="Nama lengkap kandidat" />
-              <FormMessage v-if="form.errors.name" variant="error">
-                {{ form.errors.name }}
-              </FormMessage>
-            </div>
-
-            <div class="space-y-2">
-              <Label>Visi</Label>
-              <Textarea v-model="form.vision" rows="3" />
-              <FormMessage v-if="form.errors.vision" variant="error">
-                {{ form.errors.vision }}
-              </FormMessage>
-            </div>
-
-            <div class="space-y-2">
-              <Label>Misi (1 poin per baris)</Label>
-              <Textarea v-model="form.mission" rows="4" />
-              <FormMessage v-if="form.errors.mission" variant="error">
-                {{ form.errors.mission }}
-              </FormMessage>
-            </div>
-
             <div class="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" @click="closeModal">
                 Batal
               </Button>
               <Button type="submit" :disabled="form.processing">
-                {{ editingId ? "Simpan Perubahan" : "Tambahkan" }}
+                {{ editingId ? "Simpan" : "Tambahkan" }}
               </Button>
             </div>
           </form>

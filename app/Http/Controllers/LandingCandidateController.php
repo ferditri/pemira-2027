@@ -37,34 +37,24 @@ class LandingCandidateController extends Controller
             'section' => 'required|in:bem,blm',
             'candidate_id' => 'required|exists:candidates,id',
             'role_label' => 'required|string|max:120',
-            'name' => 'required|string|max:255',
-            'vision' => 'required|string',
-            'mission' => 'required|string',
             'sort_order' => 'nullable|integer|min:0|max:999',
-            'photo_url' => 'nullable|string|max:500',
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'candidate_id.required' => 'Silakan pilih calon dari menu Calon & Tipe terlebih dahulu.',
         ]);
 
-        $photo = $validated['photo_url'] ?? null;
-        if ($request->hasFile('picture')) {
-            $path = $request->file('picture')->store('landing-candidates', 'public');
-            $photo = '/storage/' . $path;
-        }
-
+        $candidate = Candidate::findOrFail($validated['candidate_id']);
         $nextOrder = $validated['sort_order'] ?? (
             (int) LandingCandidate::query()->where('section', $validated['section'])->max('sort_order') + 1
         );
 
         LandingCandidate::create([
             'section' => $validated['section'],
-            'candidate_id' => $validated['candidate_id'] ?? null,
+            'candidate_id' => $candidate->id,
             'role_label' => $validated['role_label'],
-            'name' => $validated['name'],
-            'photo' => $photo,
-            'vision' => $validated['vision'],
-            'mission' => $this->parseMissionLines($validated['mission']),
+            'name' => $candidate->name_2 ? "{$candidate->name_1} & {$candidate->name_2}" : $candidate->name_1,
+            'photo' => $candidate->picture,
+            'vision' => $candidate->vision,
+            'mission' => $this->parseMissionLines((string) $candidate->mission),
             'sort_order' => $nextOrder,
         ]);
 
@@ -80,34 +70,21 @@ class LandingCandidateController extends Controller
             'section' => 'required|in:bem,blm',
             'candidate_id' => 'required|exists:candidates,id',
             'role_label' => 'required|string|max:120',
-            'name' => 'required|string|max:255',
-            'vision' => 'required|string',
-            'mission' => 'required|string',
             'sort_order' => 'nullable|integer|min:0|max:999',
-            'photo_url' => 'nullable|string|max:500',
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
             'candidate_id.required' => 'Silakan pilih calon dari menu Calon & Tipe terlebih dahulu.',
         ]);
 
-        $photo = array_key_exists('photo_url', $validated) && $validated['photo_url'] !== null
-            ? $validated['photo_url']
-            : $landingCandidate->photo;
-
-        if ($request->hasFile('picture')) {
-            $this->deleteManagedPhoto($landingCandidate->photo);
-            $path = $request->file('picture')->store('landing-candidates', 'public');
-            $photo = '/storage/' . $path;
-        }
+        $candidate = Candidate::findOrFail($validated['candidate_id']);
 
         $landingCandidate->update([
             'section' => $validated['section'],
-            'candidate_id' => $validated['candidate_id'] ?? null,
+            'candidate_id' => $candidate->id,
             'role_label' => $validated['role_label'],
-            'name' => $validated['name'],
-            'photo' => $photo,
-            'vision' => $validated['vision'],
-            'mission' => $this->parseMissionLines($validated['mission']),
+            'name' => $candidate->name_2 ? "{$candidate->name_1} & {$candidate->name_2}" : $candidate->name_1,
+            'photo' => $candidate->picture,
+            'vision' => $candidate->vision,
+            'mission' => $this->parseMissionLines((string) $candidate->mission),
             'sort_order' => $validated['sort_order'] ?? $landingCandidate->sort_order,
         ]);
 
