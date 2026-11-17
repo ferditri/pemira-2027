@@ -22,6 +22,7 @@ class AuthController extends Controller
         try {
             $user = Socialite::driver("google")->user();
         } catch (\Throwable $th) {
+            Log::error($th->getMessage());
             return redirect(route("login"));
         }
 

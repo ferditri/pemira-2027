@@ -1,12 +1,4 @@
 <script lang="ts" setup>
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Link, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
@@ -24,6 +16,14 @@ const form = useForm({
 const selected = ref(
   props.ballotDetails?.map((detail) => detail.candidate_id) ?? [],
 );
+
+const viewing = ref<Candidate | null>(null);
+const open = ref(false);
+
+const openDetail = (candidate: Candidate) => {
+  viewing.value = candidate;
+  open.value = true;
+};
 
 const select = (id: number) => {
   if (selected.value.includes(id)) {
@@ -63,130 +63,153 @@ const submit = () => {
 };
 </script>
 
+<style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700;900&family=Libre+Baskerville&display=swap");
+
+.font-title {
+  font-family: "Cinzel Decorative", serif;
+}
+.font-label {
+  font-family: "Cinzel", serif;
+}
+.font-body {
+  font-family: "Libre Baskerville", serif;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-active .modal-box,
+.modal-leave-active .modal-box {
+  transition: transform 0.3s ease;
+}
+.modal-enter-from .modal-box,
+.modal-leave-to .modal-box {
+  transform: scale(0.92) translateY(1rem);
+}
+</style>
+
 <template>
   <div
-    class="min-h-dvh flex justify-center p-4 sm:p-6 lg:p-8 bg-blue-800 bg-[url('/background.webp')] bg-cover bg-center bg-fixed font-sans relative"
+    class="min-h-dvh flex justify-center p-4 sm:p-6 lg:p-8 bg-[#F8E4BB] bg-[url('/background.webp')] bg-cover bg-center bg-fixed relative"
   >
-    <div class="max-w-screen-xl w-full space-y-4 relative z-10">
-      <Card
-        class="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
+    <div class="w-full max-w-5xl relative z-10">
+      <div
+        class="rounded-[2.5rem] bg-[#F8E4BB] px-6 py-10 text-center shadow-[0_20px_50px_rgba(15,27,77,0.25)]"
       >
-        <CardHeader class="text-center border-b border-white/20 pb-6">
-          <CardTitle class="text-3xl font-extrabold text-white">{{
-            group.name
-          }}</CardTitle>
-          <CardDescription class="text-gray-200 text-lg mt-1">
-            Pilihlah {{ group.min_candidates }} kandidat di bawah ini!
-          </CardDescription>
+        <h1 class="font-title text-3xl sm:text-5xl font-black text-[#0F1B4D]">
+          {{ group.name }}
+        </h1>
+        <p class="font-label mt-1 text-base font-bold text-[#151333]">
+          PILIH {{ group.min_candidates }} KANDIDAT
+        </p>
 
-          <div class="flex justify-center gap-4 mt-6">
-            <Link
-              :href="
-                route('vote.group.previous', {
-                  organization: organization.id,
-                  group: group.id,
-                })
-              "
-            >
-              <Button
-                variant="ghost"
-                class="bg-white/10 backdrop-blur-lg border border-white/10 text-white rounded-full px-8 shadow-lg hover:bg-white/20 transition-all"
-              >
-                Kembali
-              </Button>
-            </Link>
-
-            <Button
-              :disabled="!selected"
-              @click="submit"
-              class="bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full px-8 shadow-lg disabled:bg-gray-400 disabled:opacity-70"
-            >
-              Selanjutnya
-            </Button>
-          </div>
-
-          <div
-            v-if="form.errors.candidate_ids"
-            class="text-red-400 text-sm font-bold mt-4 drop-shadow-md"
+        <div class="mt-5 flex justify-center gap-3">
+          <Link
+            :href="
+              route('vote.group.previous', {
+                organization: organization.id,
+                group: group.id,
+              })
+            "
+            class="font-label rounded-md bg-[#0F1B4D] px-8 py-2 text-sm font-bold text-[#F8E4BB] hover:brightness-125"
           >
-            {{ form.errors.candidate_ids }}
-          </div>
-        </CardHeader>
+            KEMBALI
+          </Link>
+          <button
+            type="button"
+            @click="submit"
+            class="font-label rounded-md border border-[#A86B1F] bg-[#FBF3DE] px-8 py-2 text-sm font-bold text-[#0F1B4D] hover:brightness-95"
+          >
+            SELANJUTNYA
+          </button>
+        </div>
 
-        <CardContent class="pt-6">
-          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card
-              v-for="(candidate, number) in candidates"
-              :class="[
-                selected.includes(candidate.id)
-                  ? 'ring-4 ring-[#FF8A00] bg-white/30 scale-[1.02] shadow-xl border-transparent'
-                  : 'border-white/20 bg-white/10 hover:bg-white/20 hover:scale-[1.01] shadow-lg',
-                'transition-all duration-300 backdrop-blur-md aspect-square cursor-pointer overflow-hidden',
-              ]"
-              @click="select(candidate.id)"
+        <p
+          v-if="form.errors.candidate_ids"
+          class="font-body mt-3 text-sm font-bold text-red-700"
+        >
+          {{ form.errors.candidate_ids }}
+        </p>
+
+        <div class="mt-10 flex flex-wrap justify-center gap-10">
+          <div
+            v-for="(candidate, number) in candidates"
+            :key="candidate.id"
+            @click="select(candidate.id)"
+            :class="[
+              selected.includes(candidate.id)
+                ? 'ring-4 ring-[#FF7F0F] scale-[1.03]'
+                : 'hover:scale-[1.02]',
+              'w-80 cursor-pointer rounded-t-[10rem] rounded-b-3xl border-4 border-[#A86B1F] bg-[#FBF3DE] px-6 pb-6 pt-12 transition-all duration-300 shadow-xl',
+            ]"
+          >
+            <img
+              :src="candidate.picture"
+              :alt="candidate.name_1"
+              class="mx-auto size-56 rounded-full border-4 border-[#A86B1F] object-cover object-top"
+            />
+            <p class="font-title mt-5 text-2xl font-black text-[#6B1A24]">
+              CALON {{ number + 1 }}
+            </p>
+            <p
+              class="font-label mt-2 text-lg font-bold leading-snug text-[#0F1B4D]"
             >
-              <div class="size-full grid grid-cols-2 divide-x divide-white/20">
-                <div class="flex flex-col h-full">
-                  <div class="relative grow overflow-hidden">
-                    <div
-                      class="absolute bottom-2 left-2 size-8 flex items-center justify-center shadow-md bg-[#FF8A00] text-white rounded-full text-lg font-bold z-10"
-                    >
-                      {{ number + 1 }}
-                    </div>
-                    <img
-                      :src="candidate.picture"
-                      :alt="candidate.name_1"
-                      class="w-full h-full object-cover absolute inset-0"
-                    />
-                  </div>
-                  <CardHeader
-                    class="p-4 text-center border-t border-white/20 shrink-0 bg-black/20"
-                  >
-                    <CardTitle
-                      class="leading-normal text-white text-sm lg:text-base font-bold drop-shadow-md"
-                    >
-                      {{ candidate.name_1 }}
-                      <template v-if="candidate.name_2">
-                        <br />
-                        &
-                        <br />
-                        {{ candidate.name_2 }}
-                      </template>
-                    </CardTitle>
-                  </CardHeader>
-                </div>
-
-                <div class="overflow-y-auto">
-                  <CardHeader class="p-4 pb-2">
-                    <CardDescription
-                      class="text-white font-bold text-xs uppercase tracking-wider mb-1"
-                    >
-                      Visi
-                    </CardDescription>
-                    <pre
-                      class="font-sans text-xs text-gray-200 text-wrap whitespace-pre-wrap"
-                      >{{ candidate.vision }}</pre
-                    >
-                  </CardHeader>
-                  <CardContent
-                    class="px-4 pb-4 border-t border-white/10 mt-2 pt-2 flex-1"
-                  >
-                    <CardDescription
-                      class="text-white font-bold text-xs uppercase tracking-wider mb-1"
-                    >
-                      Misi
-                    </CardDescription>
-                    <pre
-                      class="font-sans text-xs text-gray-200 text-wrap whitespace-pre-wrap"
-                      >{{ candidate.mission }}</pre
-                    >
-                  </CardContent>
-                </div>
-              </div>
-            </Card>
+              {{ candidate.name_1 }}
+              <template v-if="candidate.name_2">
+                <br />&amp;<br />
+                {{ candidate.name_2 }}
+              </template>
+            </p>
+            <button
+              type="button"
+              @click.stop="openDetail(candidate)"
+              class="font-label mt-5 rounded-md bg-[#6B1A24] px-6 py-2 text-xs font-bold text-[#F8E4BB] hover:brightness-125"
+            >
+              VISI &amp; MISI
+            </button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
+
+    <Transition name="modal">
+      <div
+        v-if="open"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        @click.self="open = false"
+      >
+        <div
+          class="modal-box max-h-[85dvh] w-full max-w-lg overflow-y-auto rounded-3xl bg-[#F8E4BB] p-6 text-left shadow-2xl"
+        >
+          <h2 class="font-title text-xl font-black text-[#0F1B4D]">
+            {{ viewing?.name_1 }}
+            <template v-if="viewing?.name_2">
+              &amp; {{ viewing.name_2 }}</template
+            >
+          </h2>
+          <p class="font-label mt-4 text-xs font-bold text-[#6B1A24]">VISI</p>
+          <pre class="font-body whitespace-pre-wrap text-xs text-[#151333]">{{
+            viewing?.vision
+          }}</pre>
+          <p class="font-label mt-4 text-xs font-bold text-[#6B1A24]">MISI</p>
+          <pre class="font-body whitespace-pre-wrap text-xs text-[#151333]">{{
+            viewing?.mission
+          }}</pre>
+          <button
+            type="button"
+            @click="open = false"
+            class="font-label mt-5 rounded-md bg-[#0F1B4D] px-6 py-1.5 text-xs font-bold text-[#F8E4BB] hover:brightness-125"
+          >
+            TUTUP
+          </button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>

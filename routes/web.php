@@ -25,6 +25,8 @@ use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
+Route::get("/", fn() => redirect()->route("index"));
+
 Route::middleware("guest")->group(function () {
     Route::get("/login", fn() => Inertia::render("login"))->name("login");
     Route::get("/auth/redirect", [AuthController::class, "redirect"])

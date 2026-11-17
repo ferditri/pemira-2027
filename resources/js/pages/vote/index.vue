@@ -1,18 +1,10 @@
 <script lang="ts" setup>
 import Flash from "@/components/Flash.vue";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { PageProps } from "@/types";
 import { Link, usePage } from "@inertiajs/vue3";
 import { LogOut } from "lucide-vue-next";
+import { ref } from "vue";
 
 const props = defineProps<{
   verification: UserVerification | null;
@@ -21,153 +13,152 @@ const props = defineProps<{
 
 const page = usePage<PageProps>();
 const user = page.props.auth.user;
+
+const brokenLogos = ref<number[]>([]);
 </script>
+
+<style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700;900&family=Libre+Baskerville&display=swap");
+
+.font-title {
+  font-family: "Cinzel Decorative", serif;
+}
+.font-label {
+  font-family: "Cinzel", serif;
+}
+.font-body {
+  font-family: "Libre Baskerville", serif;
+}
+</style>
 
 <template>
   <div
     class="min-h-dvh flex items-center justify-center p-4 relative overflow-hidden"
   >
-    <img src="/background.webp" class="absolute size-full object-cover -z-10" />
-    <Flash />
-    <div class="max-w-md w-full space-y-4 relative z-10">
-      <Card
-        class="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
+    <img
+      src="/background.webp"
+      alt=""
+      class="absolute inset-0 size-full object-cover -z-10"
+    />
+    <div class="w-full max-w-md space-y-4 relative z-10">
+      <div
+        class="rounded-[2.5rem] bg-[#F8E4BB] px-8 py-8 text-center shadow-[0_20px_50px_rgba(15,27,77,0.25)]"
       >
-        <CardHeader
-          class="space-y-2 border-b border-white/20 text-center text-pretty"
-        >
-          <Avatar class="size-24 mx-auto border-2 border-white/20 shadow-md">
-            <AvatarImage
-              v-if="user.avatar"
-              :alt="user.name"
-              :src="user.avatar"
-              referrerpolicy="no-referrer"
-            />
-          </Avatar>
-          <div class="space-y-1.5">
-            <CardDescription class="text-gray-200 font-medium"
-              >Selamat datang!</CardDescription
-            >
-            <CardTitle class="text-2xl font-extrabold text-white">{{
-              user.name
-            }}</CardTitle>
-          </div>
-        </CardHeader>
+        <Flash />
 
-        <CardContent
+        <Avatar class="size-24 mx-auto bg-[#0F1B4D]">
+          <AvatarImage
+            v-if="user.avatar"
+            :alt="user.name"
+            :src="user.avatar"
+            referrerpolicy="no-referrer"
+          />
+        </Avatar>
+        <p class="font-body mt-2 text-xs text-[#151333]">Selamat Datang</p>
+        <h1 class="font-sans mt-1 text-2xl font-bold text-[#0F1B4D]">
+          {{ user.name }}
+        </h1>
+
+        <hr class="my-5 border-[#151333]/40" />
+
+        <div
           v-if="
             verification === null ||
             verification.ktm === null ||
             verification.verification === null
           "
-          class="p-6 space-y-4 border-b border-white/20"
+          class="space-y-3"
         >
-          <div class="text-center space-y-1.5">
-            <CardTitle class="text-white text-xl">Upload KTM</CardTitle>
-            <CardDescription class="text-gray-200">
-              Sebelum pemilihan silakan upload KTM kamu dulu yaa!
-            </CardDescription>
-          </div>
-          <div class="flex justify-center space-x-4">
-            <Link :href="route('verification')" class="w-full">
-              <Button
-                class="w-full bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full py-6 text-md shadow-lg transition-transform hover:-translate-y-1"
-              >
-                Selanjutnya
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-
-        <CardContent
-          v-else-if="organizations.length > 0"
-          class="p-6 space-y-4 border-b border-white/20"
-        >
-          <div class="text-center">
-            <CardTitle class="text-white text-xl">Organisasi</CardTitle>
-            <CardDescription class="text-gray-200">
-              Pilih organisasi yang ingin kamu buka
-            </CardDescription>
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <Link
-              v-for="organization in organizations"
-              :href="
-                route('vote.organization', {
-                  organization: organization.id,
-                })
-              "
+          <h2 class="font-label text-lg font-bold text-[#0F1B4D]">
+            UPLOAD KTM
+          </h2>
+          <p class="font-body text-xs text-[#151333]">
+            Sebelum pemilihan silakan upload KTM kamu dulu yaa!
+          </p>
+          <Link :href="route('verification')" class="block">
+            <span
+              class="font-label block w-full rounded-xl border-2 border-[#A86B1F] bg-[#0F1B4D] py-3 text-sm font-bold text-[#F8E4BB] transition hover:brightness-125"
             >
-              <Card
-                class="overflow-hidden bg-white/10 border border-white/20 cursor-pointer hover:bg-white/30 transition-colors shadow-md"
-              >
-                <img :src="organization.logo" class="w-full object-cover" />
-                <CardHeader class="p-3">
-                  <CardTitle class="text-center text-white text-sm">
-                    {{ organization.name }}
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-            </Link>
-          </div>
-        </CardContent>
+              SELANJUTNYA
+            </span>
+          </Link>
+        </div>
 
-        <CardContent v-else class="p-6 border-b border-white/20">
-          <div class="text-center space-y-1.5">
-            <CardTitle class="text-white text-xl"
-              >Belum ada pemilihan</CardTitle
+        <div v-else-if="organizations.length > 0" class="space-y-3">
+          <h2 class="font-label text-lg font-bold text-[#0F1B4D]">
+            ORGANISASI
+          </h2>
+          <p class="font-body text-xs text-[#151333]">
+            Pilih Organisasi Yang Ingin Kamu Buka
+          </p>
+          <Link
+            v-for="organization in organizations"
+            :key="organization.id"
+            :href="route('vote.organization', { organization: organization.id })"
+            class="block overflow-hidden rounded-xl border-2 border-[#A86B1F] bg-[#0F1B4D] transition hover:brightness-125"
+          >
+            <img
+              v-if="organization.logo && !brokenLogos.includes(organization.id)"
+              :src="organization.logo"
+              :alt="organization.name"
+              class="h-32 w-full object-cover"
+              @error="brokenLogos.push(organization.id)"
+            />
+            <span
+              class="font-body block w-full py-4 text-sm text-[#F8E4BB]"
             >
-            <CardDescription class="text-gray-200">
-              Wah kamu rajin sekali! tunggu info selanjutnya yaa! 🤩
-            </CardDescription>
-          </div>
-        </CardContent>
+              {{ organization.name }}
+            </span>
+          </Link>
+        </div>
 
-        <CardFooter
-          class="p-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
+        <div v-else class="space-y-1">
+          <h2 class="font-label text-lg font-bold text-[#0F1B4D]">
+            BELUM ADA PEMILIHAN
+          </h2>
+          <p class="font-body text-xs text-[#151333]">
+            Wah kamu rajin sekali! Tunggu info selanjutnya yaa!
+          </p>
+        </div>
+
+        <div
+          class="mt-6 flex flex-col items-center justify-between gap-3 md:flex-row"
         >
-          <CardDescription class="text-gray-200">
-            Butuh bantuan?
+          <p class="font-body text-sm text-[#151333]">
+            Butuh Bantuan?
             <a
               href="https://wa.me/62859183994546"
               target="_blank"
-              class="text-[#FF8A00] hover:text-[#e07a00] underline font-semibold ml-1 transition-colors"
+              class="ml-1 font-semibold text-[#FF7F0F] hover:underline"
+              >Hubungi Kami Disini</a
             >
-              Hubungi kami disini
-            </a>
-          </CardDescription>
-          <Link :href="route('logout')" class="w-full md:w-fit">
-            <Button
-              variant="outline"
-              class="w-full gap-2 bg-transparent text-white border-white/30 hover:bg-white/10 hover:text-white rounded-full"
-            >
-              <LogOut class="size-4" />
-              Keluar Akun
-            </Button>
-          </Link>
-        </CardFooter>
-      </Card>
-
-      <Card
-        v-if="user.type === 'admin'"
-        class="max-w-md mx-auto bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl"
-      >
-        <CardHeader>
-          <CardTitle class="text-white text-xl">Admin</CardTitle>
-          <CardDescription class="text-gray-200"
-            >Kamu punya akses admin</CardDescription
+          </p>
+          <Link
+            :href="route('logout')"
+            class="font-label inline-flex items-center gap-2 rounded-xl border border-[#0F1B4D]/40 px-4 py-2 text-xs font-bold text-[#0F1B4D] hover:bg-[#0F1B4D]/10"
           >
-        </CardHeader>
-        <CardFooter class="grid pb-6">
-          <Link :href="route('admin.dashboard')">
-            <Button
-              class="w-full bg-[#FF8A00] hover:bg-[#e07a00] text-white border-none font-bold rounded-full py-6 text-md shadow-lg transition-transform hover:-translate-y-1"
-            >
-              Masuk ke Dashboard
-            </Button>
+            <LogOut class="size-4" />
+            KELUAR
           </Link>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
+
+      <div
+        v-if="user.type === 'admin'"
+        class="rounded-[2rem] bg-[#F8E4BB] px-8 py-6 shadow-[0_20px_50px_rgba(15,27,77,0.25)]"
+      >
+        <h2 class="font-label text-lg font-bold text-[#0F1B4D]">ADMIN</h2>
+        <p class="font-body text-xs text-[#151333]">
+          Kamu Punya Akses Ke Admin
+        </p>
+        <Link :href="route('admin.dashboard')" class="mt-4 block">
+          <span
+            class="font-body block w-full rounded-xl border-2 border-[#A86B1F] bg-[#0F1B4D] py-3 text-center text-sm text-[#F8E4BB] transition hover:brightness-125"
+          >
+            Masuk Ke Dashboard
+          </span>
+        </Link>
+      </div>
     </div>
   </div>
 </template>
