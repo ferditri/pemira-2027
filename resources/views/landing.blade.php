@@ -348,14 +348,12 @@
             <!-- Video Thumbnail strictly fitted inside the golden frame inner window -->
             <div class="video-inner-window">
               <img 
-                src="https://img.youtube.com/vi/{{ config('pemira.tutorial_video_id') }}/maxresdefault.jpg" 
+                src="{{ asset('assets/images/me/thumbnail_yt.png') }}" 
                 alt="Thumbnail Tutorial Voting" 
                 loading="lazy"
                 decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
-              <!-- Subtle Dark Overlay -->
-              <div class="absolute inset-0 bg-gradient-to-t from-[#0a1835]/80 via-black/20 to-black/15"></div>
             </div>
 
             <!-- Carved Golden Picture Frame Overlay (True RGBA Transparent Asset) -->
