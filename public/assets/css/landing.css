@@ -599,6 +599,34 @@ section[id], header[id] {
   transform: scale(0.94) translateY(16px);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  color: #2b1810 !important;
+}
+
+#modal-body {
+  color: #2b1810 !important;
+}
+
+#modal-body h3,
+#modal-body h4 {
+  text-shadow: none;
+}
+
+#modal-body .modal-visi-text,
+#modal-body p {
+  color: #2b1810 !important;
+}
+
+#modal-body .modal-misi-list,
+#modal-body .modal-misi-list li,
+#modal-body .modal-misi-list li span,
+#modal-body ul,
+#modal-body li {
+  color: #2b1810 !important;
+}
+
+#modal-body .modal-misi-list li span.text-amber-800,
+#modal-body .modal-misi-bullet {
+  color: #92400e !important;
 }
 
 .royal-modal-backdrop.active .royal-modal-content {

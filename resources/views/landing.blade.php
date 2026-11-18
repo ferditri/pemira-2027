@@ -224,7 +224,7 @@
         <div class="grid grid-cols-1 {{ ($bemCandidates ?? collect())->count() <= 2 ? 'md:grid-cols-2 max-w-4xl' : 'sm:grid-cols-2 lg:grid-cols-3 max-w-5xl' }} gap-10 md:gap-14 mx-auto">
           @forelse (($bemCandidates ?? collect()) as $item)
             <div class="blm-card">
-              <div class="w-40 h-40 mx-auto mb-5 rounded-full overflow-hidden border-2 border-amber-600/60 shadow-md bg-amber-50">
+              <div class="w-40 h-40 mx-auto mb-5 rounded-full overflow-hidden border-2 border-amber-600/60 shadow-md bg-amber-100 flex items-center justify-center relative">
                 @if ($item->photo)
                   <img
                     src="{{ $item->photo }}"
@@ -232,8 +232,12 @@
                     loading="lazy"
                     decoding="async"
                     class="w-full h-full object-cover"
+                    onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                   />
                 @endif
+                <div class="w-full h-full {{ $item->photo ? 'hidden' : 'flex' }} items-center justify-center bg-amber-900/10 text-amber-950 font-cinzel font-bold text-3xl select-none">
+                  {{ strtoupper(substr(trim($item->name), 0, 1)) }}
+                </div>
               </div>
               <h3 class="font-cinzel font-bold text-[#5c1624] text-lg mb-1 uppercase">
                 {{ $item->role_label }}
@@ -291,7 +295,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           @forelse (($blmCandidates ?? collect()) as $item)
             <div class="blm-card">
-              <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md bg-amber-50">
+              <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md bg-amber-100 flex items-center justify-center relative">
                 @if ($item->photo)
                   <img
                     src="{{ $item->photo }}"
@@ -299,8 +303,12 @@
                     loading="lazy"
                     decoding="async"
                     class="w-full h-full object-cover"
+                    onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                   />
                 @endif
+                <div class="w-full h-full {{ $item->photo ? 'hidden' : 'flex' }} items-center justify-center bg-amber-900/10 text-amber-950 font-cinzel font-bold text-2xl select-none">
+                  {{ strtoupper(substr(trim($item->name), 0, 1)) }}
+                </div>
               </div>
               <h3 class="font-cinzel font-bold text-amber-900 text-base mb-1 uppercase">
                 {{ $item->role_label }}
