@@ -16,6 +16,31 @@ class Candidate extends Model
         "picture",
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(function (Candidate $candidate) {
+            $name = $candidate->name_2 ? "{$candidate->name_1} & {$candidate->name_2}" : $candidate->name_1;
+            $lines = preg_split('/\r\n|\n|\r/', (string) $candidate->mission) ?: [];
+            $mission = array_values(array_filter(array_map('trim', $lines), fn ($line) => $line !== '')) ?: [$candidate->mission];
+
+            LandingCandidate::where('candidate_id', $candidate->id)->update([
+                'name' => $name,
+                'photo' => $candidate->picture,
+                'vision' => $candidate->vision,
+                'mission' => json_encode($mission),
+            ]);
+        });
+
+        static::deleted(function (Candidate $candidate) {
+            LandingCandidate::where('candidate_id', $candidate->id)->delete();
+        });
+    }
+
+    public function landingCandidates()
+    {
+        return $this->hasMany(LandingCandidate::class);
+    }
+
     public function organization()
     {
         return $this->belongsTo(Organization::class);

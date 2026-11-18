@@ -35,7 +35,7 @@ import {
   Trash2,
   X,
 } from "lucide-vue-next";
-import { computed, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 
 type LandingCandidateItem = {
   id: number;
@@ -191,6 +191,30 @@ const onDragEnd = () => {
   draggingId.value = null;
   dragOverId.value = null;
 };
+
+const refreshData = () => {
+  if (!modalOpen.value) {
+    router.reload({
+      only: ["landingCandidates", "sourceCandidates"],
+    });
+  }
+};
+
+const onVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    refreshData();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("focus", refreshData);
+  document.addEventListener("visibilitychange", onVisibilityChange);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("focus", refreshData);
+  document.removeEventListener("visibilitychange", onVisibilityChange);
+});
 </script>
 
 <template>

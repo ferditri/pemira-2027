@@ -23,9 +23,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatMajor } from "@/lib/majors";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import { ArrowRight, Edit, Layers, Plus, Settings, UserPlus } from "lucide-vue-next";
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 interface CandidateOrg extends Organization {
   groups: (Group & { candidates: Candidate[] })[];
@@ -43,6 +43,28 @@ const visibleOrganizations = () => {
   if (selectedOrgId.value === "all") return props.organizations;
   return props.organizations.filter((o) => o.id === selectedOrgId.value);
 };
+
+const refreshData = () => {
+  router.reload({
+    only: ["organizations"],
+  });
+};
+
+const onVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    refreshData();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("focus", refreshData);
+  document.addEventListener("visibilitychange", onVisibilityChange);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("focus", refreshData);
+  document.removeEventListener("visibilitychange", onVisibilityChange);
+});
 </script>
 
 <template>

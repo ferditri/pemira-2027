@@ -18,6 +18,30 @@ class LandingCandidateController extends Controller
             ->orderBy('id')
             ->get();
 
+        // Pastikan kolom DB landing_candidates selalu sinkron dengan candidate aslinya
+        foreach ($landingCandidates as $lc) {
+            if ($lc->candidate) {
+                $c = $lc->candidate;
+                $newName = $c->name_2 ? "{$c->name_1} & {$c->name_2}" : $c->name_1;
+                $newPhoto = $c->picture;
+                $newVision = $c->vision;
+                $newMission = $this->parseMissionLines((string) $c->mission);
+
+                if (
+                    $lc->getRawOriginal('name') !== $newName ||
+                    $lc->getRawOriginal('photo') !== $newPhoto ||
+                    $lc->getRawOriginal('vision') !== $newVision
+                ) {
+                    $lc->update([
+                        'name' => $newName,
+                        'photo' => $newPhoto,
+                        'vision' => $newVision,
+                        'mission' => $newMission,
+                    ]);
+                }
+            }
+        }
+
         $sourceCandidates = Candidate::query()
             ->with(['organization:id,name', 'group:id,name'])
             ->orderBy('organization_id')
