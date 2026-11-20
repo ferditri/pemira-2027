@@ -231,7 +231,7 @@ body {
 
 @media (max-width: 767px) {
   .hero-layered-container {
-    min-height: 540px;
+    min-height: 460px;
   }
   .hero-bg-img {
     position: absolute;
@@ -239,23 +239,77 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: center 35%;
   }
   .hero-layered-overlay {
     position: relative;
-    min-height: 540px;
-    padding-top: 6rem;
-    padding-bottom: 3rem;
+    min-height: 460px;
+    padding: 5.5rem 1.25rem 2.75rem;
   }
   .hero-title-graphic {
-    width: 85%;
-    max-width: 340px;
+    width: 82%;
+    max-width: 310px;
+    margin-bottom: 0.75rem;
   }
   .hero-tagline-text {
-    background: rgba(248, 238, 215, 0.82);
-    padding: 0.5rem 0.9rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
+    background: rgba(248, 238, 215, 0.88);
+    border: 1px solid rgba(187, 160, 112, 0.55);
+    backdrop-filter: blur(4px);
+    padding: 0.55rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 1.25rem;
+  }
+  .parchment-divider {
+    gap: 10px;
+  }
+  .parchment-divider-line {
+    width: 36px;
+  }
+  .parchment-divider-text {
+    font-size: 0.88rem;
+    letter-spacing: 0.18em;
+  }
+  .candidate-frame-box {
+    padding: 26px 14px;
+  }
+  .corner-ornament {
+    width: 44px;
+    height: 44px;
+  }
+  .corner-tl { top: 8px; left: 8px; }
+  .corner-tr { top: 8px; right: 8px; }
+  .corner-bl { bottom: 8px; left: 8px; }
+  .corner-br { bottom: 8px; right: 8px; }
+  .section-tutorial {
+    margin-top: -48px;
+    padding: 64px 14px 76px;
+  }
+  .footer-royal {
+    margin-top: 0;
+    background-color: #0d1c3f;
+    padding-top: 1.5rem;
+  }
+  .footer-rectangle-panel {
+    background-position: center top;
+    padding: 22px 16px 28px;
+  }
+  .footer-link {
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+  }
+  .royal-modal-backdrop {
+    padding: 12px;
+  }
+  #modal-body {
+    padding: 22px 16px;
+  }
+  .royal-modal-close {
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
   }
 }
 
@@ -309,7 +363,9 @@ section[id], header[id] {
 
 @media (max-width: 768px) {
   .section-heading-dark {
-    font-size: 1.95rem;
+    font-size: 1.65rem;
+    line-height: 1.25;
+    margin-bottom: 18px;
   }
 }
 

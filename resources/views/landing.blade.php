@@ -35,18 +35,18 @@
     <!-- ================= NAVBAR ================= -->
     <nav id="main-navbar" class="navbar-royal fixed top-0 left-0 w-full z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20 gap-4 lg:gap-8">
+        <div class="flex items-center justify-between h-16 md:h-20 gap-4 lg:gap-8">
           
           <!-- Brand Logo -->
-          <a href="#hero" class="flex items-center gap-3 group shrink-0">
+          <a href="#hero" class="flex items-center gap-2.5 md:gap-3 group shrink-0">
             <img 
               src="{{ asset('assets/images/nav_logo_transparent.png') }}" 
               alt="Logo PEMIRA" 
-              class="h-11 w-auto drop-shadow-[0_2px_8px_rgba(223,158,56,0.5)] group-hover:scale-105 transition duration-300" 
+              class="h-9 md:h-11 w-auto drop-shadow-[0_2px_8px_rgba(223,158,56,0.5)] group-hover:scale-105 transition duration-300" 
             />
             <div class="flex flex-col">
-              <span class="font-cinzel font-bold text-lg text-amber-200 tracking-wider">PEMIRA</span>
-              <span class="font-cinzel text-xs text-amber-400/80 -mt-1 tracking-widest">FASILKOM</span>
+              <span class="font-cinzel font-bold text-base md:text-lg text-amber-200 tracking-wider">PEMIRA</span>
+              <span class="font-cinzel text-[10px] md:text-xs text-amber-400/80 -mt-1 tracking-widest">FASILKOM</span>
             </div>
           </a>
 
@@ -85,12 +85,12 @@
       </div>
 
       <!-- Mobile Dropdown Menu -->
-      <div id="mobile-menu" class="hidden md:hidden bg-[#071328]/95 border-b border-amber-500/30 px-6 pt-2 pb-6 space-y-3">
-        <a href="#hero" class="mobile-nav-link block py-2 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Beranda</a>
-        <a href="#tentang" class="mobile-nav-link block py-2 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Tentang</a>
-        <a href="#jadwal" class="mobile-nav-link block py-2 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Jadwal</a>
-        <a href="#kandidat" class="mobile-nav-link block py-2 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Kandidat</a>
-        <a href="#voting" class="mobile-nav-link block py-2 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Cara Memilih</a>
+      <div id="mobile-menu" class="hidden md:hidden bg-[#071328]/98 backdrop-blur-md border-b border-amber-500/30 px-6 pt-2 pb-6 space-y-1">
+        <a href="#hero" class="mobile-nav-link flex items-center min-h-[44px] py-2 border-b border-amber-500/10 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Beranda</a>
+        <a href="#tentang" class="mobile-nav-link flex items-center min-h-[44px] py-2 border-b border-amber-500/10 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Tentang</a>
+        <a href="#jadwal" class="mobile-nav-link flex items-center min-h-[44px] py-2 border-b border-amber-500/10 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Jadwal</a>
+        <a href="#kandidat" class="mobile-nav-link flex items-center min-h-[44px] py-2 border-b border-amber-500/10 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Kandidat</a>
+        <a href="#voting" class="mobile-nav-link flex items-center min-h-[44px] py-2 text-slate-200 font-cinzel font-semibold hover:text-amber-400">Cara Memilih</a>
         <div class="pt-3">
           @auth
             <a href="{{ route('index') }}" class="btn-gold w-full py-3 text-center text-sm uppercase">
@@ -127,17 +127,17 @@
           <p class="hero-tagline-text">
             Satu suara, satu takdir kerajaan kampus. Tentukan pemimpin yang akan mengibarkan kemenangan
           </p>
-          <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+          <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 w-full max-w-[260px] sm:max-w-none mx-auto">
             @auth
-              <a href="{{ route('index') }}" class="btn-gold px-7 py-3 md:px-9 md:py-3.5 text-xs md:text-sm uppercase shadow-2xl">
+              <a href="{{ route('index') }}" class="btn-gold w-full sm:w-auto px-7 py-3 md:px-9 md:py-3.5 text-xs md:text-sm uppercase shadow-2xl">
                 MASUK KE VOTING
               </a>
             @else
-              <a href="{{ route('login') }}" class="btn-gold px-7 py-3 md:px-9 md:py-3.5 text-xs md:text-sm uppercase shadow-2xl">
+              <a href="{{ route('login') }}" class="btn-gold w-full sm:w-auto px-7 py-3 md:px-9 md:py-3.5 text-xs md:text-sm uppercase shadow-2xl">
                 MULAI MEMILIH
               </a>
             @endauth
-            <a href="#kandidat" class="btn-royal-blue px-7 py-3 md:px-9 md:py-3.5 text-xs md:text-sm uppercase shadow-2xl">
+            <a href="#kandidat" class="btn-royal-blue w-full sm:w-auto px-7 py-3 md:px-9 md:py-3.5 text-xs md:text-sm uppercase shadow-2xl">
               LIHAT KANDIDAT
             </a>
           </div>
@@ -146,13 +146,13 @@
     </header>
 
     <!-- ================= SECTION: TENTANG PEMIRA ================= -->
-    <section id="tentang" class="section-parchment pt-16 pb-24 px-4 sm:px-6 lg:px-8">
+    <section id="tentang" class="section-parchment pt-10 pb-14 md:pt-16 md:pb-24 px-4 sm:px-6 lg:px-8">
       
       <!-- Sparkle stars -->
-      <svg class="sparkle-star top-16 left-12 w-8 h-8 text-amber-500/50" viewBox="0 0 24 24" fill="currentColor">
+      <svg class="sparkle-star top-10 left-4 md:top-16 md:left-12 w-5 h-5 md:w-8 md:h-8 text-amber-500/50" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 0 C12 6 6 12 0 12 C6 12 12 18 12 24 C12 18 18 12 24 12 C18 12 12 6 12 0 Z"/>
       </svg>
-      <svg class="sparkle-star top-48 right-16 w-10 h-10 text-amber-500/50" viewBox="0 0 24 24" fill="currentColor">
+      <svg class="sparkle-star bottom-8 right-4 md:top-48 md:right-16 w-6 h-6 md:w-10 md:h-10 text-amber-500/50" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 0 C12 6 6 12 0 12 C6 12 12 18 12 24 C12 18 18 12 24 12 C18 12 12 6 12 0 Z"/>
       </svg>
 
@@ -182,7 +182,7 @@
     </section>
 
     <!-- ================= SECTION: CALON KETUA & WAKIL BEM + CALON BLM ================= -->
-    <section id="kandidat" class="section-parchment pt-12 pb-32 px-4 sm:px-6 lg:px-8">
+    <section id="kandidat" class="section-parchment pt-6 pb-20 md:pt-12 md:pb-32 px-3 sm:px-6 lg:px-8">
       <div class="max-w-6xl mx-auto candidate-frame-box">
         
         <!-- Golden L-Bracket Ornaments (4 Corners) -->
@@ -216,12 +216,12 @@
         </svg>
 
         <!-- Section Title matching BAHAN/LandingPage.png -->
-        <h2 class="section-heading-dark mb-16">
+        <h2 class="section-heading-dark mb-8 md:mb-16">
           CALON KETUA DAN WAKIL BEM
         </h2>
 
         <!-- Candidate Cards Grid (Dynamic from Admin -> Kandidat Landing) -->
-        <div class="grid grid-cols-1 {{ ($bemCandidates ?? collect())->count() <= 2 ? 'md:grid-cols-2 max-w-4xl' : 'sm:grid-cols-2 lg:grid-cols-3 max-w-5xl' }} gap-10 md:gap-14 mx-auto">
+        <div class="grid grid-cols-1 {{ ($bemCandidates ?? collect())->count() <= 2 ? 'md:grid-cols-2 max-w-4xl' : 'sm:grid-cols-2 lg:grid-cols-3 max-w-5xl' }} gap-6 md:gap-14 mx-auto">
           @forelse (($bemCandidates ?? collect()) as $item)
             <div class="blm-card">
               <div class="w-40 h-40 mx-auto mb-5 rounded-full overflow-hidden border-2 border-amber-600/60 shadow-md bg-amber-100 flex items-center justify-center relative">
@@ -287,12 +287,12 @@
         </svg>
 
         <!-- Heading matching BAHAN/LandingPage.png -->
-        <h2 class="section-heading-dark mb-14">
+        <h2 class="section-heading-dark mb-8 md:mb-14">
           CALON BLM
         </h2>
 
         <!-- Calon BLM Cards (Dynamic from Admin -> Kandidat Landing) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           @forelse (($blmCandidates ?? collect()) as $item)
             <div class="blm-card">
               <div class="w-36 h-36 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-600/50 shadow-md bg-amber-100 flex items-center justify-center relative">
@@ -340,12 +340,12 @@
         <!-- Header -->
         <div class="parchment-divider mb-2">
           <div class="parchment-divider-line !bg-amber-400/50"></div>
-          <h2 class="font-cinzel text-3xl md:text-5xl font-extrabold text-amber-100 tracking-wider">
+          <h2 class="font-cinzel text-2xl sm:text-3xl md:text-5xl font-extrabold text-amber-100 tracking-wider">
             TUTORIAL VOTING
           </h2>
           <div class="parchment-divider-line !bg-amber-400/50"></div>
         </div>
-        <p class="text-amber-200/70 font-cinzel text-sm tracking-widest uppercase mb-12">
+        <p class="text-amber-200/75 font-cinzel text-xs sm:text-sm tracking-widest uppercase mb-8 md:mb-12 px-2">
           Panduan langkah demi langkah tata cara pemungutan suara
         </p>
 
@@ -374,11 +374,11 @@
             />
 
             <!-- Single Play Video Button positioned cleanly at bottom border (matching Figma) -->
-            <div class="absolute -bottom-5 sm:-bottom-6 inset-x-0 z-20 flex items-center justify-center">
+            <div class="absolute -bottom-4 sm:-bottom-6 inset-x-0 z-20 flex items-center justify-center">
               <button 
                 type="button" 
                 onclick="openVideoModal()" 
-                class="btn-gold px-10 py-3.5 text-sm uppercase rounded-full shadow-2xl flex items-center gap-3 transform hover:scale-105 active:scale-95 transition"
+                class="btn-gold px-6 py-2.5 sm:px-10 sm:py-3.5 text-xs sm:text-sm uppercase rounded-full shadow-2xl flex items-center gap-2.5 sm:gap-3 transform hover:scale-105 active:scale-95 transition"
               >
                 <span>TONTON VIDEO</span>
                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -475,11 +475,11 @@
       </div>
 
       <!-- Mobile Timeline Display (Vertical Stack for Phone Screens) -->
-      <div class="md:hidden py-16 px-4 text-center">
-        <h2 class="font-cinzel text-2xl font-extrabold text-amber-100 tracking-wider mb-8">
+      <div class="md:hidden pt-12 pb-8 px-4 text-center">
+        <h2 class="font-cinzel text-xl sm:text-2xl font-extrabold text-amber-100 tracking-wider mb-6">
           JADWAL PELAKSANAAN
         </h2>
-        <div class="space-y-6 max-w-sm mx-auto">
+        <div class="space-y-4 max-w-sm mx-auto">
           <div class="timeline-scroll-card">
             <span class="inline-block w-10 h-10 rounded-full bg-amber-400 text-slate-900 font-cinzel font-bold text-base leading-10 mb-2">I</span>
             <h4 class="font-cinzel font-bold text-[#5c1624] text-lg mb-1">Tahap 1: Pendaftaran & Berkas</h4>
@@ -523,7 +523,7 @@
         <div class="max-w-4xl mx-auto">
 
         <!-- Navigation Links matching BAHAN/LandingPage.png -->
-        <div class="flex flex-wrap justify-center gap-6 md:gap-10 mb-5">
+        <div class="flex flex-wrap justify-center gap-x-5 gap-y-2.5 md:gap-10 mb-5">
           <a href="#tentang" class="footer-link">TENTANG</a>
           <a href="#kandidat" class="footer-link">KANDIDAT</a>
           <a href="#voting" class="footer-link">TUTORIAL</a>
