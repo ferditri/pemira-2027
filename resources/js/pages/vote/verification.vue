@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useEnterMotion } from "@/composables/useMotion";
 import { Link, useForm } from "@inertiajs/vue3";
-import { ArrowLeft, BookImage, Camera, HelpCircle, RefreshCw, X } from "lucide-vue-next";
+import { ArrowLeft, BookImage, Camera, Eye, FileImage, HelpCircle, RefreshCw, X } from "lucide-vue-next";
 import { nextTick, onUnmounted, reactive, ref } from "vue";
 import imageCompression from "browser-image-compression";
 
@@ -48,7 +48,26 @@ const ktmInput = ref<HTMLInputElement | null>(null);
 const verificationInput = ref<HTMLInputElement | null>(null);
 
 const showExampleModal = ref(true);
+const previewImage = ref<{ title: string; url: string } | null>(null);
 const cameraTarget = ref<"ktm" | "verification" | null>(null);
+
+const formatFileSize = (bytes?: number) => {
+  if (!bytes) return "";
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+const clearPhoto = (targetField: "ktm" | "verification") => {
+  if (targetField === "ktm") {
+    if (urls.ktm) URL.revokeObjectURL(urls.ktm);
+    form.ktm = undefined;
+    urls.ktm = "";
+  } else {
+    if (urls.verification) URL.revokeObjectURL(urls.verification);
+    form.verification = undefined;
+    urls.verification = "";
+  }
+};
 const facingMode = ref<"user" | "environment">("user");
 const cameraError = ref<string | null>(null);
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -114,9 +133,11 @@ const processImageFile = async (
     isCompressing.value = true;
     const compressedFile = await imageCompression(file, options);
     if (targetField === "ktm") {
+      if (urls.ktm) URL.revokeObjectURL(urls.ktm);
       form.ktm = compressedFile;
       urls.ktm = URL.createObjectURL(compressedFile);
     } else {
+      if (urls.verification) URL.revokeObjectURL(urls.verification);
       form.verification = compressedFile;
       urls.verification = URL.createObjectURL(compressedFile);
     }
@@ -151,7 +172,11 @@ const capturePhoto = async () => {
   await processImageFile(file, target);
 };
 
-onUnmounted(() => stopCamera());
+onUnmounted(() => {
+  stopCamera();
+  if (urls.ktm) URL.revokeObjectURL(urls.ktm);
+  if (urls.verification) URL.revokeObjectURL(urls.verification);
+});
 
 const handleInput = async (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -289,11 +314,49 @@ const submit = () => {
             Pastikan foto KTM kamu terlihat jelas yaa!
           </CardDescription>
         </CardHeader>
-        <CardContent v-if="urls.ktm" class="px-6 pb-3">
-          <img
-            :src="urls.ktm"
-            class="w-full object-cover rounded-xl border border-[#ab8240]"
-          />
+        <CardContent v-if="urls.ktm && form.ktm" class="px-5 sm:px-6 pb-3">
+          <div class="flex items-center justify-between gap-2.5 rounded-xl border border-[#ab8240]/60 bg-white/85 px-3.5 py-2.5 shadow-sm">
+            <button
+              type="button"
+              class="flex items-center gap-2.5 min-w-0 flex-1 text-left group"
+              @click="previewImage = { title: 'Preview Foto KTM', url: urls.ktm! }"
+            >
+              <div class="size-9 rounded-lg bg-[#0c1d44]/10 text-[#0c1d44] flex items-center justify-center shrink-0">
+                <FileImage class="size-4" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs sm:text-sm font-semibold text-[#0c1d44] truncate group-hover:underline">
+                  {{ form.ktm.name }}
+                </p>
+                <p class="text-[11px] text-[#3d4a66]">
+                  {{ formatFileSize(form.ktm.size) }} · Klik untuk preview
+                </p>
+              </div>
+            </button>
+            <div class="flex items-center gap-1 shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                class="h-8 px-2.5 text-xs border-[#ab8240]/50 text-[#0c1d44] hover:bg-[#0c1d44]/5 gap-1"
+                @click="previewImage = { title: 'Preview Foto KTM', url: urls.ktm! }"
+              >
+                <Eye class="size-3.5" />
+                <span class="hidden sm:inline">Preview</span>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                class="size-8 text-red-700 hover:bg-red-100 hover:text-red-800"
+                title="Hapus foto KTM"
+                aria-label="Hapus foto KTM"
+                @click="clearPhoto('ktm')"
+              >
+                <X class="size-4" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
         <CardFooter class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 sm:px-6 pb-5 sm:pb-6">
           <Button
@@ -327,11 +390,49 @@ const submit = () => {
             Pastikan foto KTM dan wajah kamu terlihat jelas yaa!
           </CardDescription>
         </CardHeader>
-        <CardContent v-if="urls.verification" class="px-6 pb-3">
-          <img
-            :src="urls.verification"
-            class="w-full object-cover rounded-xl border border-[#ab8240]"
-          />
+        <CardContent v-if="urls.verification && form.verification" class="px-5 sm:px-6 pb-3">
+          <div class="flex items-center justify-between gap-2.5 rounded-xl border border-[#ab8240]/60 bg-white/85 px-3.5 py-2.5 shadow-sm">
+            <button
+              type="button"
+              class="flex items-center gap-2.5 min-w-0 flex-1 text-left group"
+              @click="previewImage = { title: 'Preview Foto KTM & Wajah', url: urls.verification! }"
+            >
+              <div class="size-9 rounded-lg bg-[#0c1d44]/10 text-[#0c1d44] flex items-center justify-center shrink-0">
+                <FileImage class="size-4" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs sm:text-sm font-semibold text-[#0c1d44] truncate group-hover:underline">
+                  {{ form.verification.name }}
+                </p>
+                <p class="text-[11px] text-[#3d4a66]">
+                  {{ formatFileSize(form.verification.size) }} · Klik untuk preview
+                </p>
+              </div>
+            </button>
+            <div class="flex items-center gap-1 shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                class="h-8 px-2.5 text-xs border-[#ab8240]/50 text-[#0c1d44] hover:bg-[#0c1d44]/5 gap-1"
+                @click="previewImage = { title: 'Preview Foto KTM & Wajah', url: urls.verification! }"
+              >
+                <Eye class="size-3.5" />
+                <span class="hidden sm:inline">Preview</span>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                class="size-8 text-red-700 hover:bg-red-100 hover:text-red-800"
+                title="Hapus foto selfie"
+                aria-label="Hapus foto selfie"
+                @click="clearPhoto('verification')"
+              >
+                <X class="size-4" />
+              </Button>
+            </div>
+          </div>
         </CardContent>
         <CardFooter class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 sm:px-6 pb-5 sm:pb-6">
           <Button
@@ -495,6 +596,36 @@ const submit = () => {
           @click="showExampleModal = false"
         >
           Saya Paham, Mulai Foto
+        </Button>
+      </CardFooter>
+    </Card>
+  </div>
+
+  <!-- Popup Preview Foto yang Diupload -->
+  <div
+    v-if="previewImage"
+    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+    @click.self="previewImage = null"
+  >
+    <Card class="vote-parchment-card border-0 max-w-lg w-full overflow-hidden">
+      <CardHeader class="flex-row items-center justify-between py-3 px-4 border-b border-[#9c8256]/35">
+        <CardTitle class="font-cinzel text-[#0c1d44] text-sm sm:text-base font-bold uppercase">
+          {{ previewImage.title }}
+        </CardTitle>
+        <Button type="button" variant="ghost" size="icon" @click="previewImage = null">
+          <X class="size-4 text-[#0c1d44]" />
+        </Button>
+      </CardHeader>
+      <CardContent class="p-4 flex items-center justify-center bg-black/5">
+        <img
+          :src="previewImage.url"
+          :alt="previewImage.title"
+          class="max-h-[65dvh] w-auto max-w-full rounded-lg border border-[#ab8240] object-contain"
+        />
+      </CardContent>
+      <CardFooter class="px-4 pb-4 pt-2 justify-end">
+        <Button type="button" class="vote-btn-navy rounded-lg px-6 text-xs uppercase" @click="previewImage = null">
+          Tutup
         </Button>
       </CardFooter>
     </Card>
