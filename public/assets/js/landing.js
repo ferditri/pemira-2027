@@ -214,6 +214,7 @@ function openCandidateModal(id) {
     </div>
   `;
 
+  modalBody.scrollTop = 0;
   candidateModal.classList.add('active');
   document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';

@@ -221,17 +221,18 @@ const submit = () => {
       @click.self="closeVisionModal"
     >
       <div
-        class="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-2xl bg-[#fbf5e8] border-2 border-[#bba070] p-6 sm:p-8 shadow-2xl"
+        class="relative w-full max-w-xl max-h-[85vh] flex flex-col overflow-hidden rounded-2xl bg-[#fbf5e8] border-2 border-[#bba070] shadow-2xl"
       >
         <button
           type="button"
           @click="closeVisionModal"
-          class="absolute top-4 right-4 size-9 rounded-full bg-[#6e1324] text-[#faebd7] border border-[#d4a446] flex items-center justify-center hover:bg-[#8a1a2f] transition"
+          class="absolute top-4 right-4 z-30 size-9 rounded-full bg-[#6e1324] text-[#faebd7] border border-[#d4a446] shadow-md flex items-center justify-center hover:bg-[#8a1a2f] transition"
           aria-label="Tutup modal"
         >
           <X class="size-4" />
         </button>
 
+        <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 sm:p-8">
         <div class="text-center mb-5">
           <img
             :src="activeCandidate.picture"
@@ -301,6 +302,7 @@ const submit = () => {
           >
             Tutup
           </Button>
+        </div>
         </div>
       </div>
     </div>

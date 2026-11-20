@@ -604,13 +604,11 @@ section[id], header[id] {
   max-width: 650px;
   width: 100%;
   max-height: 85vh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / Edge legacy */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 6px #fbf5e8, inset 0 0 0 7.5px #ab8240;
-  padding: 36px 30px;
+  padding: 10px;
   transform: scale(0.94) translateY(16px);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
@@ -619,6 +617,12 @@ section[id], header[id] {
 
 #modal-body {
   color: #2b1810 !important;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 26px 22px;
 }
 
 #modal-body h3,
@@ -650,18 +654,21 @@ section[id], header[id] {
 
 .royal-modal-close {
   position: absolute;
-  top: 16px;
-  right: 18px;
-  width: 36px;
-  height: 36px;
+  top: 18px;
+  right: 20px;
+  z-index: 30;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: #6e1324;
   color: #faebd7;
-  border: 1px solid #d4a446;
+  border: 1.5px solid #d4a446;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
 }
