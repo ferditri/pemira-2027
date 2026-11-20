@@ -41,10 +41,10 @@ const submit = () => {
 </script>
 
 <template>
-  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6 lg:p-8">
+  <div class="vote-royal-bg flex items-center justify-center p-3 sm:p-6 lg:p-8">
     <div ref="rootRef" class="max-w-5xl w-full relative z-10">
       <Card data-enter class="vote-parchment-card border-0">
-        <CardHeader class="text-center pt-5 pb-5 px-6 border-b border-[#9c8256]/35">
+        <CardHeader class="text-center pt-5 pb-4 sm:pb-5 px-4 sm:px-6 border-b border-[#9c8256]/35">
           <div class="flex justify-start mb-2">
             <a
               :href="route('landing')"
@@ -55,24 +55,25 @@ const submit = () => {
             </a>
           </div>
           <CardTitle
-            class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
+            class="font-cinzel text-xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
           >
             Konfirmasi Pilihan
           </CardTitle>
-          <CardDescription class="text-[#3d4a66] text-sm sm:text-base font-medium mt-1">
+          <CardDescription class="text-[#3d4a66] text-xs sm:text-base font-medium mt-1">
             Pastikan pilihanmu sudah sesuai sebelum melanjutkan!
           </CardDescription>
 
-          <div class="flex flex-wrap justify-center gap-3.5 mt-5">
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 mt-4 sm:mt-5">
             <Link
               :href="
                 route('vote.organization', {
                   organization: organization.id,
                 })
               "
+              class="flex-1 sm:flex-initial"
             >
               <Button
-                class="vote-btn-outline rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase"
+                class="w-full sm:w-auto vote-btn-outline rounded-lg px-4 sm:px-8 py-2.5 min-h-[42px] text-xs sm:text-sm uppercase"
               >
                 Kembali
               </Button>
@@ -85,7 +86,7 @@ const submit = () => {
             >
               <Button
                 :disabled="isSubmitting"
-                class="vote-btn-navy rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+                class="flex-1 sm:flex-initial vote-btn-navy rounded-lg px-4 sm:px-8 py-2.5 min-h-[42px] text-xs sm:text-sm uppercase disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span v-if="isSubmitting">Memproses...</span>
                 <span v-else>Konfirmasi</span>
@@ -94,8 +95,8 @@ const submit = () => {
           </div>
         </CardHeader>
 
-        <CardContent class="pt-7 pb-10 px-6 sm:px-10">
-          <div class="flex flex-wrap justify-center gap-7">
+        <CardContent class="pt-6 sm:pt-7 pb-8 sm:pb-10 px-4 sm:px-10">
+          <div class="flex flex-wrap justify-center gap-5 sm:gap-7">
             <div
               v-for="detail in details"
               :key="detail.id"

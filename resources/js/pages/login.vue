@@ -21,10 +21,10 @@ useEnterMotion(cardRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
 </script>
 
 <template>
-  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6">
+  <div class="vote-royal-bg flex items-center justify-center p-3.5 sm:p-6">
     <div ref="cardRef" class="max-w-md w-full">
       <Card class="w-full vote-parchment-card border-0">
-        <CardHeader class="text-center text-pretty pt-8 pb-5 px-6 sm:px-8">
+        <CardHeader class="text-center text-pretty pt-6 sm:pt-8 pb-4 sm:pb-5 px-5 sm:px-8">
           <div data-enter class="flex justify-start mb-2">
             <a
               href="/"
@@ -38,11 +38,11 @@ useEnterMotion(cardRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
             data-enter
             src="/assets/images/vote/logo-vote.webp"
             alt="Logo PEMIRA Fasilkom 2027"
-            class="size-28 mx-auto mb-3 drop-shadow-md object-contain"
+            class="size-24 sm:size-28 mx-auto mb-2.5 sm:mb-3 drop-shadow-md object-contain"
           />
           <CardTitle
             data-enter
-            class="font-cinzel text-3xl sm:text-4xl font-extrabold text-[#0c1d44] tracking-wider"
+            class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] tracking-wider"
           >
             PEMIRA
           </CardTitle>

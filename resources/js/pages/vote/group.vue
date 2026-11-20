@@ -90,10 +90,10 @@ const submit = () => {
 </script>
 
 <template>
-  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6 lg:p-8">
+  <div class="vote-royal-bg flex items-center justify-center p-3 sm:p-6 lg:p-8">
     <div ref="rootRef" class="max-w-5xl w-full relative z-10">
       <Card data-enter class="vote-parchment-card border-0">
-        <CardHeader class="text-center pt-5 pb-5 px-6">
+        <CardHeader class="text-center pt-5 pb-4 sm:pb-5 px-4 sm:px-6">
           <div class="flex justify-start mb-2">
             <a
               :href="route('landing')"
@@ -104,12 +104,12 @@ const submit = () => {
             </a>
           </div>
           <CardTitle
-            class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
+            class="font-cinzel text-xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
           >
             {{ group.name }}
           </CardTitle>
           <CardDescription
-            class="font-cinzel text-[#1e2f54] text-sm sm:text-base font-bold mt-1.5 tracking-wide uppercase"
+            class="font-cinzel text-[#1e2f54] text-xs sm:text-base font-bold mt-1.5 tracking-wide uppercase"
           >
             <template v-if="group.min_candidates === 1">
               Pilih Satu Kandidat
@@ -119,7 +119,7 @@ const submit = () => {
             </template>
           </CardDescription>
 
-          <div class="flex flex-wrap justify-center gap-3.5 mt-5">
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3.5 mt-4 sm:mt-5">
             <Link
               :href="
                 route('vote.group.previous', {
@@ -127,9 +127,10 @@ const submit = () => {
                   group: group.id,
                 })
               "
+              class="flex-1 sm:flex-initial"
             >
               <Button
-                class="vote-btn-navy rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase"
+                class="w-full sm:w-auto vote-btn-navy rounded-lg px-4 sm:px-8 py-2.5 min-h-[42px] text-xs sm:text-sm uppercase"
               >
                 Kembali
               </Button>
@@ -138,7 +139,7 @@ const submit = () => {
             <Button
               :disabled="isSubmitting || !selected || selected.length === 0"
               @click="submit"
-              class="vote-btn-outline rounded-lg px-8 py-2.5 text-xs sm:text-sm uppercase disabled:opacity-45 disabled:cursor-not-allowed"
+              class="flex-1 sm:flex-initial vote-btn-outline rounded-lg px-4 sm:px-8 py-2.5 min-h-[42px] text-xs sm:text-sm uppercase disabled:opacity-45 disabled:cursor-not-allowed"
             >
               <span v-if="isSubmitting">Menyimpan...</span>
               <span v-else>Selanjutnya</span>
@@ -153,8 +154,8 @@ const submit = () => {
           </div>
         </CardHeader>
 
-        <CardContent class="pt-3 pb-10 px-6 sm:px-10">
-          <div class="flex flex-wrap justify-center gap-7 sm:gap-9">
+        <CardContent class="pt-3 pb-8 sm:pb-10 px-4 sm:px-10">
+          <div class="flex flex-wrap justify-center gap-5 sm:gap-9">
             <div
               v-for="(candidate, number) in candidates"
               :key="candidate.id"
@@ -289,14 +290,14 @@ const submit = () => {
           </div>
         </div>
 
-        <div class="mt-6 flex justify-center gap-3">
+        <div class="mt-6 flex flex-col sm:flex-row justify-center gap-2.5 sm:gap-3">
           <Button
             type="button"
             @click="
               select(activeCandidate.id);
               closeVisionModal();
             "
-            class="vote-btn-navy rounded-lg px-7 py-2.5 text-xs uppercase"
+            class="w-full sm:w-auto vote-btn-navy rounded-lg px-7 py-2.5 min-h-[42px] text-xs uppercase"
           >
             {{
               selected.includes(activeCandidate.id)
@@ -307,7 +308,7 @@ const submit = () => {
           <Button
             type="button"
             @click="closeVisionModal"
-            class="vote-btn-outline rounded-lg px-6 py-2.5 text-xs uppercase"
+            class="w-full sm:w-auto vote-btn-outline rounded-lg px-6 py-2.5 min-h-[42px] text-xs uppercase"
           >
             Tutup
           </Button>

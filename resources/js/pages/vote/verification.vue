@@ -295,22 +295,22 @@ const submit = () => {
             class="w-full object-cover rounded-xl border border-[#ab8240]"
           />
         </CardContent>
-        <CardFooter class="grid grid-cols-2 gap-2 px-6 pb-6">
+        <CardFooter class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 sm:px-6 pb-5 sm:pb-6">
           <Button
             type="button"
-            class="gap-2 vote-btn-navy rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            class="gap-2 vote-btn-navy rounded-xl font-bold text-xs sm:text-sm py-4 sm:py-5 px-4 uppercase"
             @click="openCamera('ktm')"
           >
-            <Camera class="size-4" />
+            <Camera class="size-4 shrink-0" />
             Buka Kamera
           </Button>
           <Button
             type="button"
             variant="outline"
-            class="gap-2 vote-btn-outline rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            class="gap-2 vote-btn-outline rounded-xl font-bold text-xs sm:text-sm py-4 sm:py-5 px-4 uppercase"
             @click="ktmInput?.click()"
           >
-            <BookImage class="size-4" />
+            <BookImage class="size-4 shrink-0" />
             Upload File
           </Button>
         </CardFooter>
@@ -333,33 +333,33 @@ const submit = () => {
             class="w-full object-cover rounded-xl border border-[#ab8240]"
           />
         </CardContent>
-        <CardFooter class="grid grid-cols-2 gap-2 px-6 pb-6">
+        <CardFooter class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 sm:px-6 pb-5 sm:pb-6">
           <Button
             type="button"
-            class="gap-2 vote-btn-navy rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            class="gap-2 vote-btn-navy rounded-xl font-bold text-xs sm:text-sm py-4 sm:py-5 px-4 uppercase"
             @click="openCamera('verification')"
           >
-            <Camera class="size-4" />
+            <Camera class="size-4 shrink-0" />
             Buka Kamera
           </Button>
           <Button
             type="button"
             variant="outline"
-            class="gap-2 vote-btn-outline rounded-xl font-bold text-sm py-5 px-4 uppercase"
+            class="gap-2 vote-btn-outline rounded-xl font-bold text-xs sm:text-sm py-4 sm:py-5 px-4 uppercase"
             @click="verificationInput?.click()"
           >
-            <BookImage class="size-4" />
+            <BookImage class="size-4 shrink-0" />
             Upload File
           </Button>
         </CardFooter>
       </Card>
 
-      <div class="vote-parchment-card p-5">
-        <div class="flex flex-row-reverse justify-between gap-3">
+      <div class="vote-parchment-card p-4 sm:p-5">
+        <div class="flex flex-col sm:flex-row-reverse justify-between gap-2.5 sm:gap-3">
           <Button
             v-if="!form.ktm || !form.verification"
             disabled
-            class="bg-gray-400/70 text-gray-700 cursor-not-allowed rounded-xl font-cinzel font-bold text-sm py-5 px-7 uppercase"
+            class="w-full sm:w-auto bg-gray-400/70 text-gray-700 cursor-not-allowed rounded-xl font-cinzel font-bold text-sm py-4 sm:py-5 px-7 uppercase"
           >
             Proses
           </Button>
@@ -373,7 +373,7 @@ const submit = () => {
               :disabled="
                 form.processing || isCompressing || !form.ktm || !form.verification
               "
-              class="vote-btn-navy rounded-xl text-sm py-5 px-7 uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full sm:w-auto vote-btn-navy rounded-xl text-sm py-4 sm:py-5 px-7 uppercase disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="form.processing">Mengunggah...</span>
               <span v-else-if="isCompressing">Mengompres...</span>
@@ -381,10 +381,10 @@ const submit = () => {
             </Button>
           </ConfirmationDialog>
 
-          <Link :href="route('index')">
+          <Link :href="route('index')" class="w-full sm:w-auto">
             <Button
               variant="outline"
-              class="vote-btn-outline px-7 py-5 rounded-xl text-sm uppercase"
+              class="w-full sm:w-auto vote-btn-outline px-7 py-4 sm:py-5 rounded-xl text-sm uppercase"
             >
               Kembali
             </Button>
@@ -503,9 +503,9 @@ const submit = () => {
   <!-- Popup Kamera Langsung -->
   <div
     v-if="cameraTarget"
-    class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-4"
   >
-    <Card class="max-w-md w-full overflow-hidden">
+    <Card class="max-w-md w-full max-h-[90dvh] overflow-y-auto">
       <CardHeader class="flex-row items-center justify-between py-3 px-4 border-b">
         <CardTitle class="text-base">
           {{ cameraTarget === "ktm" ? "Kamera: Foto KTM" : "Kamera: Selfie Memegang KTM" }}

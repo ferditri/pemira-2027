@@ -28,12 +28,12 @@ useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
 </script>
 
 <template>
-  <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6">
+  <div class="vote-royal-bg flex items-center justify-center p-3.5 sm:p-6">
     <Flash />
-    <div ref="rootRef" class="max-w-lg w-full space-y-5 relative z-10">
+    <div ref="rootRef" class="max-w-lg w-full space-y-4 sm:space-y-5 relative z-10">
       <Card data-enter class="vote-parchment-card border-0">
         <CardHeader
-          class="space-y-2 border-b border-[#9c8256]/35 text-center text-pretty pt-5 pb-6 px-6"
+          class="space-y-2 border-b border-[#9c8256]/35 text-center text-pretty pt-5 pb-5 sm:pb-6 px-5 sm:px-6"
         >
           <div class="flex justify-start mb-1">
             <a
@@ -45,7 +45,7 @@ useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
             </a>
           </div>
           <Avatar
-            class="size-24 mx-auto border-2 border-[#c8a35a] bg-[#0c1d44] shadow-md"
+            class="size-20 sm:size-24 mx-auto border-2 border-[#c8a35a] bg-[#0c1d44] shadow-md"
           >
             <AvatarImage
               v-if="user.avatar"
@@ -159,7 +159,7 @@ useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
               class="block"
             >
               <Button
-                class="w-full vote-btn-navy rounded-xl py-6 px-5 text-sm sm:text-base uppercase flex items-center justify-center gap-3 h-auto"
+                class="w-full vote-btn-navy rounded-xl py-4 sm:py-6 px-4 sm:px-5 text-sm sm:text-base uppercase flex items-center justify-center gap-2.5 sm:gap-3 h-auto whitespace-normal text-center leading-snug"
               >
                 <img
                   v-if="organization.logo"

@@ -115,6 +115,12 @@
     font-family: 'Plus Jakarta Sans', 'Geist', sans-serif;
 }
 
+@media (max-width: 767px) {
+    .vote-royal-bg {
+        background-attachment: scroll;
+    }
+}
+
 .vote-parchment-card {
     background: linear-gradient(180deg, rgba(249, 237, 211, 0.94) 0%, rgba(242, 224, 187, 0.94) 100%);
     border: 1.5px solid rgba(183, 146, 86, 0.45);
