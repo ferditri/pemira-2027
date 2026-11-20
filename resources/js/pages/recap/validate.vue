@@ -14,7 +14,7 @@ const props = defineProps<{
     organization: Organization;
     ballot: Ballot;
     user: User;
-    verification: UserVerification;
+    verification: UserVerification | null;
 }>();
 
 const submit = (verified = true) => {
@@ -47,15 +47,22 @@ const submit = (verified = true) => {
                 <Button variant="success" @click="submit()">Sah</Button>
             </CardContent>
         </Card>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div v-if="verification" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <img
                 :src="route('verifications.media', { verification: verification.id, type: 'ktm' })"
+                alt="Foto KTM Pemilih"
                 class="w-full rounded-lg"
             />
             <img
                 :src="route('verifications.media', { verification: verification.id, type: 'verification' })"
+                alt="Foto Selfie Memegang KTM"
                 class="w-full rounded-lg"
             />
         </div>
+        <Card v-else>
+            <CardContent class="p-6 text-center text-sm text-muted-foreground">
+                Berkas foto verifikasi pemilih tidak ditemukan atau belum tersedia.
+            </CardContent>
+        </Card>
     </div>
 </template>

@@ -14,6 +14,14 @@ class RecapController extends Controller
 {
     public function index(Organization $organization)
     {
+        if ($organization->is_open) {
+            return redirect()->route("organizations.dashboard", [
+                "organization" => $organization,
+            ])
+                ->with("flash.message", "Tutup pemilihan terlebih dahulu sebelum memulai validasi rekap.")
+                ->with("flash.type", "destructive");
+        }
+
         return Inertia::render("recap/confirmation", [
             "organization" => $organization,
         ]);
@@ -21,6 +29,14 @@ class RecapController extends Controller
 
     public function reset(Request $request, Organization $organization)
     {
+        if ($organization->is_open) {
+            return redirect()->route("organizations.dashboard", [
+                "organization" => $organization,
+            ])
+                ->with("flash.message", "Tutup pemilihan terlebih dahulu sebelum mereset validasi rekap.")
+                ->with("flash.type", "destructive");
+        }
+
         if ($request->user()?->type !== "admin") {
             Log::warning("admin.recap.reset_denied", [
                 "actor_id" => $request->user()?->id,
@@ -53,6 +69,14 @@ class RecapController extends Controller
 
     public function validate(Organization $organization)
     {
+        if ($organization->is_open) {
+            return redirect()->route("organizations.dashboard", [
+                "organization" => $organization,
+            ])
+                ->with("flash.message", "Validasi surat suara hanya dapat dilakukan setelah pemilihan ditutup.")
+                ->with("flash.type", "destructive");
+        }
+
         $next = $organization->ballots()
             ->where("is_confirmed", 1)
             ->whereNotNull("confirmed_at")
@@ -62,11 +86,14 @@ class RecapController extends Controller
             ->first();
 
         if ($next) {
+            $verification = $next->user->verification
+                ?? $next->user->verificationHistories()->first();
+
             return Inertia::render("recap/validate", [
                 "organization" => $organization,
                 "ballot" => $next,
                 "user" => $next->user,
-                "verification" => $next->user->verification,
+                "verification" => $verification,
             ]);
         }
 
@@ -77,6 +104,14 @@ class RecapController extends Controller
 
     public function validateStore(Organization $organization, Request $request)
     {
+        if ($organization->is_open) {
+            return redirect()->route("organizations.dashboard", [
+                "organization" => $organization,
+            ])
+                ->with("flash.message", "Validasi surat suara hanya dapat dilakukan setelah pemilihan ditutup.")
+                ->with("flash.type", "destructive");
+        }
+
         $request->validate([
             "ballot_id" => "required|exists:ballots,id",
             "verified" => "required|boolean",
@@ -95,12 +130,20 @@ class RecapController extends Controller
         ]);
     }
 
-    public function result(Organization $organization)
+    public function result(Request $request, Organization $organization)
     {
+        if ($organization->is_open && $request->user()?->type !== "admin") {
+            return redirect()->route("organizations.dashboard", [
+                "organization" => $organization,
+            ])
+                ->with("flash.message", "Hasil rekap baru dapat dilihat oleh panitia setelah pemilihan ditutup.")
+                ->with("flash.type", "destructive");
+        }
+
         $groups = $organization->groups()
             ->with(['candidates' => function ($query) {
                 $query->withCount(['ballotDetails as votes' => function ($q) {
-                    $q->whereHas('ballot', fn($b) => $b->where('is_verified', true));
+                    $q->whereHas('ballot', fn($b) => $b->where('is_confirmed', true)->where('is_verified', true));
                 }]);
             }])
             ->get();
