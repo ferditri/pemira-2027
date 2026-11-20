@@ -134,8 +134,6 @@ Route::middleware("auth")->group(function () {
                 ->name("organizations.recap.reset");
             Route::post("/validate", [RecapController::class, "validateStore"])
                 ->name("organizations.recap.validate.store");
-            Route::get("/ballots", [RecapController::class, "ballots"])
-                ->name("organizations.recap.ballots");
             Route::get("/result", [RecapController::class, "result"])
                 ->name("organizations.recap.result");
         });

@@ -254,10 +254,39 @@ class VoteController extends Controller
                     ->with("flash.type", "destructive");
             }
 
-            $ballot->update([
+            // Pastikan seluruh grup pemilihan yang berhak diikuti pemilih sudah lengkap terisi
+            $eligibleGroups = $organization->eligibleGroups($user->year, $user->major);
+            $eligibleGroups->loadCount("candidates");
+            $detailsByGroup = $ballot->details()->get()->groupBy("group_id");
+
+            foreach ($eligibleGroups as $eligibleGroup) {
+                if ($eligibleGroup->candidates_count === 0) {
+                    continue;
+                }
+                $required = min($eligibleGroup->min_candidates ?? 1, $eligibleGroup->candidates_count);
+                $selectedCount = $detailsByGroup->get($eligibleGroup->id)?->count() ?? 0;
+                if ($selectedCount < $required) {
+                    return redirect()->route("vote.group", [
+                        "organization" => $organization->id,
+                        "group" => $eligibleGroup->id,
+                    ])
+                        ->with("flash.message", "Silakan lengkapi pilihan untuk {$eligibleGroup->name} terlebih dahulu!")
+                        ->with("flash.type", "destructive");
+                }
+            }
+
+            $updatePayload = [
                 "is_confirmed" => 1,
                 "confirmed_at" => now(),
-            ]);
+            ];
+
+            // Jika KTM pemilih sudah disetujui panitia sebelum voting, langsung tandai suara sah
+            if ($user->verification?->status === "approved") {
+                $updatePayload["is_verified"] = true;
+                $updatePayload["verified_at"] = now();
+            }
+
+            $ballot->update($updatePayload);
 
             return redirect()
                 ->route("index")

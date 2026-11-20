@@ -22,6 +22,21 @@ class Organization extends Model
         ];
     }
 
+    public function eligibleGroups($year, $major)
+    {
+        return $this->groups()
+            ->where(function (Builder $query) use ($year) {
+                $query->where("year", null)
+                    ->orWhere("year", $year);
+            })
+            ->where(function (Builder $query) use ($major) {
+                $query->where("major", null)
+                    ->orWhere("major", $major);
+            })
+            ->orderBy("ordering")
+            ->get();
+    }
+
     public function firstGroup($year, $major)
     {
         return $this->groups()

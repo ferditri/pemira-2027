@@ -83,6 +83,7 @@ class RecapController extends Controller
         ]);
 
         $organization->ballots()
+            ->where("is_confirmed", true)
             ->findOrFail($request->ballot_id)
             ->update([
                 "is_verified" => $request->verified,
