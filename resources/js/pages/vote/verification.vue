@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useEnterMotion } from "@/composables/useMotion";
 import { Link, useForm } from "@inertiajs/vue3";
-import { BookImage, Camera, HelpCircle, RefreshCw, X } from "lucide-vue-next";
+import { ArrowLeft, BookImage, Camera, HelpCircle, RefreshCw, X } from "lucide-vue-next";
 import { nextTick, onUnmounted, reactive, ref } from "vue";
 import imageCompression from "browser-image-compression";
 
@@ -245,7 +245,16 @@ const submit = () => {
       </div>
 
       <Card data-enter class="vote-parchment-card border-0">
-        <CardHeader class="text-center pt-7 pb-5 px-6">
+        <CardHeader class="text-center pt-5 pb-5 px-6">
+          <div class="flex justify-start mb-2">
+            <a
+              :href="route('landing')"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9c8256]/40 bg-white/55 hover:bg-white/90 text-xs font-semibold text-[#2f3d59] hover:text-[#0c1d44] transition-colors min-h-[36px]"
+            >
+              <ArrowLeft class="size-3.5" />
+              Kembali ke Beranda
+            </a>
+          </div>
           <CardTitle
             class="font-cinzel text-[#0c1d44] text-2xl sm:text-3xl font-extrabold tracking-wider uppercase"
           >

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { useEnterMotion } from "@/composables/useMotion";
 import { Link, router, useForm } from "@inertiajs/vue3";
-import { Check, X } from "lucide-vue-next";
+import { ArrowLeft, Check, X } from "lucide-vue-next";
 import { ref } from "vue";
 
 const props = defineProps<{
@@ -93,7 +93,16 @@ const submit = () => {
   <div class="vote-royal-bg flex items-center justify-center p-4 sm:p-6 lg:p-8">
     <div ref="rootRef" class="max-w-5xl w-full relative z-10">
       <Card data-enter class="vote-parchment-card border-0">
-        <CardHeader class="text-center pt-8 pb-5 px-6">
+        <CardHeader class="text-center pt-5 pb-5 px-6">
+          <div class="flex justify-start mb-2">
+            <a
+              :href="route('landing')"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9c8256]/40 bg-white/55 hover:bg-white/90 text-xs font-semibold text-[#2f3d59] hover:text-[#0c1d44] transition-colors min-h-[36px]"
+            >
+              <ArrowLeft class="size-3.5" />
+              Beranda
+            </a>
+          </div>
           <CardTitle
             class="font-cinzel text-2xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
           >

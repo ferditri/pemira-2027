@@ -13,7 +13,7 @@ import {
 import { useEnterMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, usePage } from "@inertiajs/vue3";
-import { LogOut } from "lucide-vue-next";
+import { ArrowLeft, LogOut } from "lucide-vue-next";
 import { ref } from "vue";
 
 const props = defineProps<{
@@ -33,8 +33,17 @@ useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
     <div ref="rootRef" class="max-w-lg w-full space-y-5 relative z-10">
       <Card data-enter class="vote-parchment-card border-0">
         <CardHeader
-          class="space-y-2 border-b border-[#9c8256]/35 text-center text-pretty pt-8 pb-6 px-6"
+          class="space-y-2 border-b border-[#9c8256]/35 text-center text-pretty pt-5 pb-6 px-6"
         >
+          <div class="flex justify-start mb-1">
+            <a
+              :href="route('landing')"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9c8256]/40 bg-white/55 hover:bg-white/90 text-xs font-semibold text-[#2f3d59] hover:text-[#0c1d44] transition-colors min-h-[36px]"
+            >
+              <ArrowLeft class="size-3.5" />
+              Kembali ke Beranda
+            </a>
+          </div>
           <Avatar
             class="size-24 mx-auto border-2 border-[#c8a35a] bg-[#0c1d44] shadow-md"
           >
