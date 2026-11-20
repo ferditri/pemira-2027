@@ -15,21 +15,24 @@
   --color-crimson-dark: #4a0914;
 }
 
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE & Edge legacy */
+}
+
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera, Edge */
+  width: 0 !important;
+  height: 0 !important;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
   overflow-x: hidden;
   width: 100%;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / Edge legacy */
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-.royal-modal-content::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera, Edge */
-  width: 0;
-  height: 0;
 }
 
 section, header {
@@ -42,8 +45,6 @@ body {
   overflow-x: hidden;
   width: 100%;
   background-color: var(--color-dark-navy);
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / Edge legacy */
 }
 
 /* =========================================

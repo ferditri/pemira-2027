@@ -81,20 +81,23 @@
     * {
         @apply border-border;
     }
-    html,
-    body {
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE / Edge legacy */
-    }
-    html::-webkit-scrollbar,
-    body::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera, Edge */
-        width: 0;
-        height: 0;
-    }
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* Hide browser scrollbars across ALL scrollable containers while keeping scroll behavior intact */
+*,
+*::before,
+*::after {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE & Edge legacy */
+}
+
+*::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera, Edge */
+    width: 0 !important;
+    height: 0 !important;
 }
 
 /* Royal Vote UI Theme (matching CONTOH-HASIL-UI-VOTE.png) */
