@@ -372,21 +372,20 @@
               decoding="async"
               class="absolute inset-0 w-full h-full object-fill pointer-events-none z-10"
             />
+          </div>
 
-            <!-- Single Play Video Button positioned cleanly at bottom border (matching Figma) -->
-            <div class="absolute -bottom-4 sm:-bottom-6 inset-x-0 z-20 flex items-center justify-center">
-              <button 
-                type="button" 
-                onclick="openVideoModal()" 
-                class="btn-gold px-6 py-2.5 sm:px-10 sm:py-3.5 text-xs sm:text-sm uppercase rounded-full shadow-2xl flex items-center gap-2.5 sm:gap-3 transform hover:scale-105 active:scale-95 transition"
-              >
-                <span>TONTON VIDEO</span>
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
-              </button>
-            </div>
-
+          <!-- Single Play Video Button: clean below frame on phone, overlapping border on sm+ -->
+          <div class="mt-5 sm:mt-0 sm:absolute sm:-bottom-6 sm:inset-x-0 z-20 flex items-center justify-center">
+            <button 
+              type="button" 
+              onclick="openVideoModal()" 
+              class="btn-gold px-7 py-2.5 sm:px-10 sm:py-3.5 text-xs sm:text-sm uppercase rounded-full shadow-2xl flex items-center gap-2.5 sm:gap-3 transform hover:scale-105 active:scale-95 transition"
+            >
+              <span>TONTON VIDEO</span>
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -571,7 +570,9 @@
     <!-- ================= MODAL: VISI & MISI ================= -->
     <div id="candidate-modal" class="royal-modal-backdrop" onclick="closeCandidateModal(event)">
       <div class="royal-modal-content" onclick="event.stopPropagation()">
-        <button type="button" class="royal-modal-close" onclick="closeCandidateModal()" aria-label="Tutup">&times;</button>
+        <div class="royal-modal-topbar">
+          <button type="button" class="royal-modal-close" onclick="closeCandidateModal()" aria-label="Tutup">&times;</button>
+        </div>
         <div id="modal-body"></div>
       </div>
     </div>

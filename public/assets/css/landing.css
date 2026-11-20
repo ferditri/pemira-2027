@@ -229,89 +229,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 767px) {
-  .hero-layered-container {
-    min-height: 460px;
-  }
-  .hero-bg-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 35%;
-  }
-  .hero-layered-overlay {
-    position: relative;
-    min-height: 460px;
-    padding: 5.5rem 1.25rem 2.75rem;
-  }
-  .hero-title-graphic {
-    width: 82%;
-    max-width: 310px;
-    margin-bottom: 0.75rem;
-  }
-  .hero-tagline-text {
-    background: rgba(248, 238, 215, 0.88);
-    border: 1px solid rgba(187, 160, 112, 0.55);
-    backdrop-filter: blur(4px);
-    padding: 0.55rem 0.9rem;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    margin-bottom: 1.25rem;
-  }
-  .parchment-divider {
-    gap: 10px;
-  }
-  .parchment-divider-line {
-    width: 36px;
-  }
-  .parchment-divider-text {
-    font-size: 0.88rem;
-    letter-spacing: 0.18em;
-  }
-  .candidate-frame-box {
-    padding: 26px 14px;
-  }
-  .corner-ornament {
-    width: 44px;
-    height: 44px;
-  }
-  .corner-tl { top: 8px; left: 8px; }
-  .corner-tr { top: 8px; right: 8px; }
-  .corner-bl { bottom: 8px; left: 8px; }
-  .corner-br { bottom: 8px; right: 8px; }
-  .section-tutorial {
-    margin-top: -48px;
-    padding: 64px 14px 76px;
-  }
-  .footer-royal {
-    margin-top: 0;
-    background-color: #0d1c3f;
-    padding-top: 1.5rem;
-  }
-  .footer-rectangle-panel {
-    background-position: center top;
-    padding: 22px 16px 28px;
-  }
-  .footer-link {
-    font-size: 0.82rem;
-    letter-spacing: 0.08em;
-  }
-  .royal-modal-backdrop {
-    padding: 12px;
-  }
-  #modal-body {
-    padding: 22px 16px;
-  }
-  .royal-modal-close {
-    top: 14px;
-    right: 14px;
-    width: 34px;
-    height: 34px;
-  }
-}
+/* Mobile overrides are consolidated at the bottom of this stylesheet to ensure proper cascade precedence */
 
 /* =========================================
    PARCHMENT SECTIONS (bg-calonbem-calonblm.webp)
@@ -671,6 +589,20 @@ section[id], header[id] {
   color: #2b1810 !important;
 }
 
+.royal-modal-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 6px 8px 2px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 30;
+}
+
+.royal-modal-topbar .royal-modal-close {
+  position: static;
+}
+
 #modal-body {
   color: #2b1810 !important;
   flex: 1;
@@ -678,7 +610,7 @@ section[id], header[id] {
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 26px 22px;
+  padding: 4px 22px 24px;
 }
 
 #modal-body h3,
@@ -744,4 +676,105 @@ section[id], header[id] {
   0% { transform: scale(0.8) rotate(0deg); opacity: 0.4; }
   50% { transform: scale(1.2) rotate(45deg); opacity: 0.9; }
   100% { transform: scale(0.8) rotate(90deg); opacity: 0.4; }
+}
+
+/* =========================================
+   MOBILE RESPONSIVE OVERRIDES (PLACED LAST FOR CASCADE PRECEDENCE)
+   ========================================= */
+@media (max-width: 767px) {
+  .navbar-royal {
+    background: rgba(7, 17, 36, 0.96);
+  }
+  .hero-layered-container {
+    min-height: 500px;
+  }
+  .hero-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+  }
+  .hero-layered-overlay {
+    position: relative;
+    min-height: 500px;
+    padding: 5.5rem 1.25rem 3.5rem;
+    gap: 0.45rem;
+  }
+  .hero-title-graphic {
+    width: 82%;
+    max-width: 300px;
+    margin-bottom: 0.35rem;
+  }
+  .hero-tagline-text {
+    background: rgba(248, 238, 215, 0.9);
+    border: 1px solid rgba(187, 160, 112, 0.55);
+    backdrop-filter: blur(4px);
+    padding: 0.6rem 0.95rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+  }
+  .parchment-divider {
+    gap: 10px;
+  }
+  .parchment-divider-line {
+    width: 34px;
+  }
+  .parchment-divider-text {
+    font-size: 0.88rem;
+    letter-spacing: 0.18em;
+  }
+  .section-heading-dark {
+    font-size: 1.55rem;
+    line-height: 1.25;
+    margin-bottom: 18px;
+  }
+  .candidate-frame-box {
+    padding: 36px 16px 40px;
+  }
+  .candidate-frame-box .section-heading-dark {
+    padding-inline: 28px;
+  }
+  .corner-ornament {
+    width: 38px;
+    height: 38px;
+  }
+  .corner-tl { top: 8px; left: 8px; }
+  .corner-tr { top: 8px; right: 8px; }
+  .corner-bl { bottom: 8px; left: 8px; }
+  .corner-br { bottom: 8px; right: 8px; }
+  .section-tutorial {
+    margin-top: -36px;
+    padding: 56px 14px 64px;
+  }
+  .footer-royal {
+    margin-top: 0;
+    background-color: #0d1c3f;
+    padding-top: 1.25rem;
+  }
+  .footer-rectangle-panel {
+    background-position: center top;
+    padding: 22px 16px 28px;
+  }
+  .footer-link {
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+  }
+  .royal-modal-backdrop {
+    padding: 12px;
+  }
+  .royal-modal-topbar {
+    padding: 4px 6px 0;
+  }
+  #modal-body {
+    padding: 4px 14px 20px;
+  }
+  .royal-modal-close {
+    width: 34px;
+    height: 34px;
+    font-size: 1.15rem;
+  }
 }
