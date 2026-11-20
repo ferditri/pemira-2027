@@ -140,20 +140,7 @@ if (mobileMenuBtn && mobileMenu) {
   });
 }
 
-// 3. Scroll Reveal Observer
-const revealElements = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('active');
-    }
-  });
-}, {
-  threshold: 0.1,
-  rootMargin: '0px 0px -40px 0px'
-});
-
-revealElements.forEach(el => revealObserver.observe(el));
+// 3. Motion animations are handled by Vite entry resources/js/landing-motion.ts
 
 // 4. Candidate Modal Logic
 const candidateModal = document.getElementById('candidate-modal');
@@ -218,6 +205,7 @@ function openCandidateModal(id) {
   candidateModal.classList.add('active');
   document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
+  window.dispatchEvent(new CustomEvent('pemira:candidate-modal-open'));
 }
 
 function closeCandidateModal(e) {
