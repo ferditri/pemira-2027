@@ -25,7 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatMajor } from "@/lib/majors";
-import { Link, useForm } from "@inertiajs/vue3";
+import { Link, router, useForm } from "@inertiajs/vue3";
 import {
   BarChart3,
   CheckCircle2,
@@ -36,6 +36,7 @@ import {
   Square,
   Vote,
 } from "lucide-vue-next";
+import { onMounted, onUnmounted } from "vue";
 
 interface ElectionOrg extends Organization {
   groups_count: number;
@@ -48,15 +49,39 @@ defineProps<{
   organizations: ElectionOrg[];
 }>();
 
+const refreshOrganizations = () => {
+  router.reload({ only: ["organizations"] });
+};
+
+const onVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    refreshOrganizations();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("focus", refreshOrganizations);
+  window.addEventListener("pageshow", refreshOrganizations);
+  document.addEventListener("visibilitychange", onVisibilityChange);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("focus", refreshOrganizations);
+  window.removeEventListener("pageshow", refreshOrganizations);
+  document.removeEventListener("visibilitychange", onVisibilityChange);
+});
+
 const openVote = (orgId: number) => {
   useForm({}).post(route("organizations.open", { organization: orgId }), {
     preserveScroll: true,
+    onSuccess: () => refreshOrganizations(),
   });
 };
 
 const closeVote = (orgId: number) => {
   useForm({}).post(route("organizations.close", { organization: orgId }), {
     preserveScroll: true,
+    onSuccess: () => refreshOrganizations(),
   });
 };
 

@@ -640,7 +640,7 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
               <TableCell class="text-right" @click.stop>
                 <ConfirmationDialog
                   title="Arsipkan data ini?"
-                  description="Data akan disembunyikan dari daftar aktif tanpa dihapus dari database/riwayat."
+                  description="Data disembunyikan dari daftar antrean aktif tanpa menghapus riwayat & tanpa mengubah status suara sah/tidak sah. Untuk membatalkan suara, gunakan tombol Tidak Sah atau Minta Re-take."
                   @accept="archiveItem(item.id)"
                 >
                   <Button

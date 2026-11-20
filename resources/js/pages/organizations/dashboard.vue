@@ -20,7 +20,7 @@ import { useEnterMotion } from "@/composables/useMotion";
 import { PageProps } from "@/types";
 import { Link, router, useForm, usePage } from "@inertiajs/vue3";
 import { ArrowLeft, ArrowRight, Building, LogOut, Vote } from "lucide-vue-next";
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 
 const rootRef = ref<HTMLElement | null>(null);
 useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.42, staggerDelay: 0.05 });
@@ -58,19 +58,47 @@ const next = () => {
   }
 };
 
+const refreshDashboard = () => {
+  router.reload({ only: ["organization", "ballots"] });
+};
+
+const onVisibilityChange = () => {
+  if (document.visibilityState === "visible") {
+    refreshDashboard();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("focus", refreshDashboard);
+  window.addEventListener("pageshow", refreshDashboard);
+  document.addEventListener("visibilitychange", onVisibilityChange);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("focus", refreshDashboard);
+  window.removeEventListener("pageshow", refreshDashboard);
+  document.removeEventListener("visibilitychange", onVisibilityChange);
+});
+
 const open = () => {
   const form = useForm({});
-  form.post(route("organizations.open", props.organization.id));
+  form.post(route("organizations.open", props.organization.id), {
+    preserveState: false,
+  });
 };
 
 const close = () => {
   const form = useForm({});
-  form.post(route("organizations.close", props.organization.id));
+  form.post(route("organizations.close", props.organization.id), {
+    preserveState: false,
+  });
 };
 
 const reset = () => {
   const form = useForm({});
-  form.post(route("organizations.reset", props.organization.id));
+  form.post(route("organizations.reset", props.organization.id), {
+    preserveState: false,
+  });
 };
 
 const recap = () => {

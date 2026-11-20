@@ -343,4 +343,101 @@ class PemiraSecurityAndFlowTest extends TestCase
         $response->assertRedirect();
         $this->assertDatabaseHas('users', ['id' => $voter->id]);
     }
+
+    public function test_retake_invalidates_ballot_temporarily_blocks_double_vote_and_restores_single_vote_on_reapproval(): void
+    {
+        Storage::fake('local');
+
+        $admin = User::create([
+            'npm' => '25082010060',
+            'email' => '25082010060@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Admin Retake',
+            'type' => 'admin',
+        ]);
+        $voter = User::create([
+            'npm' => '25082010061',
+            'email' => '25082010061@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Voter Retake',
+            'type' => 'voter',
+        ]);
+        $org = Organization::create([
+            'name' => 'Retake Org',
+            'logo' => 'logo.webp',
+            'major' => null,
+            'ordering' => 1,
+            'is_open' => true,
+        ]);
+        $group = Group::create(['organization_id' => $org->id, 'name' => 'BEM', 'ordering' => 1, 'min_candidates' => 1]);
+        $candidate = Candidate::create([
+            'organization_id' => $org->id,
+            'group_id' => $group->id,
+            'name_1' => 'Calon 1',
+            'vision' => 'v',
+            'mission' => 'm',
+            'picture' => '/a.jpg',
+        ]);
+
+        // 1. Initial verification & confirmed vote
+        $v1 = UserVerification::create([
+            'user_id' => $voter->id,
+            'ktm' => 'ktms/old.jpg',
+            'verification' => 'verifications/old.jpg',
+            'status' => 'approved',
+            'is_active' => true,
+        ]);
+        $ballot = Ballot::create([
+            'organization_id' => $org->id,
+            'user_id' => $voter->id,
+            'is_confirmed' => 1,
+            'confirmed_at' => now(),
+            'is_verified' => true,
+            'verified_at' => now(),
+        ]);
+        $ballot->details()->create([
+            'organization_id' => $org->id,
+            'group_id' => $group->id,
+            'candidate_id' => $candidate->id,
+        ]);
+
+        // 2. Admin requests retake -> ballot becomes unverified (not counted)
+        $this->actingAs($admin)
+            ->post(route('admin.verifications.review', ['verification' => $v1->id]), [
+                'status' => 'retake',
+                'admin_note' => 'Foto buram',
+            ])
+            ->assertRedirect();
+
+        $this->assertFalse((bool) $ballot->fresh()->is_verified);
+
+        // 3. Voter uploads retake photo -> old history archived in private, new record active
+        $v1->update(['is_active' => false]);
+        $v2 = UserVerification::create([
+            'user_id' => $voter->id,
+            'ktm' => 'ktms/new.jpg',
+            'verification' => 'verifications/new.jpg',
+            'status' => 'pending',
+            'is_active' => true,
+        ]);
+
+        // 4. Voter tries to vote again -> blocked, still only 1 ballot
+        $this->actingAs($voter)
+            ->get(route('vote.organization', ['organization' => $org->id]))
+            ->assertRedirect(route('index'));
+
+        $this->assertSame(1, Ballot::where('organization_id', $org->id)->where('user_id', $voter->id)->count());
+
+        // 5. Admin approves new retake photo -> existing ballot becomes valid again, total counted = 1 (no double vote)
+        $this->actingAs($admin)
+            ->post(route('admin.verifications.review', ['verification' => $v2->id]), [
+                'status' => 'approved',
+            ])
+            ->assertRedirect();
+
+        $this->assertTrue((bool) $ballot->fresh()->is_verified);
+        $this->assertSame(1, Ballot::where('organization_id', $org->id)->where('is_confirmed', true)->where('is_verified', true)->count());
+    }
 }
