@@ -47,10 +47,17 @@ class AdminVerificationController extends Controller
             });
         }
 
-        $verifications = $query->get();
+        $paginated = $query->paginate(50)->withQueryString();
 
         return Inertia::render('admin/verifications', [
-            'verifications' => $verifications,
+            'verifications' => $paginated->items(),
+            'pagination' => [
+                'current_page' => $paginated->currentPage(),
+                'last_page' => $paginated->lastPage(),
+                'total' => $paginated->total(),
+                'prev_page_url' => $paginated->previousPageUrl(),
+                'next_page_url' => $paginated->nextPageUrl(),
+            ],
             'stats' => $stats,
             'exampleImages' => UserVerification::exampleUrls(),
             'filters' => [
@@ -168,7 +175,7 @@ class AdminVerificationController extends Controller
                 }
             }
             if ($request->hasFile('ktm')) {
-                $ext = $request->file('ktm')->getClientOriginalExtension() ?: 'jpg';
+                $ext = $request->file('ktm')->extension() ?: 'jpg';
                 $request->file('ktm')->storeAs('examples', 'ktm.' . $ext, 'public');
             }
         }
@@ -180,7 +187,7 @@ class AdminVerificationController extends Controller
                 }
             }
             if ($request->hasFile('selfie')) {
-                $ext = $request->file('selfie')->getClientOriginalExtension() ?: 'jpg';
+                $ext = $request->file('selfie')->extension() ?: 'jpg';
                 $request->file('selfie')->storeAs('examples', 'selfie.' . $ext, 'public');
             }
         }

@@ -59,6 +59,13 @@ interface VerificationItem extends UserVerification {
 
 const props = defineProps<{
   verifications: VerificationItem[];
+  pagination?: {
+    current_page: number;
+    last_page: number;
+    total: number;
+    prev_page_url: string | null;
+    next_page_url: string | null;
+  };
   stats: {
     total: number;
     pending: number;
@@ -649,6 +656,30 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
             </TableRow>
           </TableBody>
         </Table>
+        <div
+          v-if="pagination && pagination.last_page > 1"
+          class="flex items-center justify-between gap-2 px-4 py-3 border-t text-xs text-muted-foreground"
+        >
+          <span>Halaman {{ pagination.current_page }} dari {{ pagination.last_page }} ({{ pagination.total }} data)</span>
+          <div class="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              :disabled="!pagination.prev_page_url"
+              @click="pagination.prev_page_url && router.visit(pagination.prev_page_url, { preserveScroll: true })"
+            >
+              Sebelumnya
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              :disabled="!pagination.next_page_url"
+              @click="pagination.next_page_url && router.visit(pagination.next_page_url, { preserveScroll: true })"
+            >
+              Berikutnya
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   </div>

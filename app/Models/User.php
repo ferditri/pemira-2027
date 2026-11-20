@@ -17,6 +17,10 @@ class User extends Authenticatable
         "avatar",
     ];
 
+    protected $hidden = [
+        "google_id",
+    ];
+
     public function verification()
     {
         return $this->hasOne(UserVerification::class)

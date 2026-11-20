@@ -94,12 +94,12 @@ class OrganizationController extends Controller
 
         // 2. Jika ada file logo baru yang diunggah
         if ($request->hasFile('logo')) {
-            // Bersihkan format path '/storage/...' agar bisa dihapus oleh sistem
-            $oldFilePath = str_replace('/storage/', '', $logoPath);
-            
-            // Hapus logo lama dari server
-            if ($logoPath && Storage::disk('public')->exists($oldFilePath)) {
-               Storage::disk('public')->delete($oldFilePath);
+            // Bersihkan format path '/storage/organizations/...' agar hanya hapus file logo milik organisasi
+            if ($logoPath && str_starts_with($logoPath, '/storage/organizations/')) {
+                $oldFilePath = str_replace('/storage/', '', $logoPath);
+                if (Storage::disk('public')->exists($oldFilePath)) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
             }
             
             // Simpan logo baru
@@ -129,7 +129,7 @@ class OrganizationController extends Controller
             $logoPath = $organization->logo;
             $organization->delete();
 
-            if ($logoPath) {
+            if ($logoPath && str_starts_with($logoPath, '/storage/organizations/')) {
                 $oldFilePath = str_replace('/storage/', '', $logoPath);
                 if (Storage::disk('public')->exists($oldFilePath)) {
                     Storage::disk('public')->delete($oldFilePath);

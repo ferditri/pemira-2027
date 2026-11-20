@@ -122,10 +122,12 @@ class CandidateController extends Controller
 
         // 2. Cek apakah ada file foto baru yang diunggah
         if ($request->hasFile('picture')) {
-            // Hapus foto lama dari server untuk menghemat ruang
-            $oldFilePath = str_replace('/storage/', '', $picturePath);
-            if ($picturePath && Storage::disk('public')->exists($oldFilePath)) {
-               Storage::disk('public')->delete($oldFilePath);
+            // Hapus foto lama dari server untuk menghemat ruang (hanya folder candidates/)
+            if ($picturePath && str_starts_with($picturePath, '/storage/candidates/')) {
+                $oldFilePath = str_replace('/storage/', '', $picturePath);
+                if (Storage::disk('public')->exists($oldFilePath)) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
             }
             
             // Simpan foto baru
@@ -176,10 +178,12 @@ class CandidateController extends Controller
             // 1. Coba hapus data dari database terlebih dahulu
             $candidate->delete();
 
-            // 2. JIKA BERHASIL (tidak ditolak MySQL), baru hapus foto fisik dari Storage
-            $oldFilePath = str_replace('/storage/', '', $candidate->picture);
-            if ($candidate->picture && Storage::disk('public')->exists($oldFilePath)) {
-                Storage::disk('public')->delete($oldFilePath);
+            // 2. JIKA BERHASIL (tidak ditolak MySQL), baru hapus foto fisik dari Storage (hanya folder candidates/)
+            if ($candidate->picture && str_starts_with($candidate->picture, '/storage/candidates/')) {
+                $oldFilePath = str_replace('/storage/', '', $candidate->picture);
+                if (Storage::disk('public')->exists($oldFilePath)) {
+                    Storage::disk('public')->delete($oldFilePath);
+                }
             }
 
             // 3. Kembalikan dengan pesan sukses

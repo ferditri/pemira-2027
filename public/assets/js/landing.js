@@ -146,27 +146,47 @@ if (mobileMenuBtn && mobileMenu) {
 const candidateModal = document.getElementById('candidate-modal');
 const modalBody = document.getElementById('modal-body');
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizeImageUrl(url) {
+  const trimmed = String(url ?? '').trim();
+  if (trimmed.startsWith('/') || trimmed.startsWith('https://') || trimmed.startsWith('http://')) {
+    return escapeHtml(trimmed);
+  }
+  return '/assets/images/nav_logo_transparent.png';
+}
+
 function openCandidateModal(id) {
   const data = (window.__LANDING_CANDIDATES__ && window.__LANDING_CANDIDATES__[id]) || (typeof candidateData !== 'undefined' ? candidateData[id] : null);
   if (!data) return;
 
-  const initial = (data.name || 'C').trim().charAt(0).toUpperCase();
-  const visiText = data.visi ? data.visi : '-';
+  const safeName = escapeHtml(data.name || '');
+  const safeTitle = escapeHtml(data.title || '');
+  const safeImage = sanitizeImageUrl(data.image);
+  const initial = escapeHtml((data.name || 'C').trim().charAt(0).toUpperCase());
+  const visiText = escapeHtml(data.visi ? data.visi : '-');
   const misiList = Array.isArray(data.misi) && data.misi.length > 0 ? data.misi : [];
 
   modalBody.innerHTML = `
     <div class="text-center">
       <div class="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-4 border-amber-600/60 shadow-lg bg-amber-100 flex items-center justify-center relative">
-        <img src="${data.image}" alt="${data.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+        <img src="${safeImage}" alt="${safeName}" class="w-full h-full object-cover" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
         <div class="w-full h-full hidden items-center justify-center bg-amber-900/10 text-amber-950 font-cinzel font-bold text-3xl select-none">
           ${initial}
         </div>
       </div>
       <span class="inline-block px-3.5 py-1 bg-amber-900/15 border border-amber-700/30 rounded-full text-xs font-cinzel font-bold text-amber-950 uppercase tracking-widest mb-1.5 shadow-sm">
-        ${data.title}
+        ${safeTitle}
       </span>
       <h3 class="font-cinzel font-extrabold text-2xl text-[#6e1324] mb-6 tracking-wide drop-shadow-sm">
-        ${data.name}
+        ${safeName}
       </h3>
     </div>
 
@@ -192,7 +212,7 @@ function openCandidateModal(id) {
           ? misiList.map(m => `
             <li class="flex items-start gap-2.5 text-[#2b1810]" style="color: #2b1810 !important;">
               <span class="text-amber-800 font-bold mt-0.5 select-none flex-shrink-0" style="color: #92400e !important;">❖</span>
-              <span class="leading-relaxed text-[#2b1810]" style="color: #2b1810 !important;">${m}</span>
+              <span class="leading-relaxed text-[#2b1810]" style="color: #2b1810 !important;">${escapeHtml(m)}</span>
             </li>
           `).join('')
           : `<li class="text-sm italic text-[#5c4033] pl-4" style="color: #5c4033 !important;">Belum ada rincian misi.</li>`
