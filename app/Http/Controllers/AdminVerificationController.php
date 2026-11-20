@@ -114,6 +114,42 @@ class AdminVerificationController extends Controller
             ->with('flash.type', 'success');
     }
 
+    public function media(Request $request, UserVerification $verification, string $type)
+    {
+        $user = $request->user();
+        $isStaff = in_array($user?->type, ['admin', 'committee'], true);
+        $isOwner = $user && $user->id === $verification->user_id;
+
+        if (!$isStaff && !$isOwner) {
+            abort(403, 'Tidak berwenang mengakses berkas verifikasi.');
+        }
+
+        if (!in_array($type, ['ktm', 'verification'], true)) {
+            abort(404);
+        }
+
+        $relativePath = $type === 'ktm' ? $verification->ktm : $verification->verification;
+        if (!$relativePath || str_contains($relativePath, '..')) {
+            abort(404);
+        }
+
+        $disk = null;
+        if (Storage::disk('local')->exists($relativePath)) {
+            $disk = Storage::disk('local');
+        } elseif (Storage::disk('public')->exists($relativePath)) {
+            $disk = Storage::disk('public');
+        }
+
+        if (!$disk) {
+            abort(404);
+        }
+
+        return response()->file($disk->path($relativePath), [
+            'Cache-Control' => 'private, max-age=3600',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
     public function updateExamples(Request $request)
     {
         $request->validate([

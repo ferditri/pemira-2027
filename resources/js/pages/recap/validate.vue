@@ -49,11 +49,11 @@ const submit = (verified = true) => {
         </Card>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <img
-                :src="'/storage/' + verification.ktm!"
+                :src="route('verifications.media', { verification: verification.id, type: 'ktm' })"
                 class="w-full rounded-lg"
             />
             <img
-                :src="'/storage/' + verification.verification!"
+                :src="route('verifications.media', { verification: verification.id, type: 'verification' })"
                 class="w-full rounded-lg"
             />
         </div>

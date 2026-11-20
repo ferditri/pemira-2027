@@ -71,6 +71,9 @@ Route::middleware("auth")->group(function () {
     Route::post("/verification", [UserVerificationController::class, "store"])
         ->middleware("throttle:15,1")
         ->name("verification.store");
+    Route::get("/verifications/{verification}/media/{type}", [AdminVerificationController::class, "media"])
+        ->whereIn("type", ["ktm", "verification"])
+        ->name("verifications.media");
 
     Route::post("/logout", [AuthController::class, "logout"])->name("logout");
 

@@ -39,8 +39,8 @@ class UserVerificationController extends Controller
             "verification" => "required|image|mimes:jpeg,png,jpg,webp|max:5120",
         ]);
 
-        $ktm = Storage::disk("public")->put("ktms", $request->file("ktm"));
-        $verification = Storage::disk("public")->put(
+        $ktm = Storage::disk("local")->put("ktms", $request->file("ktm"));
+        $verification = Storage::disk("local")->put(
             "verifications",
             $request->file("verification")
         );

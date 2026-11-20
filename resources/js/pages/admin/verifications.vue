@@ -205,6 +205,9 @@ const statusBadgeClass = (status?: string) => {
   }
 };
 
+const verificationMediaUrl = (id: number, type: "ktm" | "verification") =>
+  route("verifications.media", { verification: id, type });
+
 const majorName = (code?: string) => formatMajor(code);
 
 const archiveItem = (id: number) => {
@@ -470,11 +473,11 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
                 </Label>
                 <div
                   class="relative group rounded-lg border overflow-hidden bg-muted aspect-[4/3] cursor-pointer"
-                  @click="zoomImage = '/storage/' + currentItem.ktm"
+                  @click="zoomImage = verificationMediaUrl(currentItem.id, 'ktm')"
                 >
                   <img
                     v-if="currentItem.ktm"
-                    :src="'/storage/' + currentItem.ktm"
+                    :src="verificationMediaUrl(currentItem.id, 'ktm')"
                     alt="Foto KTM"
                     class="w-full h-full object-contain"
                   />
@@ -490,11 +493,11 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
                 </Label>
                 <div
                   class="relative group rounded-lg border overflow-hidden bg-muted aspect-[4/3] cursor-pointer"
-                  @click="zoomImage = '/storage/' + currentItem.verification"
+                  @click="zoomImage = verificationMediaUrl(currentItem.id, 'verification')"
                 >
                   <img
                     v-if="currentItem.verification"
-                    :src="'/storage/' + currentItem.verification"
+                    :src="verificationMediaUrl(currentItem.id, 'verification')"
                     alt="Foto Megang KTM"
                     class="w-full h-full object-contain"
                   />
@@ -705,18 +708,18 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
           <div class="grid grid-cols-2 gap-3">
             <div
               class="rounded border bg-background overflow-hidden cursor-pointer aspect-[4/3] relative group"
-              @click="zoomImage = '/storage/' + hist.ktm"
+              @click="zoomImage = verificationMediaUrl(hist.id, 'ktm')"
             >
-              <img :src="'/storage/' + hist.ktm" alt="KTM" class="w-full h-full object-contain" />
+              <img :src="verificationMediaUrl(hist.id, 'ktm')" alt="KTM" class="w-full h-full object-contain" />
               <div class="absolute bottom-1 left-1 bg-black/65 text-white text-[10px] px-1.5 py-0.5 rounded">
                 KTM
               </div>
             </div>
             <div
               class="rounded border bg-background overflow-hidden cursor-pointer aspect-[4/3] relative group"
-              @click="zoomImage = '/storage/' + hist.verification"
+              @click="zoomImage = verificationMediaUrl(hist.id, 'verification')"
             >
-              <img :src="'/storage/' + hist.verification" alt="Selfie" class="w-full h-full object-contain" />
+              <img :src="verificationMediaUrl(hist.id, 'verification')" alt="Selfie" class="w-full h-full object-contain" />
               <div class="absolute bottom-1 left-1 bg-black/65 text-white text-[10px] px-1.5 py-0.5 rounded">
                 Selfie
               </div>
