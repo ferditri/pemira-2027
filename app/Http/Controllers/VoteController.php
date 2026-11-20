@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ballot;
 use App\Models\BallotDetail;
 use App\Models\Group;
 use App\Models\Organization;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -51,9 +53,22 @@ class VoteController extends Controller
         }
 
         if (!$ballot) {
-            $user->ballot()->create([
-                "organization_id" => $organization->id,
-            ]);
+            try {
+                $ballot = Ballot::query()->firstOrCreate([
+                    "organization_id" => $organization->id,
+                    "user_id" => $user->id,
+                    "active_lock" => 1,
+                ]);
+            } catch (QueryException $e) {
+                $ballot = $user->ballots()
+                    ->where("organization_id", $organization->id)
+                    ->first();
+                if ($ballot && $ballot->is_confirmed) {
+                    return redirect()->route("index")
+                        ->with("flash.message", "Oops! Kamu sudah menggunakan hak suaramu untuk organisasi ini 😅")
+                        ->with("flash.type", "destructive");
+                }
+            }
         }
 
         $first = $organization->firstGroup($user->year, $user->major);

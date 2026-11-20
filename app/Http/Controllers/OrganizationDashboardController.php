@@ -13,7 +13,9 @@ class OrganizationDashboardController extends Controller
 {
     public function dashboard(Organization $organization)
     {
-        $organization->loadCount("ballots");
+        $organization->loadCount([
+            "ballots" => fn ($q) => $q->where("is_confirmed", true),
+        ]);
         $ballots = $organization->ballots()->with("user")
             ->where("is_confirmed", 1)
             ->cursorPaginate(5);
@@ -27,14 +29,24 @@ class OrganizationDashboardController extends Controller
     public function open(Organization $organization, Request $request)
     {
         $organization->update(["is_open" => true]);
+        Log::info("organization.voting.opened", [
+            "actor_id" => $request->user()?->id,
+            "actor_type" => $request->user()?->type,
+            "organization_id" => $organization->id,
+        ]);
         return redirect()->back()
             ->with("flash.message", "Pemilihan {$organization->name} berhasil dibuka!")
             ->with("flash.type", "success");
     }
 
-    public function close(Organization $organization)
+    public function close(Organization $organization, Request $request)
     {
         $organization->update(["is_open" => false]);
+        Log::info("organization.voting.closed", [
+            "actor_id" => $request->user()?->id,
+            "actor_type" => $request->user()?->type,
+            "organization_id" => $organization->id,
+        ]);
         return redirect()->back()
             ->with("flash.message", "Pemilihan {$organization->name} berhasil ditutup!")
             ->with("flash.type", "success");
