@@ -240,7 +240,9 @@ function closeCandidateModal(e) {
 // 5. Video Tutorial Modal Logic
 const videoModal = document.getElementById('video-modal');
 const ytPlayer = document.getElementById('youtube-player');
-const youtubeUrl = 'https://www.youtube.com/embed/_Zpm7Rbca1A?autoplay=1';
+const rawVideoId = String(window.__PEMIRA_TUTORIAL_VIDEO_ID__ || '_Zpm7Rbca1A').trim();
+const safeVideoId = /^[A-Za-z0-9_-]{6,20}$/.test(rawVideoId) ? rawVideoId : '_Zpm7Rbca1A';
+const youtubeUrl = `https://www.youtube.com/embed/${safeVideoId}?autoplay=1`;
 
 function openVideoModal() {
   ytPlayer.src = youtubeUrl;

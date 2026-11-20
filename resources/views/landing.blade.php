@@ -613,6 +613,7 @@
     @endphp
     <script>
       window.__LANDING_CANDIDATES__ = @json($landingCandidatesMap);
+      window.__PEMIRA_TUTORIAL_VIDEO_ID__ = @json(config('pemira.tutorial_video_id', '_Zpm7Rbca1A'));
     </script>
     <script src="{{ asset('assets/js/landing.js') }}"></script>
     @vite(['resources/js/landing-motion.ts'])

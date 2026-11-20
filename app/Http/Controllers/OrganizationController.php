@@ -15,9 +15,7 @@ class OrganizationController extends Controller
      */
     public function index()
     {
-        return Inertia::render("admin/organizations", [
-            "organizations" => Organization::all(),
-        ]);
+        return redirect()->route("admin.candidates.index");
     }
 
     /**

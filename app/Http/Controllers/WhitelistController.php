@@ -36,54 +36,73 @@ class WhitelistController extends Controller
      */
     public function create()
     {
-        return Inertia::render("whitelists/create");
+        return redirect()->route("admin.whitelists.index");
     }
 
     /**
      * Store a newly created resource in storage.
      */
- public function store(Request $request)
-{
-    $request->validate([
-        'whitelists' => 'required',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'whitelists' => 'required|string|max:500000',
+        ]);
 
-    // 1. Bersihkan input: pecah baris, hilangkan spasi, buang baris yang kosong
-    $rawNpms = preg_split("/\r\n|\n|\r/", $request->whitelists);
-    $cleanNpms = array_filter(array_map('trim', $rawNpms));
+        // 1. Bersihkan input: pecah baris, hilangkan spasi, buang baris kosong, dan deduplikasi
+        $rawNpms = preg_split("/\r\n|\n|\r/", (string) $request->whitelists) ?: [];
+        $trimmedNpms = array_values(array_unique(array_filter(array_map('trim', $rawNpms), fn ($v) => $v !== '')));
 
-    // 2. Eksekusi penghapusan data lama (Tetap gunakan logika asli Anda)
-    // Whitelist::query()->whereDoesntHave('user')->delete();
-    // Whitelist::query()->whereHas('user', function ($query) {
-    //     $query->where('type', 'voter');
-    // })->delete();
+        $validNpms = [];
+        $skippedCount = 0;
+        foreach ($trimmedNpms as $npm) {
+            if (preg_match('/^[A-Za-z0-9._-]{3,50}$/', $npm)) {
+                $validNpms[] = $npm;
+            } else {
+                $skippedCount++;
+            }
+        }
 
-    // 3. Rakit data menjadi format Array Multidimensi
-    $insertData = [];
-    $now = now();
-    foreach ($cleanNpms as $npm) {
-        $insertData[] = [
-            'npm' => $npm,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ];
+        if (empty($validNpms)) {
+            return redirect()
+                ->back()
+                ->withErrors(['whitelists' => 'Tidak ada NPM valid yang ditemukan. Pastikan tiap baris hanya berisi NPM.']);
+        }
+
+        // 2. Rakit data menjadi format Array Multidimensi
+        $insertData = [];
+        $now = now();
+        foreach ($validNpms as $npm) {
+            $insertData[] = [
+                'npm' => $npm,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+
+        // 3. BULK INSERT per 1000 baris sekaligus
+        foreach (array_chunk($insertData, 1000) as $chunk) {
+            Whitelist::insertOrIgnore($chunk);
+        }
+
+        $msg = count($validNpms) . ' NPM valid diproses ke daftar pemilih.';
+        if ($skippedCount > 0) {
+            $msg .= " ({$skippedCount} baris tidak valid dilewati.)";
+        }
+
+        return redirect(route("admin.whitelists.index"))
+            ->with("flash.message", $msg)
+            ->with("flash.type", "success");
     }
-
-    // 4. BULK INSERT MAGIC: Masukkan per 1000 baris sekaligus
-    foreach (array_chunk($insertData, 1000) as $chunk) {
-        // insertOrIgnore akan mengabaikan data duplikat secara efisien
-        Whitelist::insertOrIgnore($chunk);
-    }
-
-    return redirect(route("admin.whitelists.index"))
-        ->with("flash.message", "Daftar pemilih massal berhasil diperbarui.")
-        ->with("flash.type", "success");
-}
 
     public function storeSingle(Request $request)
     {
-        $request->validate(["npm" => "required|string"]);
-        Whitelist::query()->firstOrCreate(["npm" => trim($request->npm)]);
+        $validated = $request->validate([
+            "npm" => ["required", "string", "min:3", "max:50", "regex:/^[A-Za-z0-9._-]+$/"],
+        ], [
+            "npm.regex" => "Format NPM tidak valid (hanya huruf, angka, titik, garis bawah, atau strip).",
+        ]);
+
+        Whitelist::query()->firstOrCreate(["npm" => trim($validated["npm"])]);
 
         return redirect()->back()
             ->with("flash.message", "NPM berhasil ditambahkan ke daftar pemilih.")

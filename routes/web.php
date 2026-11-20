@@ -108,11 +108,11 @@ Route::middleware("auth")->group(function () {
         Route::resource("landing-candidates", LandingCandidateController::class)
             ->only(["index", "store", "update", "destroy"]);
         Route::resource("organizations", OrganizationController::class);
-        Route::resource("organizations.groups", GroupController::class);
+        Route::resource("organizations.groups", GroupController::class)->scoped();
         Route::resource(
             "organizations.groups.candidates",
             CandidateController::class
-        );
+        )->scoped();
     });
 
     Route::prefix("organizations/{organization}")->middleware(ComitteeMiddleware::class)->group(function () {

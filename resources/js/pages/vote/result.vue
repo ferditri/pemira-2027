@@ -119,9 +119,10 @@ const submit = () => {
                     class="size-28 sm:size-32 rounded-full p-1 bg-gradient-to-b from-[#e4b35a] to-[#a9782a] shadow-md"
                   >
                     <img
-                      :src="detail.candidate?.picture"
+                      :src="detail.candidate?.picture || '/assets/images/nav_logo_transparent.png'"
                       :alt="detail.candidate?.name_1"
                       class="w-full h-full rounded-full object-cover bg-[#0c1d44]"
+                      @error="(e: Event) => { const img = e.target as HTMLImageElement; if (!img.dataset.fallback) { img.dataset.fallback = '1'; img.src = '/assets/images/nav_logo_transparent.png'; } }"
                     />
                   </div>
                 </div>

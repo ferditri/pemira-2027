@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Whitelist;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -181,8 +182,20 @@ class UserController extends Controller
         }
 
         $deletedId = $user->id;
+        $deletedName = $user->name;
         $deletedType = $user->type;
-        $user->delete();
+
+        try {
+            $user->delete();
+        } catch (QueryException $e) {
+            if ($e->getCode() == "23000") {
+                return redirect()
+                    ->back()
+                    ->with("flash.message", "Gagal menghapus! Pengguna {$deletedName} sudah memiliki riwayat suara atau verifikasi di dalam sistem.")
+                    ->with("flash.type", "destructive");
+            }
+            throw $e;
+        }
 
         Log::warning("admin.user.deleted", [
             "actor_id" => $request->user()?->id,
@@ -191,7 +204,7 @@ class UserController extends Controller
         ]);
 
         return redirect(route("admin.users.index", ["type" => $deletedType]))
-            ->with("flash.message", "Pengguna {$user->name} berhasil dihapus.")
+            ->with("flash.message", "Pengguna {$deletedName} berhasil dihapus.")
             ->with("flash.type", "success");
     }
 }
