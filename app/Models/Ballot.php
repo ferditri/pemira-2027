@@ -11,6 +11,7 @@ class Ballot extends Model
     protected $fillable = [
         "organization_id",
         "user_id",
+        "active_lock",
         "ktm",
         "verification",
         "is_verified",
@@ -21,7 +22,24 @@ class Ballot extends Model
 
     protected $casts = [
         "is_verified" => "boolean",
+        "active_lock" => "integer",
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Ballot $ballot) {
+            if ($ballot->active_lock === null && $ballot->deleted_at === null) {
+                $ballot->active_lock = 1;
+            }
+        });
+
+        static::deleting(function (Ballot $ballot) {
+            if (!$ballot->isForceDeleting()) {
+                $ballot->active_lock = null;
+                $ballot->saveQuietly();
+            }
+        });
+    }
 
     public function organization()
     {

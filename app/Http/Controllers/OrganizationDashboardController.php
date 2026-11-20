@@ -77,6 +77,7 @@ class OrganizationDashboardController extends Controller
             }
 
             $organization->ballotDetails()->delete();
+            $organization->ballots()->update(["active_lock" => null]);
             $organization->ballots()->delete();
         });
 
