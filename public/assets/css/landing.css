@@ -20,6 +20,16 @@ html {
   scroll-padding-top: 100px;
   overflow-x: hidden;
   width: 100%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge legacy */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.royal-modal-content::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera, Edge */
+  width: 0;
+  height: 0;
 }
 
 section, header {
@@ -32,6 +42,8 @@ body {
   overflow-x: hidden;
   width: 100%;
   background-color: var(--color-dark-navy);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge legacy */
 }
 
 /* =========================================
@@ -594,6 +606,8 @@ section[id], header[id] {
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge legacy */
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 6px #fbf5e8, inset 0 0 0 7.5px #ab8240;
   padding: 36px 30px;
   transform: scale(0.94) translateY(16px);

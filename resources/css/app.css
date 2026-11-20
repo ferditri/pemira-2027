@@ -81,6 +81,17 @@
     * {
         @apply border-border;
     }
+    html,
+    body {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE / Edge legacy */
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera, Edge */
+        width: 0;
+        height: 0;
+    }
     body {
         @apply bg-background text-foreground;
     }
