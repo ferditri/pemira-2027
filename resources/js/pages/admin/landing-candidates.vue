@@ -304,7 +304,7 @@ onUnmounted(() => {
             </Avatar>
             <div class="space-y-1">
               <div class="flex flex-wrap items-center gap-2">
-                <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-900">
+                <span class="whitespace-nowrap rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold text-amber-900">
                   {{ item.role_label }}
                 </span>
                 <span class="text-xs text-muted-foreground">

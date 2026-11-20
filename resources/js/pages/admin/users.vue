@@ -120,13 +120,13 @@ const next = () => {
                     <Button class="w-full sm:w-auto">Tambah Pengguna</Button>
                 </Link>
             </CardHeader>
-            <CardContent class="space-y-4 overflow-x-auto">
+            <CardContent class="space-y-4 p-3 sm:p-6 overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>NPM</TableHead>
-                            <TableHead>Nama</TableHead>
-                            <TableHead></TableHead>
+                            <TableHead class="hidden sm:table-cell">NPM</TableHead>
+                            <TableHead>Pengguna</TableHead>
+                            <TableHead class="text-right w-[92px]">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -138,11 +138,13 @@ const next = () => {
                                 Belum ada data
                             </TableCell>
                         </TableRow>
-                        <TableRow v-for="user in users.data">
-                            <TableCell>{{ user.npm }}</TableCell>
-                            <TableCell>
-                                <div class="flex items-center gap-2">
-                                    <Avatar class="size-6">
+                        <TableRow v-for="user in users.data" :key="user.id">
+                            <TableCell class="hidden sm:table-cell font-mono text-xs sm:text-sm whitespace-nowrap">
+                                {{ user.npm }}
+                            </TableCell>
+                            <TableCell class="min-w-0">
+                                <div class="flex items-start sm:items-center gap-2.5 min-w-0">
+                                    <Avatar class="size-7 shrink-0 mt-0.5 sm:mt-0">
                                         <AvatarImage
                                             v-if="user.avatar"
                                             :src="user.avatar"
@@ -151,39 +153,52 @@ const next = () => {
                                             {{ user.name[0] }}
                                         </AvatarFallback>
                                     </Avatar>
-                                    {{ user.name }}
-                                    <span
-                                        v-if="isSuperAdmin(user)"
-                                        class="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800"
-                                    >
-                                        Super Admin
-                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-center gap-1.5">
+                                            <span class="font-medium text-sm leading-snug break-words">
+                                                {{ user.name }}
+                                            </span>
+                                            <span
+                                                v-if="isSuperAdmin(user)"
+                                                class="whitespace-nowrap shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-amber-800"
+                                            >
+                                                Super Admin
+                                            </span>
+                                        </div>
+                                        <p class="sm:hidden font-mono text-[11px] text-muted-foreground mt-0.5">
+                                            {{ user.npm }}
+                                        </p>
+                                    </div>
                                 </div>
                             </TableCell>
-                            <TableCell class="flex justify-end gap-2">
-                                <Button
-                                    v-if="canEdit(user)"
-                                    size="icon"
-                                    variant="outline"
-                                    @click="edit(user)"
-                                >
-                                    <Edit class="size-4" />
-                                </Button>
-                                <ConfirmationDialog
-                                    v-if="!isSuperAdmin(user)"
-                                    title="Hapus Pengguna?"
-                                    :description="`Akun ${user.name} (${user.npm}) akan dihapus dari sistem.`"
-                                    destructive
-                                    confirm-text="Ya, Hapus"
-                                    @accept="destroy(user)"
-                                >
+                            <TableCell class="text-right whitespace-nowrap">
+                                <div class="inline-flex justify-end gap-1.5">
                                     <Button
+                                        v-if="canEdit(user)"
                                         size="icon"
-                                        variant="destructive"
+                                        variant="outline"
+                                        class="size-8"
+                                        @click="edit(user)"
                                     >
-                                        <Trash2 class="size-4" />
+                                        <Edit class="size-3.5" />
                                     </Button>
-                                </ConfirmationDialog>
+                                    <ConfirmationDialog
+                                        v-if="!isSuperAdmin(user)"
+                                        title="Hapus Pengguna?"
+                                        :description="`Akun ${user.name} (${user.npm}) akan dihapus dari sistem.`"
+                                        destructive
+                                        confirm-text="Ya, Hapus"
+                                        @accept="destroy(user)"
+                                    >
+                                        <Button
+                                            size="icon"
+                                            variant="destructive"
+                                            class="size-8"
+                                        >
+                                            <Trash2 class="size-3.5" />
+                                        </Button>
+                                    </ConfirmationDialog>
+                                </div>
                             </TableCell>
                         </TableRow>
                     </TableBody>

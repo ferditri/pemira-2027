@@ -36,7 +36,7 @@ watch(
   >
     <div
       v-if="visible && flash?.message"
-      class="fixed top-5 right-5 z-[100] min-w-[300px] shadow-2xl"
+      class="fixed top-3 left-3 right-3 sm:left-auto sm:top-5 sm:right-5 sm:min-w-[300px] sm:max-w-md z-[100] shadow-2xl"
     >
       <Alert
         :variant="flash?.type === 'destructive' ? 'destructive' : 'default'"

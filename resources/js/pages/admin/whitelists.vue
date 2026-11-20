@@ -250,14 +250,14 @@ const massForm = useForm({
                     <Button type="submit" variant="outline">Cari</Button>
                 </form>
             </CardHeader>
-            <CardContent class="p-0 sm:p-6 overflow-x-auto">
+            <CardContent class="p-2 sm:p-6 overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>NPM</TableHead>
                             <TableHead>Status Akun</TableHead>
-                            <TableHead>Ditambahkan</TableHead>
-                            <TableHead class="text-right">Aksi</TableHead>
+                            <TableHead class="hidden md:table-cell">Ditambahkan</TableHead>
+                            <TableHead class="text-right w-[64px]">Aksi</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -267,25 +267,34 @@ const massForm = useForm({
                             </TableCell>
                         </TableRow>
                         <TableRow v-for="item in whitelists.data" :key="item.npm">
-                            <TableCell class="font-medium">{{ item.npm }}</TableCell>
-                            <TableCell>
-                                <span
-                                    v-if="item.user"
-                                    class="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
-                                >
-                                    Sudah Login ({{ item.user.name }})
-                                </span>
+                            <TableCell class="font-medium align-top sm:align-middle">
+                                <div class="font-mono text-xs sm:text-sm">{{ item.npm }}</div>
+                                <div class="md:hidden text-[11px] text-muted-foreground mt-0.5">
+                                    {{ formatTanggal(item.created_at) }}
+                                </div>
+                            </TableCell>
+                            <TableCell class="min-w-0">
+                                <div v-if="item.user" class="flex flex-col items-start gap-0.5 min-w-0">
+                                    <span
+                                        class="inline-flex items-center whitespace-nowrap rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-800"
+                                    >
+                                        Sudah Login
+                                    </span>
+                                    <span class="text-xs text-muted-foreground truncate max-w-[130px] sm:max-w-[240px]">
+                                        {{ item.user.name }}
+                                    </span>
+                                </div>
                                 <span
                                     v-else
-                                    class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700"
+                                    class="inline-flex items-center whitespace-nowrap rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700"
                                 >
                                     Belum Login
                                 </span>
                             </TableCell>
-                            <TableCell class="text-muted-foreground">
+                            <TableCell class="hidden md:table-cell text-muted-foreground whitespace-nowrap">
                                 {{ formatTanggal(item.created_at) }}
                             </TableCell>
-                            <TableCell class="text-right">
+                            <TableCell class="text-right whitespace-nowrap">
                                 <ConfirmationDialog
                                     title="Hapus NPM?"
                                     :description="`NPM ${item.npm} akan dihapus dari daftar pemilih.`"
@@ -293,8 +302,8 @@ const massForm = useForm({
                                     confirm-text="Ya, Hapus"
                                     @accept="destroy(item.npm)"
                                 >
-                                    <Button size="icon" variant="destructive">
-                                        <Trash2 class="size-4" />
+                                    <Button size="icon" variant="destructive" class="size-8">
+                                        <Trash2 class="size-3.5" />
                                     </Button>
                                 </ConfirmationDialog>
                             </TableCell>
