@@ -6,7 +6,8 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createApp, DefineComponent, h } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
 
-const appName = import.meta.env.VITE_APP_NAME || "Laravel";
+const rawAppName = import.meta.env.VITE_APP_NAME;
+const appName = !rawAppName || rawAppName === "Laravel" ? "PEMIRA FASILKOM 2027" : rawAppName;
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
