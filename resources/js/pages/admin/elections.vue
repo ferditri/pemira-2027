@@ -74,7 +74,7 @@ const majorLabel = (code: string | null) => formatMajor(code);
     </Breadcrumb>
   </Teleport>
 
-  <div class="flex-1 space-y-4">
+  <div class="flex-1 min-w-0 space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h2 class="text-xl font-bold tracking-tight">Kontrol Pemilihan per Organisasi</h2>
@@ -139,7 +139,7 @@ const majorLabel = (code: string | null) => formatMajor(code);
           </div>
         </CardContent>
 
-        <CardFooter class="flex flex-wrap items-center justify-between gap-2 border-t pt-4">
+        <CardFooter class="flex flex-col items-stretch sm:flex-row sm:flex-wrap sm:items-center justify-between gap-2 border-t pt-4">
           <div class="flex flex-wrap gap-2">
             <ConfirmationDialog
               v-if="!org.is_open"

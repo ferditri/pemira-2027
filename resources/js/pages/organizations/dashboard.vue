@@ -83,14 +83,14 @@ const recap = () => {
 </script>
 
 <template>
-  <div ref="rootRef" class="min-h-dvh flex items-center justify-center p-4 bg-stone-50/40">
+  <div ref="rootRef" class="min-h-dvh flex items-center justify-center p-3 sm:p-4 bg-stone-50/40">
     <Card data-enter class="max-w-screen-md w-full divide-y shadow-sm">
-      <div class="flex justify-between gap-4">
-        <CardHeader>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <CardHeader class="pb-2 sm:pb-6">
           <CardTitle class="font-extrabold">PEMIRA</CardTitle>
           <CardDescription> Fakultas Ilmu Komputer </CardDescription>
         </CardHeader>
-        <CardHeader class="flex-row gap-4">
+        <CardHeader class="flex-row flex-wrap gap-2 sm:gap-3 pt-0 sm:pt-6">
           <ConfirmationDialog
             v-if="!organization.is_open && organization.ballots_count > 0"
             title="Apakah kamu yakin?"
@@ -127,7 +127,7 @@ const recap = () => {
           </Button>
         </CardHeader>
       </div>
-      <div class="grid grid-cols-2 divide-x">
+      <div class="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x">
         <CardHeader class="p-6">
           <CardDescription class="flex items-center justify-between">
             Organisasi

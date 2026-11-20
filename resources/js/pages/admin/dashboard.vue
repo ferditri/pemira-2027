@@ -42,9 +42,9 @@ defineProps<{
             </BreadcrumbList>
         </Breadcrumb>
     </Teleport>
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
         <div class="grid gap-4">
-            <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <Card class="taste-card shadow-sm">
                     <CardHeader
                         class="flex flex-row items-center justify-between space-y-0 pb-2"

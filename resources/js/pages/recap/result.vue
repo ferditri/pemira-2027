@@ -48,7 +48,7 @@ const ballotsChart = [
       </CardHeader>
       <CardContent>
         <Tabs default-value="ballots">
-          <TabsList class="block w-fit mx-auto">
+          <TabsList class="flex flex-wrap h-auto w-full sm:w-fit mx-auto justify-center gap-1 p-1.5">
             <TabsTrigger value="ballots">Surat Suara</TabsTrigger>
             <TabsTrigger v-for="group in groups" :value="`grp${group.id}`">
               {{ group.name }}
@@ -56,7 +56,7 @@ const ballotsChart = [
             <TabsTrigger value="overview">Ringkasan</TabsTrigger>
           </TabsList>
           <TabsContent value="ballots">
-            <div class="max-w-lg mx-auto grid grid-cols-2 gap-2">
+            <div class="max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
               <Card>
                 <CardHeader>
                   <CardTitle>Surat Suara</CardTitle>
@@ -73,7 +73,7 @@ const ballotsChart = [
                   </CardTitle>
                 </CardHeader>
               </Card>
-              <Card class="col-span-2">
+              <Card class="sm:col-span-2">
                 <CardHeader>
                   <CardTitle>Ratio Surat Suara</CardTitle>
                 </CardHeader>

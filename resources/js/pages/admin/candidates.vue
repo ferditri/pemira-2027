@@ -78,7 +78,7 @@ onUnmounted(() => {
     </Breadcrumb>
   </Teleport>
 
-  <div class="flex-1 space-y-4">
+  <div class="flex-1 min-w-0 space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
         <h2 class="text-xl font-bold tracking-tight">Pengaturan Calon &amp; Tipe Pemilihan</h2>
@@ -189,7 +189,7 @@ onUnmounted(() => {
           </div>
         </CardHeader>
 
-        <CardContent class="p-6 space-y-6">
+        <CardContent class="p-4 sm:p-6 space-y-4 sm:space-y-6">
           <div v-if="!org.groups.length" class="text-center py-6 text-sm text-muted-foreground">
             Belum ada tipe pemilihan di {{ org.name }}. Klik "Tambah Tipe" untuk menambahkan (contoh: BEM, BLM SIFO, BLM INFOR).
           </div>

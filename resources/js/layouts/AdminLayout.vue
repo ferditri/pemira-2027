@@ -239,16 +239,16 @@ const menu = {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-    <SidebarInset class="bg-stone-50/40">
+    <SidebarInset class="bg-stone-50/40 min-w-0 overflow-x-hidden">
       <header
         class="flex h-14 shrink-0 items-center gap-2 border-b border-stone-200/70 bg-background/95 backdrop-blur-sm transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
       >
-        <div id="header" class="flex items-center gap-2 px-4 md:px-6">
-          <SidebarTrigger class="-ml-1" />
-          <Separator orientation="vertical" class="mr-2 h-4" />
+        <div id="header" class="flex flex-1 min-w-0 items-center gap-2 px-3 sm:px-4 md:px-6 overflow-hidden">
+          <SidebarTrigger class="-ml-1 shrink-0" />
+          <Separator orientation="vertical" class="mr-1 sm:mr-2 h-4 shrink-0" />
         </div>
       </header>
-      <div ref="mainContentRef" class="flex flex-1 p-4 md:p-6">
+      <div ref="mainContentRef" class="flex flex-1 min-w-0 p-3 sm:p-4 md:p-6">
         <slot />
       </div>
     </SidebarInset>

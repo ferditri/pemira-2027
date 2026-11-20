@@ -94,10 +94,10 @@ const next = () => {
             </BreadcrumbList>
         </Breadcrumb>
     </Teleport>
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
         <Card>
-            <CardHeader class="flex-row justify-between gap-4">
-                <div class="flex items-center gap-4">
+            <CardHeader class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3 sm:gap-4">
                     <Label>Peran:</Label>
                     <div class="w-36">
                         <Select
@@ -116,11 +116,11 @@ const next = () => {
                         </Select>
                     </div>
                 </div>
-                <Link :href="route('admin.users.create', { _query: { type } })">
-                    <Button>Tambah Pengguna</Button>
+                <Link :href="route('admin.users.create', { _query: { type } })" class="w-full sm:w-auto">
+                    <Button class="w-full sm:w-auto">Tambah Pengguna</Button>
                 </Link>
             </CardHeader>
-            <CardContent class="space-y-4">
+            <CardContent class="space-y-4 overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>

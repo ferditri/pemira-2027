@@ -47,7 +47,7 @@ const submit = (verified = true) => {
                 <Button variant="success" @click="submit()">Sah</Button>
             </CardContent>
         </Card>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <img
                 :src="'/storage/' + verification.ktm!"
                 class="w-full rounded-lg"

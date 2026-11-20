@@ -228,7 +228,7 @@ onUnmounted(() => {
     </Breadcrumb>
   </Teleport>
 
-  <div class="flex-1 space-y-6">
+  <div class="flex-1 min-w-0 space-y-6">
     <div>
       <h1 class="text-2xl font-bold tracking-tight">Kandidat Landing Page</h1>
       <p class="text-sm text-muted-foreground">

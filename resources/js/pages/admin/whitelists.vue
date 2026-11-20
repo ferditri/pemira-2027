@@ -110,7 +110,7 @@ const massForm = useForm({
             </BreadcrumbList>
         </Breadcrumb>
     </Teleport>
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <Card>
@@ -250,7 +250,7 @@ const massForm = useForm({
                     <Button type="submit" variant="outline">Cari</Button>
                 </form>
             </CardHeader>
-            <CardContent>
+            <CardContent class="p-0 sm:p-6 overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>

@@ -243,9 +243,9 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
     </Breadcrumb>
   </Teleport>
 
-  <div class="flex-1 space-y-4">
+  <div class="flex-1 min-w-0 space-y-4">
     <!-- Ringkasan Status -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3">
       <Card
         class="cursor-pointer transition hover:border-primary"
         :class="selectedStatus === 'all' ? 'ring-2 ring-primary' : ''"
@@ -307,8 +307,8 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
     </div>
 
     <!-- Search Bar -->
-    <form class="flex gap-2" @submit.prevent="applyFilter(selectedStatus)">
-      <div class="relative flex-1 max-w-md">
+    <form class="flex flex-wrap items-center gap-2" @submit.prevent="applyFilter(selectedStatus)">
+      <div class="relative flex-1 min-w-[200px] sm:max-w-md">
         <Search class="size-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
         <Input
           v-model="searchText"
@@ -461,7 +461,7 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
             </div>
           </CardHeader>
 
-          <CardContent class="p-6 space-y-5">
+          <CardContent class="p-4 sm:p-6 space-y-5">
             <!-- Foto KTM & Foto Megang KTM -->
             <div class="grid md:grid-cols-2 gap-4">
               <div class="space-y-2">
@@ -516,10 +516,10 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
             </div>
 
             <!-- Tombol Sah / Minta Re-take / Tidak Sah -->
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t">
-              <div class="flex flex-wrap gap-2">
+            <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3 pt-3 border-t">
+              <div class="grid grid-cols-1 xs:grid-cols-3 sm:flex sm:flex-wrap gap-2 w-full sm:w-auto">
                 <Button
-                  class="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  class="bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto"
                   :disabled="reviewForm.processing"
                   @click="submitReview('approved')"
                 >
@@ -528,7 +528,7 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
                 </Button>
                 <Button
                   variant="outline"
-                  class="border-amber-500 text-amber-700 hover:bg-amber-50"
+                  class="border-amber-500 text-amber-700 hover:bg-amber-50 w-full sm:w-auto"
                   :disabled="reviewForm.processing"
                   @click="submitReview('retake')"
                 >
@@ -537,6 +537,7 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
                 </Button>
                 <Button
                   variant="destructive"
+                  class="w-full sm:w-auto"
                   :disabled="reviewForm.processing"
                   @click="submitReview('rejected')"
                 >
@@ -546,7 +547,7 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
               </div>
 
               <!-- Panah Kiri / Kanan -->
-              <div class="flex items-center gap-2">
+              <div class="flex items-center justify-center sm:justify-end gap-2 w-full sm:w-auto pt-1 sm:pt-0">
                 <Button
                   variant="outline"
                   size="icon"
@@ -587,7 +588,7 @@ onUnmounted(() => window.removeEventListener("keydown", handleKeydown));
           Klik salah satu baris untuk langsung memeriksa fotonya di panel atas.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent class="p-0 sm:p-6 overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
