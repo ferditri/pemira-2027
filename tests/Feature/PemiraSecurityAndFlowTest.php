@@ -276,4 +276,71 @@ class PemiraSecurityAndFlowTest extends TestCase
             ])
             ->assertNotFound();
     }
+
+    public function test_recap_is_blocked_for_committee_while_voting_is_open(): void
+    {
+        $committee = User::create([
+            'npm' => '25082010040',
+            'email' => '25082010040@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Committee Recap Guard',
+            'type' => 'committee',
+        ]);
+        $org = Organization::create([
+            'name' => 'Open Org',
+            'logo' => 'logo.webp',
+            'major' => null,
+            'ordering' => 1,
+            'is_open' => true,
+        ]);
+
+        $dashboardUrl = route('organizations.dashboard', ['organization' => $org->id]);
+
+        $this->actingAs($committee)
+            ->get(route('organizations.recap.validate', ['organization' => $org->id]))
+            ->assertRedirect($dashboardUrl);
+
+        $this->actingAs($committee)
+            ->get(route('organizations.recap.result', ['organization' => $org->id]))
+            ->assertRedirect($dashboardUrl);
+    }
+
+    public function test_deleting_user_with_ballots_returns_flash_instead_of_500(): void
+    {
+        $admin = User::create([
+            'npm' => '25082010050',
+            'email' => '25082010050@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Admin Delete Test',
+            'type' => 'admin',
+        ]);
+        $voter = User::create([
+            'npm' => '25082010051',
+            'email' => '25082010051@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Voter With Ballot',
+            'type' => 'voter',
+        ]);
+        $org = Organization::create([
+            'name' => 'Delete Guard Org',
+            'logo' => 'logo.webp',
+            'major' => null,
+            'ordering' => 1,
+            'is_open' => false,
+        ]);
+        Ballot::create([
+            'organization_id' => $org->id,
+            'user_id' => $voter->id,
+            'is_confirmed' => 1,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->delete(route('admin.users.destroy', ['user' => $voter->id]));
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('users', ['id' => $voter->id]);
+    }
 }

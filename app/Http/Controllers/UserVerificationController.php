@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserVerification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -45,17 +46,19 @@ class UserVerificationController extends Controller
             $request->file("verification")
         );
 
-        // Nonaktifkan record lama tanpa menghapus (simpan riwayat)
-        $user->verificationHistories()
-            ->where("is_active", true)
-            ->update(["is_active" => false]);
+        // Nonaktifkan record lama tanpa menghapus (simpan riwayat) secara atomik
+        DB::transaction(function () use ($user, $ktm, $verification) {
+            $user->verificationHistories()
+                ->where("is_active", true)
+                ->update(["is_active" => false]);
 
-        $user->verificationHistories()->create([
-            "ktm" => $ktm,
-            "verification" => $verification,
-            "status" => "pending",
-            "is_active" => true,
-        ]);
+            $user->verificationHistories()->create([
+                "ktm" => $ktm,
+                "verification" => $verification,
+                "status" => "pending",
+                "is_active" => true,
+            ]);
+        });
 
         return redirect()->route("index")
             ->with("flash.message", "Foto verifikasi berhasil dikirim dan menunggu validasi panitia.")
