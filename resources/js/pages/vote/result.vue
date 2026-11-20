@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { useEnterMotion } from "@/composables/useMotion";
 import { Link, router } from "@inertiajs/vue3";
-import { ArrowLeft } from "lucide-vue-next";
 import { ref } from "vue";
 
 const props = defineProps<{
@@ -44,16 +43,7 @@ const submit = () => {
   <div class="vote-royal-bg flex items-center justify-center p-3 sm:p-6 lg:p-8">
     <div ref="rootRef" class="max-w-5xl w-full relative z-10">
       <Card data-enter class="vote-parchment-card border-0">
-        <CardHeader class="text-center pt-5 pb-4 sm:pb-5 px-4 sm:px-6 border-b border-[#9c8256]/35">
-          <div class="flex justify-start mb-2">
-            <a
-              :href="route('landing')"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#9c8256]/40 bg-white/55 hover:bg-white/90 text-xs font-semibold text-[#2f3d59] hover:text-[#0c1d44] transition-colors min-h-[36px]"
-            >
-              <ArrowLeft class="size-3.5" />
-              Beranda
-            </a>
-          </div>
+        <CardHeader class="text-center pt-7 sm:pt-8 pb-4 sm:pb-5 px-4 sm:px-6 border-b border-[#9c8256]/35">
           <CardTitle
             class="font-cinzel text-xl sm:text-4xl font-extrabold text-[#0c1d44] uppercase tracking-wider"
           >
@@ -96,20 +86,20 @@ const submit = () => {
         </CardHeader>
 
         <CardContent class="pt-6 sm:pt-7 pb-8 sm:pb-10 px-4 sm:px-10">
-          <div class="flex flex-wrap justify-center gap-5 sm:gap-7">
+          <div class="flex flex-wrap justify-center items-stretch gap-5 sm:gap-7">
             <div
               v-for="detail in details"
               :key="detail.id"
               class="flex flex-col items-center gap-3 w-full max-w-[240px]"
             >
               <h3
-                class="font-cinzel text-center text-[#0c1d44] text-sm sm:text-base font-extrabold uppercase tracking-wide"
+                class="font-cinzel text-center text-[#0c1d44] text-sm sm:text-base font-extrabold uppercase tracking-wide min-h-[2.75rem] flex items-center justify-center leading-tight"
               >
                 {{ detail.group?.name }}
               </h3>
 
               <div
-                class="vote-candidate-arch w-full px-4 pt-6 pb-5 text-center flex flex-col items-center"
+                class="vote-candidate-arch w-full flex-1 px-4 pt-6 pb-5 text-center flex flex-col items-center justify-between"
               >
                 <div class="relative mb-3.5">
                   <div

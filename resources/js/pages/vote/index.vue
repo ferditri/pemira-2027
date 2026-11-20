@@ -161,12 +161,16 @@ useEnterMotion(rootRef, "[data-enter]", { y: 12, duration: 0.45, staggerDelay: 0
               <Button
                 class="w-full vote-btn-navy rounded-xl py-4 sm:py-6 px-4 sm:px-5 text-sm sm:text-base uppercase flex items-center justify-center gap-2.5 sm:gap-3 h-auto whitespace-normal text-center leading-snug"
               >
-                <img
-                  v-if="organization.logo"
-                  :src="organization.logo"
-                  :alt="organization.name"
-                  class="size-7 rounded-full object-cover border border-amber-200/40 shrink-0"
-                />
+                <Avatar class="size-7 border border-amber-200/40 bg-amber-500/20 shrink-0">
+                  <AvatarImage
+                    v-if="organization.logo"
+                    :src="organization.logo"
+                    :alt="organization.name"
+                  />
+                  <AvatarFallback class="bg-amber-400/20 text-[#fce7ba] font-cinzel text-xs font-bold">
+                    {{ organization.name?.[0]?.toUpperCase() ?? "O" }}
+                  </AvatarFallback>
+                </Avatar>
                 <span>{{ organization.name }}</span>
               </Button>
             </Link>
