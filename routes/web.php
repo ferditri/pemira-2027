@@ -10,12 +10,12 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\LandingCandidateController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\OrganizationDashboardController;
+use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\RecapController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserVerificationController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\WhitelistController;
-use App\Models\LandingCandidate;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\ComitteeMiddleware;
 use App\Http\Middleware\EnsureGroupBelongsToOrganization;
@@ -24,37 +24,13 @@ use App\Http\Middleware\EnsureUserCanVoteGroup;
 use App\Http\Middleware\EnsureUserHasBallot;
 use App\Http\Middleware\EnsureUserIsVerified;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+Route::get("/", [PublicPageController::class, "landing"])->name("landing");
 
-if (app()->environment("local")) {
-    Route::get("/dev/login/{npm}", function ($npm) {
-        $user = User::where("npm", $npm)->firstOrFail();
-        Auth::login($user);
-        return redirect()->route("index")->with("flash.message", "Logged in as {$user->name} ({$user->type})");
-    })->name("dev.login");
-}
-
-Route::get("/", function () {
-    $candidates = LandingCandidate::query()
-        ->orderBy("sort_order")
-        ->orderBy("id")
-        ->get();
-
-    return view("landing", [
-        "bemCandidates" => $candidates->where("section", "bem")->values(),
-        "blmCandidates" => $candidates->where("section", "blm")->values(),
-    ]);
-})->name("landing");
-
-Route::get("/privacy-policy", function () {
-    return view("privacy-policy");
-})->name("privacy-policy");
+Route::get("/privacy-policy", [PublicPageController::class, "privacyPolicy"])->name("privacy-policy");
 
 Route::middleware("guest")->group(function () {
-    Route::get("/login", fn() => Inertia::render("login"))->name("login");
+    Route::get("/login", [PublicPageController::class, "login"])->name("login");
     Route::get("/auth/redirect", [AuthController::class, "redirect"])
         ->middleware("throttle:20,1")
         ->name("auth.redirect");
@@ -72,6 +48,7 @@ Route::middleware("auth")->group(function () {
         ->middleware("throttle:15,1")
         ->name("verification.store");
     Route::get("/verifications/{verification}/media/{type}", [AdminVerificationController::class, "media"])
+        ->middleware("throttle:60,1")
         ->whereIn("type", ["ktm", "verification"])
         ->name("verifications.media");
 
