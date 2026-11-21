@@ -62,14 +62,14 @@
           <section>
             <h2 class="font-cinzel font-bold text-xl text-[#0d1b38] mb-2">3. Kerahasiaan Suara (Luber Jurdil)</h2>
             <p>
-              Pilihan surat suara Anda dienkripsi secara asimetris di server dan <strong>TIDAK DAPAT DIKAITKAN KEMBALI</strong> dengan identitas atau NPM Anda. Sistem hanya mencatat status token bahwa pemilih telah menggunakan hak suaranya demi mencegah pemilihan ganda.
+              Pilihan surat suara Anda disimpan pada server internal yang terlindungi dan <strong>tidak ditampilkan secara individual</strong> di antarmuka panitia maupun administrator. Rekapitulasi hanya menghitung jumlah perolehan suara secara agregat setelah verifikasi keabsahan pemilih, serta sistem mencatat status partisipasi untuk mencegah pemilihan ganda.
             </p>
           </section>
 
           <section>
             <h2 class="font-cinzel font-bold text-xl text-[#0d1b38] mb-2">4. Keamanan Data</h2>
             <p>
-              Seluruh transmisi data dilindungi oleh enkripsi SSL/TLS 256-bit standar industri. Data verifikasi hanya dapat diakses oleh Panitia Pengawas Pemira yang berwenang dan disumpah untuk menjaga kerahasiaan.
+              Seluruh transmisi data dilindungi oleh enkripsi SSL/TLS standar industri. Berkas verifikasi identitas disimpan di direktori privat yang tidak dapat diakses publik dan hanya dapat dilihat oleh Panitia Pengawas Pemira yang berwenang.
             </p>
           </section>
 
@@ -77,7 +77,7 @@
             <h2 class="font-cinzel font-bold text-xl text-[#0d1b38] mb-2">5. Hubungi Kami</h2>
             <p>
               Jika ada pertanyaan mengenai kebijakan privasi atau kendala akun pemilih, silakan hubungi tim IT Pemira melalui Instagram resmi di 
-              <a href="{{ config('pemira.instagram_url') }}" target="_blank" class="text-amber-800 font-bold underline hover:text-[#6e1324]">@pemirafasilkom</a>.
+              <a href="{{ config('pemira.instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-amber-800 font-bold underline hover:text-[#6e1324]">@pemirafasilkom</a>.
             </p>
           </section>
         </div>

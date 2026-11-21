@@ -68,18 +68,47 @@ class OrganizationDashboardController extends Controller
         }
 
         DB::transaction(function () use ($organization, $request) {
-            $ballotsSnapshot = $organization->ballots()
-                ->with(["user:id,npm,name,email", "details"])
-                ->get();
+            $ballotsSnapshot = $organization->ballots()->get();
 
             if ($ballotsSnapshot->isNotEmpty()) {
                 $timestamp = now()->format("Y-m-d_His");
+
+                // Simpan rekap agregat & ringkasan partisipasi tanpa mengaitkan identitas pemilih ke pilihan kandidat
+                $aggregateResults = $organization->groups()
+                    ->with(["candidates" => function ($query) {
+                        $query->withCount([
+                            "ballotDetails as confirmed_votes" => fn ($q) => $q->whereHas("ballot", fn ($b) => $b->where("is_confirmed", true)),
+                            "ballotDetails as verified_votes" => fn ($q) => $q->whereHas("ballot", fn ($b) => $b->where("is_confirmed", true)->where("is_verified", true)),
+                        ]);
+                    }])
+                    ->get()
+                    ->map(fn ($group) => [
+                        "group_id" => $group->id,
+                        "group_name" => $group->name,
+                        "candidates" => $group->candidates->map(fn ($candidate) => [
+                            "candidate_id" => $candidate->id,
+                            "name_1" => $candidate->name_1,
+                            "name_2" => $candidate->name_2,
+                            "confirmed_votes" => $candidate->confirmed_votes,
+                            "verified_votes" => $candidate->verified_votes,
+                        ])->values()->all(),
+                    ])->values()->all();
+
                 $backupPayload = [
                     "reset_at" => now()->toIso8601String(),
                     "reset_by" => $request->user()?->only(["id", "npm", "name", "email"]),
                     "organization" => $organization->only(["id", "name", "major"]),
                     "ballots_count" => $ballotsSnapshot->count(),
-                    "ballots" => $ballotsSnapshot->toArray(),
+                    "confirmed_ballots_count" => $ballotsSnapshot->where("is_confirmed", true)->count(),
+                    "verified_ballots_count" => $ballotsSnapshot->where("is_confirmed", true)->where("is_verified", true)->count(),
+                    "aggregate_results" => $aggregateResults,
+                    "participation_summary" => $ballotsSnapshot->map(fn ($ballot) => [
+                        "ballot_id" => $ballot->id,
+                        "is_confirmed" => (bool) $ballot->is_confirmed,
+                        "confirmed_at" => $ballot->confirmed_at,
+                        "is_verified" => $ballot->is_verified,
+                        "verified_at" => $ballot->verified_at,
+                    ])->values()->all(),
                 ];
 
                 Storage::disk("local")->put(
