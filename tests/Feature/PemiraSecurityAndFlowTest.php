@@ -440,4 +440,290 @@ class PemiraSecurityAndFlowTest extends TestCase
         $this->assertTrue((bool) $ballot->fresh()->is_verified);
         $this->assertSame(1, Ballot::where('organization_id', $org->id)->where('is_confirmed', true)->where('is_verified', true)->count());
     }
+
+    public function test_dev_login_route_is_not_registered(): void
+    {
+        $this->get('/dev/login/25082010001')->assertNotFound();
+    }
+
+    public function test_committee_cannot_overwrite_already_verified_ballot_in_recap(): void
+    {
+        $committee = User::create([
+            'npm' => '25082010070',
+            'email' => '25082010070@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Committee Overwrite Guard',
+            'type' => 'committee',
+        ]);
+        $voter = User::create([
+            'npm' => '25082010071',
+            'email' => '25082010071@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Verified Voter',
+            'type' => 'voter',
+        ]);
+        $org = Organization::create([
+            'name' => 'Closed Recap Org',
+            'logo' => 'logo.webp',
+            'major' => null,
+            'ordering' => 1,
+            'is_open' => false,
+        ]);
+        $ballot = Ballot::create([
+            'organization_id' => $org->id,
+            'user_id' => $voter->id,
+            'is_confirmed' => 1,
+            'confirmed_at' => now(),
+            'is_verified' => true,
+            'verified_at' => now(),
+        ]);
+
+        $this->actingAs($committee)
+            ->post(route('organizations.recap.validate.store', ['organization' => $org->id]), [
+                'ballot_id' => $ballot->id,
+                'verified' => false,
+            ])
+            ->assertRedirect(route('organizations.recap.validate', ['organization' => $org->id]));
+
+        $this->assertTrue((bool) $ballot->fresh()->is_verified);
+    }
+
+    public function test_archived_verification_cannot_be_reviewed_or_overwrite_ballot(): void
+    {
+        $admin = User::create([
+            'npm' => '25082010080',
+            'email' => '25082010080@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Admin Archive Review Guard',
+            'type' => 'admin',
+        ]);
+        $voter = User::create([
+            'npm' => '25082010081',
+            'email' => '25082010081@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Voter Archive Guard',
+            'type' => 'voter',
+        ]);
+        $org = Organization::create([
+            'name' => 'Archive Guard Org',
+            'logo' => 'logo.webp',
+            'major' => null,
+            'ordering' => 1,
+            'is_open' => false,
+        ]);
+
+        $oldVerification = UserVerification::create([
+            'user_id' => $voter->id,
+            'ktm' => 'ktms/old.jpg',
+            'verification' => 'verifications/old.jpg',
+            'status' => 'retake',
+            'is_active' => false,
+        ]);
+        UserVerification::create([
+            'user_id' => $voter->id,
+            'ktm' => 'ktms/new.jpg',
+            'verification' => 'verifications/new.jpg',
+            'status' => 'approved',
+            'is_active' => true,
+        ]);
+
+        $ballot = Ballot::create([
+            'organization_id' => $org->id,
+            'user_id' => $voter->id,
+            'is_confirmed' => 1,
+            'confirmed_at' => now(),
+            'is_verified' => true,
+            'verified_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.verifications.review', ['verification' => $oldVerification->id]), [
+                'status' => 'rejected',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('retake', $oldVerification->fresh()->status);
+        $this->assertTrue((bool) $ballot->fresh()->is_verified);
+    }
+
+    public function test_committee_media_access_is_scoped_to_closed_recap_active_verification(): void
+    {
+        Storage::fake('local');
+        Storage::disk('local')->put('ktms/old.jpg', 'old-bytes');
+        Storage::disk('local')->put('ktms/active.jpg', 'active-bytes');
+
+        $committee = User::create([
+            'npm' => '25082010090',
+            'email' => '25082010090@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Committee Media Scope',
+            'type' => 'committee',
+        ]);
+        $voter = User::create([
+            'npm' => '25082010091',
+            'email' => '25082010091@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Voter Media Scope',
+            'type' => 'voter',
+        ]);
+        $org = Organization::create([
+            'name' => 'Media Scope Org',
+            'logo' => 'logo.webp',
+            'major' => '20',
+            'ordering' => 1,
+            'is_open' => true,
+        ]);
+
+        $archived = UserVerification::create([
+            'user_id' => $voter->id,
+            'ktm' => 'ktms/old.jpg',
+            'verification' => 'ktms/old.jpg',
+            'status' => 'retake',
+            'is_active' => false,
+        ]);
+        $active = UserVerification::create([
+            'user_id' => $voter->id,
+            'ktm' => 'ktms/active.jpg',
+            'verification' => 'ktms/active.jpg',
+            'status' => 'pending',
+            'is_active' => true,
+        ]);
+        Ballot::create([
+            'organization_id' => $org->id,
+            'user_id' => $voter->id,
+            'is_confirmed' => 1,
+            'confirmed_at' => now(),
+        ]);
+
+        // While election is still open -> forbidden for committee
+        $this->actingAs($committee)
+            ->get(route('verifications.media', ['verification' => $active->id, 'type' => 'ktm']))
+            ->assertForbidden();
+
+        // Close election -> committee can access active verification, still blocked on archived history
+        $org->update(['is_open' => false]);
+
+        $this->actingAs($committee)
+            ->get(route('verifications.media', ['verification' => $active->id, 'type' => 'ktm']))
+            ->assertOk();
+        $this->actingAs($committee)
+            ->get(route('verifications.media', ['verification' => $archived->id, 'type' => 'ktm']))
+            ->assertForbidden();
+    }
+
+    public function test_reset_backup_json_anonymizes_voter_choices(): void
+    {
+        Storage::fake('local');
+
+        $admin = User::create([
+            'npm' => '25082010100',
+            'email' => '25082010100@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Admin Reset Privacy',
+            'type' => 'admin',
+        ]);
+        $voter = User::create([
+            'npm' => '25082010101',
+            'email' => '25082010101@student.upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Secret Voter',
+            'type' => 'voter',
+        ]);
+        $org = Organization::create([
+            'name' => 'Privacy Org',
+            'logo' => 'logo.webp',
+            'major' => null,
+            'ordering' => 1,
+            'is_open' => false,
+        ]);
+        $group = Group::create(['organization_id' => $org->id, 'name' => 'BEM', 'ordering' => 1, 'min_candidates' => 1]);
+        $candidate = Candidate::create([
+            'organization_id' => $org->id,
+            'group_id' => $group->id,
+            'name_1' => 'Paslon 1',
+            'vision' => 'v',
+            'mission' => 'm',
+            'picture' => '/a.jpg',
+        ]);
+        $ballot = Ballot::create([
+            'organization_id' => $org->id,
+            'user_id' => $voter->id,
+            'is_confirmed' => 1,
+            'confirmed_at' => now(),
+            'is_verified' => true,
+            'verified_at' => now(),
+        ]);
+        $ballot->details()->create([
+            'organization_id' => $org->id,
+            'group_id' => $group->id,
+            'candidate_id' => $candidate->id,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('organizations.reset', ['organization' => $org->id]))
+            ->assertRedirect();
+
+        $files = Storage::disk('local')->files('reset-backups');
+        $this->assertCount(1, $files);
+
+        $json = Storage::disk('local')->get($files[0]);
+        $this->assertStringNotContainsString('25082010101', $json);
+        $this->assertStringNotContainsString('Secret Voter', $json);
+
+        $decoded = json_decode($json, true);
+        $this->assertArrayHasKey('aggregate_results', $decoded);
+        $this->assertArrayHasKey('participation_summary', $decoded);
+        $this->assertArrayNotHasKey('ballots', $decoded);
+    }
+
+    public function test_oauth_callback_blocks_npm_prefix_collision_with_different_email(): void
+    {
+        config([
+            'pemira.allowed_email_domains' => ['student.upnjatim.ac.id', 'upnjatim.ac.id'],
+            'pemira.auth_allow_any_email' => false,
+            'pemira.admin_emails' => [],
+        ]);
+
+        $admin = User::create([
+            'npm' => '25082010111',
+            'email' => '25082010111@upnjatim.ac.id',
+            'major' => '20',
+            'year' => '25',
+            'name' => 'Original Admin',
+            'type' => 'admin',
+        ]);
+        \App\Models\Whitelist::create(['npm' => '25082010111']);
+
+        $mockGoogleUser = new class {
+            public array $user = ['email_verified' => true];
+            public function getEmail(): string { return '25082010111@student.upnjatim.ac.id'; }
+            public function getId(): string { return 'attacker-google-id'; }
+            public function getName(): string { return 'Attacker'; }
+            public function getAvatar(): string { return 'https://example.com/a.png'; }
+        };
+
+        $mockDriver = \Mockery::mock();
+        $mockDriver->shouldReceive('redirectUrl')->andReturnSelf();
+        $mockDriver->shouldReceive('user')->once()->andReturn($mockGoogleUser);
+
+        \Laravel\Socialite\Facades\Socialite::shouldReceive('driver')
+            ->with('google')
+            ->once()
+            ->andReturn($mockDriver);
+
+        $this->get(route('auth.callback'))
+            ->assertRedirect(route('login'));
+
+        $this->assertGuest();
+        $this->assertSame('25082010111@upnjatim.ac.id', $admin->fresh()->email);
+        $this->assertNull($admin->fresh()->google_id);
+    }
 }
