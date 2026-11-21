@@ -30,6 +30,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Trusted Reverse Proxies
+    |--------------------------------------------------------------------------
+    | Comma-separated proxy IPs/CIDRs (e.g. "127.0.0.1" for local Nginx/Apache).
+    | Avoid "*" unless the app port is strictly firewalled to a single proxy.
+    */
+    'trusted_proxies' => env('TRUSTED_PROXIES', '127.0.0.1'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Support Contact & Landing Links
     |--------------------------------------------------------------------------
     */

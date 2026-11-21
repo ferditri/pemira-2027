@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'enabled' => env('TELESCOPE_ENABLED', true),
+    'enabled' => env('TELESCOPE_ENABLED', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -115,6 +115,7 @@ return [
         'livewire*',
         'nova-api*',
         'pulse*',
+        'vote*',
     ],
 
     'ignore_commands' => [
