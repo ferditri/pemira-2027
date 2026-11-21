@@ -69,6 +69,12 @@ class AdminVerificationController extends Controller
 
     public function review(Request $request, UserVerification $verification)
     {
+        if (!$verification->is_active) {
+            return redirect()->back()
+                ->with('flash.message', 'Data verifikasi ini sudah diarsipkan atau digantikan unggahan terbaru sehingga tidak dapat direview lagi.')
+                ->with('flash.type', 'destructive');
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:approved,rejected,retake',
             'admin_note' => 'nullable|string|max:500',
@@ -110,10 +116,16 @@ class AdminVerificationController extends Controller
             ->with('flash.type', 'success');
     }
 
-    public function archive(UserVerification $verification)
+    public function archive(Request $request, UserVerification $verification)
     {
         $verification->update([
             'is_active' => false,
+        ]);
+
+        Log::info('admin.verification.archived', [
+            'actor_id' => $request->user()?->id,
+            'verification_id' => $verification->id,
+            'target_user_id' => $verification->user_id,
         ]);
 
         return redirect()->back()
@@ -124,11 +136,40 @@ class AdminVerificationController extends Controller
     public function media(Request $request, UserVerification $verification, string $type)
     {
         $user = $request->user();
-        $isStaff = in_array($user?->type, ['admin', 'committee'], true);
+        $isAdmin = $user?->type === 'admin';
+        $isCommittee = $user?->type === 'committee';
         $isOwner = $user && $user->id === $verification->user_id;
 
-        if (!$isStaff && !$isOwner) {
-            abort(403, 'Tidak berwenang mengakses berkas verifikasi.');
+        if (!$isAdmin && !$isOwner) {
+            if (!$isCommittee) {
+                abort(403, 'Tidak berwenang mengakses berkas verifikasi.');
+            }
+
+            // Panitia hanya boleh melihat verifikasi terbaru milik pemilih yang memiliki suara confirmed
+            // pada organisasi tertutup (tahap rekap) sesuai kewenangan prodi/fakultas panitia.
+            $latestVerificationId = $verification->user?->verification?->id
+                ?? $verification->user?->verificationHistories()->value('id');
+
+            $hasEligibleClosedBallot = Ballot::query()
+                ->where('user_id', $verification->user_id)
+                ->where('is_confirmed', true)
+                ->whereHas('organization', function ($q) use ($user) {
+                    $q->where('is_open', false)
+                        ->where(function ($sub) use ($user) {
+                            $sub->whereNull('major')->orWhere('major', $user->major);
+                        });
+                })
+                ->exists();
+
+            if ($latestVerificationId !== $verification->id || !$hasEligibleClosedBallot) {
+                Log::warning('verification.media.denied', [
+                    'actor_id' => $user->id,
+                    'actor_type' => $user->type,
+                    'verification_id' => $verification->id,
+                    'type' => $type,
+                ]);
+                abort(403, 'Tidak berwenang mengakses berkas verifikasi.');
+            }
         }
 
         if (!in_array($type, ['ktm', 'verification'], true)) {
@@ -149,6 +190,16 @@ class AdminVerificationController extends Controller
 
         if (!$disk) {
             abort(404);
+        }
+
+        if ($isAdmin || $isCommittee) {
+            Log::info('verification.media.accessed', [
+                'actor_id' => $user->id,
+                'actor_type' => $user->type,
+                'verification_id' => $verification->id,
+                'target_user_id' => $verification->user_id,
+                'type' => $type,
+            ]);
         }
 
         return response()->file($disk->path($relativePath), [

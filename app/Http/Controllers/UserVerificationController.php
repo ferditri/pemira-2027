@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\UserVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,19 +47,39 @@ class UserVerificationController extends Controller
             $request->file("verification")
         );
 
-        // Nonaktifkan record lama tanpa menghapus (simpan riwayat) secara atomik
-        DB::transaction(function () use ($user, $ktm, $verification) {
-            $user->verificationHistories()
+        // Kunci baris user agar request submit paralel (double-click) tidak membuat 2 verifikasi aktif sekaligus
+        $created = DB::transaction(function () use ($user, $ktm, $verification) {
+            $lockedUser = User::query()->whereKey($user->id)->lockForUpdate()->firstOrFail();
+            $currentActive = $lockedUser->verification;
+
+            if ($currentActive !== null && !in_array($currentActive->status, ["retake", "rejected"], true)) {
+                return false;
+            }
+
+            $lockedUser->verificationHistories()
                 ->where("is_active", true)
                 ->update(["is_active" => false]);
 
-            $user->verificationHistories()->create([
+            $lockedUser->verificationHistories()->create([
                 "ktm" => $ktm,
                 "verification" => $verification,
                 "status" => "pending",
                 "is_active" => true,
             ]);
+
+            return true;
         });
+
+        if (!$created) {
+            if ($ktm) {
+                Storage::disk("local")->delete($ktm);
+            }
+            if ($verification) {
+                Storage::disk("local")->delete($verification);
+            }
+
+            return redirect()->route("index");
+        }
 
         return redirect()->route("index")
             ->with("flash.message", "Foto verifikasi berhasil dikirim dan menunggu validasi panitia.")

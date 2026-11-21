@@ -112,18 +112,53 @@ class RecapController extends Controller
                 ->with("flash.type", "destructive");
         }
 
-        $request->validate([
-            "ballot_id" => "required|exists:ballots,id",
+        $validated = $request->validate([
+            "ballot_id" => "required|integer|exists:ballots,id",
             "verified" => "required|boolean",
         ]);
 
-        $organization->ballots()
-            ->where("is_confirmed", true)
-            ->findOrFail($request->ballot_id)
-            ->update([
-                "is_verified" => $request->verified,
+        $verified = (bool) $validated["verified"];
+
+        $updated = \Illuminate\Support\Facades\DB::transaction(function () use ($organization, $validated, $verified, $request) {
+            $ballot = $organization->ballots()
+                ->where("is_confirmed", true)
+                ->lockForUpdate()
+                ->findOrFail($validated["ballot_id"]);
+
+            if ($ballot->is_verified !== null || $ballot->verified_at !== null) {
+                Log::warning("recap.ballot.overwrite_blocked", [
+                    "actor_id" => $request->user()?->id,
+                    "actor_type" => $request->user()?->type,
+                    "organization_id" => $organization->id,
+                    "ballot_id" => $ballot->id,
+                ]);
+
+                return false;
+            }
+
+            $ballot->update([
+                "is_verified" => $verified,
                 "verified_at" => now(),
             ]);
+
+            Log::info("recap.ballot.validated", [
+                "actor_id" => $request->user()?->id,
+                "actor_type" => $request->user()?->type,
+                "organization_id" => $organization->id,
+                "ballot_id" => $ballot->id,
+                "verified" => $verified,
+            ]);
+
+            return true;
+        });
+
+        if (!$updated) {
+            return redirect()->route("organizations.recap.validate", [
+                "organization" => $organization->id,
+            ])
+                ->with("flash.message", "Surat suara ini sudah pernah divalidasi sebelumnya. Hubungi Administrator jika perlu reset validasi.")
+                ->with("flash.type", "destructive");
+        }
 
         return redirect()->route("organizations.recap.validate", [
             "organization" => $organization->id,

@@ -44,6 +44,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            "email" => strtolower(trim((string) $request->input("email"))),
+            "npm" => trim((string) $request->input("npm")),
+        ]);
+
         $request->validate([
             "type" => "required|in:admin,committee,voter",
             "name" => "required|string|max:255",
@@ -51,17 +56,26 @@ class UserController extends Controller
             "npm" => "required|string|size:11|regex:/^[0-9]{11}$/|unique:users,npm",
         ]);
 
+        $email = $request->input("email");
+        if (in_array($email, config("pemira.admin_emails", []), true) && !$request->user()->isSuperAdmin()) {
+            return redirect()
+                ->back()
+                ->withErrors(["email" => "Email Super Admin (.env) hanya dapat dikelola oleh Super Admin."])
+                ->with("flash.message", "Email Super Admin (.env) hanya dapat dikelola oleh Super Admin.")
+                ->with("flash.type", "destructive");
+        }
+
         $npm = $request->input("npm");
         $user = User::create([
             "npm" => $npm,
-            "email" => $request->input("email"),
+            "email" => $email,
             "year" => substr($npm, 0, 2),
             "major" => substr($npm, 4, 2),
             "name" => $request->input("name"),
             "type" => $request->input("type"),
         ]);
 
-        Whitelist::query()->firstOrCreate(["npm" => $request->input("npm")]);
+        Whitelist::query()->firstOrCreate(["npm" => $npm]);
 
         Log::info("admin.user.created", [
             "actor_id" => $request->user()?->id,
@@ -112,12 +126,26 @@ class UserController extends Controller
                 ->with("flash.type", "destructive");
         }
 
+        $request->merge([
+            "email" => strtolower(trim((string) $request->input("email"))),
+            "npm" => trim((string) $request->input("npm")),
+        ]);
+
         $request->validate([
             "type" => "required|in:admin,committee,voter",
             "name" => "required|string|max:255",
             "email" => "required|email|max:255|unique:users,email," . $user->id,
             "npm" => "required|string|size:11|regex:/^[0-9]{11}$/|unique:users,npm," . $user->id,
         ]);
+
+        $email = $request->input("email");
+        if (in_array($email, config("pemira.admin_emails", []), true) && !$request->user()->isSuperAdmin()) {
+            return redirect()
+                ->back()
+                ->withErrors(["email" => "Email Super Admin (.env) hanya dapat dikelola oleh Super Admin."])
+                ->with("flash.message", "Email Super Admin (.env) hanya dapat dikelola oleh Super Admin.")
+                ->with("flash.type", "destructive");
+        }
 
         if ($user->isSuperAdmin() && $request->input("type") !== "admin") {
             return redirect()
@@ -142,14 +170,14 @@ class UserController extends Controller
         $npm = $request->input("npm");
         $user->update([
             "npm" => $npm,
-            "email" => $request->input("email"),
+            "email" => $email,
             "year" => substr($npm, 0, 2),
             "major" => substr($npm, 4, 2),
             "name" => $request->input("name"),
             "type" => $request->input("type"),
         ]);
 
-        Whitelist::query()->firstOrCreate(["npm" => $request->input("npm")]);
+        Whitelist::query()->firstOrCreate(["npm" => $npm]);
 
         Log::info("admin.user.updated", [
             "actor_id" => $request->user()?->id,

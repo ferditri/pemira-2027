@@ -32,15 +32,26 @@ class AuthController extends Controller
     public function callback(Request $request)
     {
         try {
-            $user = $this->googleDriver($request)->user();
+            $googleUser = $this->googleDriver($request)->user();
         } catch (\Throwable $th) {
-            \Illuminate\Support\Facades\Log::error("Google OAuth error: " . $th->getMessage());
+            Log::error("Google OAuth error: " . $th->getMessage());
             return redirect(route("login"))
                 ->with("flash.message", "Gagal autentikasi Google. Silakan coba lagi.")
                 ->with("flash.type", "destructive");
         }
 
-        $email = strtolower((string) $user->getEmail());
+        $rawGoogleProfile = is_array($googleUser->user ?? null) ? $googleUser->user : [];
+        if (array_key_exists("email_verified", $rawGoogleProfile) && !$rawGoogleProfile["email_verified"]) {
+            Log::warning("auth.unverified_google_email", [
+                "google_id" => $googleUser->getId(),
+            ]);
+            return redirect(route("login"))
+                ->with("flash.message", "Akun Google kamu belum terverifikasi emailnya.")
+                ->with("flash.type", "destructive");
+        }
+
+        $email = strtolower(trim((string) $googleUser->getEmail()));
+        $googleId = (string) $googleUser->getId();
         $domain = explode("@", $email)[1] ?? "";
         $allowedDomains = config("pemira.allowed_email_domains", ["student.upnjatim.ac.id"]);
         $allowAnyEmail = config("pemira.auth_allow_any_email", false);
@@ -52,40 +63,85 @@ class AuthController extends Controller
                 ->with("flash.type", "destructive");
         }
 
-        $npm = explode("@", $email)[0];
+        $npm = substr(explode("@", $email)[0], 0, 64);
 
-        // Jika mode bebas email aktif di non-production atau user adalah admin .env: otomatis whitelist
-        if ($allowAnyEmail || $isEnvAdmin) {
-            Whitelist::query()->firstOrCreate(["npm" => $npm]);
-        }
+        // Cocokkan akun berdasarkan email (case-insensitive) terlebih dahulu agar prefix npm tidak menimpa akun lain
+        $existingUser = User::query()
+            ->whereRaw("LOWER(email) = ?", [$email])
+            ->first();
 
-        if (Whitelist::query()->find($npm) === null) {
-            return redirect(route("login"))
-                ->with("flash.message", "Maaf.. NPM kamu tidak terdaftar sebagai pemilih 😔")
-                ->with("flash.type", "destructive");
-        }
+        if ($existingUser) {
+            if ($existingUser->google_id !== null && $existingUser->google_id !== $googleId) {
+                Log::warning("auth.google_id_mismatch", [
+                    "user_id" => $existingUser->id,
+                    "email" => $email,
+                ]);
+                return redirect(route("login"))
+                    ->with("flash.message", "Akun ini sudah terhubung dengan akun Google berbeda. Hubungi panitia.")
+                    ->with("flash.type", "destructive");
+            }
 
-        $year = (strlen($npm) >= 2 && is_numeric(substr($npm, 0, 2))) ? substr($npm, 0, 2) : "22";
-        $major = (strlen($npm) >= 6 && is_numeric(substr($npm, 4, 2))) ? substr($npm, 4, 2) : "10";
+            if ($allowAnyEmail || $isEnvAdmin) {
+                Whitelist::query()->firstOrCreate(["npm" => $existingUser->npm]);
+            }
 
-        $user = User::query()->updateOrCreate([
-            "npm" => $npm,
-        ], [
-            "npm" => $npm,
-            "email" => $user->getEmail(),
-            "year" => $year,
-            "major" => $major,
-            "name" => $user->getName(),
-            "google_id" => $user->getId(),
-            "avatar" => $user->getAvatar(),
-        ]);
+            if (Whitelist::query()->find($existingUser->npm) === null && !$isEnvAdmin) {
+                return redirect(route("login"))
+                    ->with("flash.message", "Maaf.. NPM kamu tidak terdaftar sebagai pemilih 😔")
+                    ->with("flash.type", "destructive");
+            }
 
-        if ($isEnvAdmin) {
-            $user->type = "admin";
-            $user->save();
-        } elseif ($user->wasRecentlyCreated) {
-            $user->type = "voter";
-            $user->save();
+            $existingUser->fill([
+                "email" => $email,
+                "name" => $googleUser->getName(),
+                "google_id" => $googleId,
+                "avatar" => $googleUser->getAvatar(),
+            ]);
+
+            if ($isEnvAdmin) {
+                $existingUser->type = "admin";
+            }
+
+            $existingUser->save();
+            $user = $existingUser;
+        } else {
+            // Cegah kolisi NPM: jika NPM sudah dipakai user lain dengan email berbeda, tolak login
+            $npmCollision = User::query()->where("npm", $npm)->first();
+            if ($npmCollision !== null) {
+                Log::warning("auth.npm_collision_blocked", [
+                    "npm" => $npm,
+                    "incoming_email" => $email,
+                    "existing_user_id" => $npmCollision->id,
+                ]);
+                return redirect(route("login"))
+                    ->with("flash.message", "Akun dengan NPM tersebut sudah terdaftar dengan email berbeda. Hubungi panitia.")
+                    ->with("flash.type", "destructive");
+            }
+
+            // Jika mode bebas email aktif di non-production atau user adalah admin .env: otomatis whitelist
+            if ($allowAnyEmail || $isEnvAdmin) {
+                Whitelist::query()->firstOrCreate(["npm" => $npm]);
+            }
+
+            if (Whitelist::query()->find($npm) === null) {
+                return redirect(route("login"))
+                    ->with("flash.message", "Maaf.. NPM kamu tidak terdaftar sebagai pemilih 😔")
+                    ->with("flash.type", "destructive");
+            }
+
+            $year = (strlen($npm) >= 2 && is_numeric(substr($npm, 0, 2))) ? substr($npm, 0, 2) : "22";
+            $major = (strlen($npm) >= 6 && is_numeric(substr($npm, 4, 2))) ? substr($npm, 4, 2) : "10";
+
+            $user = User::query()->create([
+                "npm" => $npm,
+                "email" => $email,
+                "year" => $year,
+                "major" => $major,
+                "name" => $googleUser->getName(),
+                "google_id" => $googleId,
+                "avatar" => $googleUser->getAvatar(),
+                "type" => $isEnvAdmin ? "admin" : "voter",
+            ]);
         }
 
         Auth::login($user);
