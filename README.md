@@ -10,9 +10,10 @@ Aplikasi e-voting PEMIRA Fakultas Ilmu Komputer berbasis **Laravel 11**, **Inert
 - MySQL / MariaDB
 
 ## Instalasi Awal (Clone di Laptop Baru / Tim)
-1. Masuk ke folder aplikasi:
+1. Clone repository lalu masuk ke folder project:
    ```bash
-   cd pemira26-main
+   git clone https://github.com/ferditri/pemira-2027.git
+   cd pemira-2027
    ```
 2. Install dependency backend & frontend:
    ```bash
@@ -44,7 +45,7 @@ Aplikasi e-voting PEMIRA Fakultas Ilmu Komputer berbasis **Laravel 11**, **Inert
    ```
 
 ## Menjalankan di Lokal (Development)
-Jalankan 2 terminal di folder `pemira26-main`:
+Jalankan 2 terminal di folder root project:
 ```bash
 php artisan serve --host=localhost --port=8000
 npm run dev
