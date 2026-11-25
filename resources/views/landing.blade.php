@@ -36,13 +36,13 @@
     <nav id="main-navbar" class="navbar-royal fixed top-0 left-0 w-full z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 md:h-20 gap-4 lg:gap-8">
-          
+
           <!-- Brand Logo -->
           <a href="#hero" class="flex items-center gap-2.5 md:gap-3 group shrink-0">
-            <img 
-              src="{{ asset('assets/images/nav_logo_transparent.png') }}" 
-              alt="Logo PEMIRA" 
-              class="h-9 md:h-11 w-auto drop-shadow-[0_2px_8px_rgba(223,158,56,0.5)] group-hover:scale-105 transition duration-300" 
+            <img
+              src="{{ asset('assets/images/nav_logo_transparent.png') }}"
+              alt="Logo PEMIRA"
+              class="h-9 md:h-11 w-auto drop-shadow-[0_2px_8px_rgba(223,158,56,0.5)] group-hover:scale-105 transition duration-300"
             />
             <div class="flex flex-col">
               <span class="font-cinzel font-bold text-base md:text-lg text-amber-200 tracking-wider">PEMIRA</span>
@@ -108,20 +108,26 @@
     <!-- ================= HERO SECTION (TRUE LAYERED ARTWORK) ================= -->
     <header id="hero" class="relative bg-[#071124]">
       <div class="hero-layered-container">
-        <!-- Pristine 2K Background: Knights, Moon, Castle, Marble Floor (No baked navbar/text) -->
-        <img 
-          src="{{ asset('assets/images/me/bg-hero-section.webp') }}?v=2" 
-          alt="Kastil PEMIRA FASILKOM 2027" 
-          decoding="async"
-          fetchpriority="high"
-          class="hero-bg-img"
-        />
+        <!-- Responsive artwork: layered desktop scene and portrait mobile illustration -->
+        <picture class="hero-bg-picture">
+          <source
+            media="(max-width: 767px)"
+            srcset="{{ asset('assets/images/me/bg-mobile.webp') }}?v=1"
+          />
+          <img
+            src="{{ asset('assets/images/me/bg-hero-section.webp') }}?v=2"
+            alt="Kastil PEMIRA FASILKOM 2027"
+            decoding="async"
+            fetchpriority="high"
+            class="hero-bg-img"
+          />
+        </picture>
 
         <!-- Interactive Layered Content -->
         <div class="hero-layered-overlay">
-          <img 
-            src="{{ asset('assets/images/me/teks-pemira-hero-trimmed.webp') }}" 
-            alt="PEMIRA FASILKOM 2027" 
+          <img
+            src="{{ asset('assets/images/me/teks-pemira-hero-trimmed.webp') }}"
+            alt="PEMIRA FASILKOM 2027"
             class="hero-title-graphic"
           />
           <p class="hero-tagline-text">
@@ -147,7 +153,7 @@
 
     <!-- ================= SECTION: TENTANG PEMIRA ================= -->
     <section id="tentang" class="section-parchment pt-10 pb-14 md:pt-16 md:pb-24 px-4 sm:px-6 lg:px-8">
-      
+
       <!-- Sparkle stars -->
       <svg class="sparkle-star top-10 left-4 md:top-16 md:left-12 w-5 h-5 md:w-8 md:h-8 text-amber-500/50" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 0 C12 6 6 12 0 12 C6 12 12 18 12 24 C12 18 18 12 24 12 C18 12 12 6 12 0 Z"/>
@@ -184,7 +190,7 @@
     <!-- ================= SECTION: CALON KETUA & WAKIL BEM + CALON BLM ================= -->
     <section id="kandidat" class="section-parchment pt-6 pb-20 md:pt-12 md:pb-32 px-3 sm:px-6 lg:px-8">
       <div class="max-w-6xl mx-auto candidate-frame-box">
-        
+
         <!-- Golden L-Bracket Ornaments (4 Corners) -->
         <svg class="corner-ornament corner-tl text-amber-700/60" viewBox="0 0 100 100" fill="none" stroke="currentColor">
           <path d="M15,90 L15,15 L90,15" stroke-width="2.5" />
@@ -263,7 +269,7 @@
 
       <!-- ================= CALON BLM (SATU SECTION PARCHMENT) ================= -->
       <div class="max-w-6xl mx-auto candidate-frame-box mt-12">
-        
+
         <!-- Golden Corner Ornaments -->
         <svg class="corner-ornament corner-tl text-amber-700/60" viewBox="0 0 100 100" fill="none" stroke="currentColor">
           <path d="M15,90 L15,15 L90,15" stroke-width="2.5" />
@@ -336,7 +342,7 @@
     <!-- ================= SECTION: TUTORIAL VOTING ================= -->
     <section id="voting" class="section-tutorial">
       <div class="max-w-6xl mx-auto px-4 text-center">
-        
+
         <!-- Header -->
         <div class="parchment-divider mb-2">
           <div class="parchment-divider-line !bg-amber-400/50"></div>
@@ -352,12 +358,12 @@
         <!-- Ornate Golden Video Frame Container -->
         <div class="video-ornate-container">
           <div class="relative w-full aspect-video group">
-            
+
             <!-- Video Thumbnail strictly fitted inside the golden frame inner window -->
             <div class="video-inner-window">
-              <img 
-                src="{{ asset('assets/images/me/thumbnail_yt.png') }}" 
-                alt="Thumbnail Tutorial Voting" 
+              <img
+                src="{{ asset('assets/images/me/thumbnail_yt.png') }}"
+                alt="Thumbnail Tutorial Voting"
                 loading="lazy"
                 decoding="async"
                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
@@ -365,9 +371,9 @@
             </div>
 
             <!-- Carved Golden Picture Frame Overlay (True RGBA Transparent Asset) -->
-            <img 
-              src="{{ asset('assets/images/me/kotak-tutorialvoting.webp') }}" 
-              alt="Bingkai Emas Ornamen" 
+            <img
+              src="{{ asset('assets/images/me/kotak-tutorialvoting.webp') }}"
+              alt="Bingkai Emas Ornamen"
               loading="lazy"
               decoding="async"
               class="absolute inset-0 w-full h-full object-fill pointer-events-none z-10"
@@ -376,9 +382,9 @@
 
           <!-- Single Play Video Button: clean below frame on phone, overlapping border on sm+ -->
           <div class="mt-5 sm:mt-0 sm:absolute sm:-bottom-6 sm:inset-x-0 z-20 flex items-center justify-center">
-            <button 
-              type="button" 
-              onclick="openVideoModal()" 
+            <button
+              type="button"
+              onclick="openVideoModal()"
               class="btn-gold px-7 py-2.5 sm:px-10 sm:py-3.5 text-xs sm:text-sm uppercase rounded-full shadow-2xl flex items-center gap-2.5 sm:gap-3 transform hover:scale-105 active:scale-95 transition"
             >
               <span>TONTON VIDEO</span>
@@ -394,12 +400,12 @@
 
     <!-- ================= SECTION: JADWAL PELAKSANAAN (TRUE LAYERED WITH bg-jadwalpelaksanaan.webp) ================= -->
     <section id="jadwal" class="relative bg-[#0d1c3f] overflow-hidden">
-      
+
       <!-- Desktop Timeline Display (Clean 2K Background + Sharp Vector Typography & Cards) -->
       <div class="hidden md:block timeline-layered-container">
-        <img 
-          src="{{ asset('assets/images/me/bg-jadwalpelaksanaan.webp') }}?v=3" 
-          alt="Latar Jadwal Pelaksanaan" 
+        <img
+          src="{{ asset('assets/images/me/bg-jadwalpelaksanaan.webp') }}?v=3"
+          alt="Latar Jadwal Pelaksanaan"
           loading="lazy"
           decoding="async"
           class="timeline-bg-img"
@@ -510,9 +516,9 @@
       <!-- Crisp Transparent Logo centered right below Jadwal Pelaksanaan curve -->
       <div class="max-w-4xl mx-auto px-4 pb-2">
         <div class="flex justify-center">
-          <img 
-            src="{{ asset('assets/images/me/teks-pemira-footer-trimmed.webp') }}" 
-            alt="PEMIRA FASILKOM 2027" 
+          <img
+            src="{{ asset('assets/images/me/teks-pemira-footer-trimmed.webp') }}"
+            alt="PEMIRA FASILKOM 2027"
             class="h-20 md:h-24 lg:h-28 w-auto drop-shadow-[0_4px_18px_rgba(223,158,56,0.6)]"
           />
         </div>
@@ -533,11 +539,11 @@
         <!-- Social Icons matching BAHAN/LandingPage.png -->
         <div class="flex justify-center gap-4 mb-5">
           <!-- Instagram -->
-          <a 
-            href="{{ config('pemira.instagram_url') }}" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="social-circle-btn" 
+          <a
+            href="{{ config('pemira.instagram_url') }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-circle-btn"
             aria-label="Instagram"
           >
             <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -545,11 +551,11 @@
             </svg>
           </a>
           <!-- YouTube -->
-          <a 
-            href="{{ config('pemira.youtube_url') }}" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            class="social-circle-btn" 
+          <a
+            href="{{ config('pemira.youtube_url') }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-circle-btn"
             aria-label="YouTube"
           >
             <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -582,13 +588,13 @@
       <div class="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden shadow-2xl p-2" onclick="event.stopPropagation()">
         <button type="button" class="royal-modal-close !top-3 !right-3 z-30" onclick="closeVideoModal()" aria-label="Tutup">&times;</button>
         <div class="relative w-full aspect-video">
-          <iframe 
-            id="youtube-player" 
+          <iframe
+            id="youtube-player"
             class="w-full h-full rounded-lg"
-            src="" 
-            title="Tutorial Voting Pemira" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            src=""
+            title="Tutorial Voting Pemira"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
         </div>
